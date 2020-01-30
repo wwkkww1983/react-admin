@@ -49,6 +49,40 @@ const menus: any[] = [
                         icon: "icon-guanbi",
                         title: "充电柜管理",
                         path: "icon-iconset0499"
+                    },
+                    {
+                        icon: "icon-iconset0499",
+                        title: "充电柜管理",
+                        path: "",
+                        children: [
+                            {
+                                icon: "icon-dianchi",
+                                title: "电池管理",
+                                path: "/batteryManage"
+                            },
+                            {
+                                icon: "icon-guanbi",
+                                title: "充电柜管理",
+                                path: "icon-iconset0499"
+                            },
+                            {
+                                icon: "icon-iconset0499",
+                                title: "充电柜管理",
+                                path: "",
+                                children: [
+                                    {
+                                        icon: "icon-dianchi",
+                                        title: "电池管理",
+                                        path: "/batteryManage"
+                                    },
+                                    {
+                                        icon: "icon-guanbi",
+                                        title: "充电柜管理",
+                                        path: "icon-iconset0499"
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ]
             }
@@ -88,6 +122,7 @@ export default class Layout extends React.Component {
                 <div className="layout-content">
                     <div className="layout-content-aside">
                         <Menus menus={menus}/>
+                        {/* <div style={{width: "300px", height: "200px", background: "red"}}>123</div> */}
                     </div>
                     <div className="layout-content-content">
                         <div className="history-bar-wrap">

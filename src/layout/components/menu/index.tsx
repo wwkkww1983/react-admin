@@ -11,64 +11,6 @@ interface Menu {
     $ACTIVE?: boolean
 }
 
-class SubMenu extends React.Component {
-    static defaultProps = {
-        menu: null
-    }
-    state = {
-        show: false
-    }
-    componentDidMount () {
-        this.setState({show: (this as any).props.show});
-    }
-
-    onclick () {
-        this.setState({show: !this.state.show});
-    }
-
-    render (): any {
-        const 
-        menu: Menu = (this as any).props.menu,
-        state: any = this.state;
-        return (
-            <div className="menus-group">
-                <div className="menus-item" onClick={this.onclick.bind(this)}>
-                    {menu.icon ? <div className={"icon iconfont " + menu.icon}></div> : null}
-                    <div className="text">{menu.title}</div>
-                    <div className="right-icon iconfont icon-shouqi" style={{
-                        transform: state.show ? "rotate(0deg)" : "rotate(180deg)"
-                    }}></div>
-                </div>
-                <div className="menus-group"
-                style={{
-                    height: state.show ? "auto" : "0px",
-                    transition: "all .3s"
-                }}
-                >
-                    {(this as any).props.children}
-                </div>
-            </div>
-        );
-    }
-}
-
-class Item extends React.Component {
-    static defaultProps = {
-        menu: null
-    }
-    render (): any {
-        const menu: Menu = (this as any).props.menu;
-        return (
-            <div className="menus-item"
-            // key={menus.$ID}
-            >
-                {menu.icon ? <div className={"icon iconfont " + menu.icon}></div> : null}
-                <div className="text">{menu.title}</div>
-            </div>
-        );
-    }
-}
-
 export default class Menus extends React.Component {
 
     static defaultProps = {
@@ -77,7 +19,8 @@ export default class Menus extends React.Component {
     }
 
     state = {
-        menus: []
+        menus: [], //菜单集合
+        opens: {} //是否打开
     }
 
     componentDidMount () {
@@ -93,6 +36,7 @@ export default class Menus extends React.Component {
                 id ++;
                 menu.$ID = `id-${id}`
                 if (menu.children !== undefined) {
+                    this.state.opens[menu.$ID] = false;
                     menu.$OPEN = false;
                     f.call(this, menu.children);
                 } else {
@@ -103,10 +47,22 @@ export default class Menus extends React.Component {
         
         console.log("debug1");
         console.log(menus);
+        console.log(this.state.opens);
         this.setState({menus});
     }
 
+    onclick (key: string): void {
+        console.log(key);
+        const opens: any = this.state.opens;
+        if (opens[key] !== undefined) {
+            opens[key] = !opens[key];
+            this.setState({});
+        }
+    }
+
     render (): any {
+
+        const opens: any = this.state.opens;
 
         const Children: any = ({menus}): any => {
             return (
@@ -114,12 +70,26 @@ export default class Menus extends React.Component {
                     {menus.map((menu: Menu): any => {
                         if (menu.children) {
                             return (
-                                <SubMenu menu={menu}>
-                                    <Children menus={menu.children}/>
-                                </SubMenu>
+                                <div className="menus-group">
+                                    <div className="menus-item" onClick={this.onclick.bind(this, menu.$ID)}>
+                                        {menu.icon ? <div className={"icon iconfont " + menu.icon}></div> : null}
+                                        <div className="text">{menu.title}</div>
+                                        <div className="right-icon iconfont icon-shouqi" style={{
+                                            transform: opens[menu.$ID] ? "rotate(0deg)" : "rotate(180deg)"
+                                        }}></div>
+                                    </div>
+                                    <div className="menus-group" style={{ height: opens[menu.$ID] ? "auto" : "0px"}}>
+                                        <Children menus={menu.children}/>
+                                    </div>
+                                </div>
                             );
                         } else {
-                            return <Item menu={menu}/>
+                            return (
+                                <div className="menus-item">
+                                    {menu.icon ? <div className={"icon iconfont " + menu.icon}></div> : null}
+                                    <div className="text">{menu.title}</div>
+                                </div>
+                            );
                         }
                     })}
                 </div>
