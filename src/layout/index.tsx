@@ -68,10 +68,17 @@ export default class Layout extends React.Component {
 
     componentDidMount () {
         // console.log(this.props);
+        setInterval(() => {
+            this.setState({asideFold: !this.state.asideFold});
+        }, 2000);
+    }
+
+    state = {
+        asideFold: false
     }
     
     render (): any {
-        const props: any = this.props;
+        const props: any = this.props, state: any = this.state;
         return (
             <div className="layout-wrap">
                 <div className="layout-header">
@@ -85,7 +92,7 @@ export default class Layout extends React.Component {
                 </div>
                 <div className="layout-content">
                     <div className="layout-content-aside">
-                        <Menus menus={menus}/>
+                        <Menus menus={menus} fold={state.asideFold}/>
                         {/* <div style={{width: "300px", height: "200px", background: "red"}}>123</div> */}
                     </div>
                     <div className="layout-content-content">

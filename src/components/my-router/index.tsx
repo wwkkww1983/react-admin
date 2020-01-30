@@ -5,6 +5,11 @@ import "./less/index.less";
 import history from "./lib/History.class.js";
 import { deepClone } from "./lib/tools.js";
 
+/**
+ * 导出history对象 
+ */
+export const History = history;
+
 const 
 DEBUG: boolean = true,
 ANIMATION_CLASS = "router-enter",

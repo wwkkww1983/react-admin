@@ -1,6 +1,8 @@
 import React from "react";
 import "./less/index.less";
 
+import { History } from "../../../components/my-router";
+
 interface Menu {
     icon?: string,
     title: string,
@@ -14,35 +16,52 @@ interface Menu {
 }
 
 //每层左侧间隔
-const PADDING_LEFT: number= 10;
+const 
+PADDING_LEFT: number= 10,
+MAX_DEEP: number = 2,
+WIDTH: number = 200;
 
 export default class Menus extends React.Component {
 
     static defaultProps = {
         menus: [],
-        collapse: false
+        fold: false
     }
 
     state = {
+        fold: false,
+        oldOpens: {},
         menus: [], //菜单集合
         opens: {}, //是否打开
-        children: {}// item集合
+        children: {}// item集合， 不包含展开项
+    }
+
+    componentWillReceiveProps (props) {
+        const fold: boolean = props.fold, menus: Menu[] = props.menus;
+        if (fold !== this.state.fold) {
+            this.setState({fold});
+            if (fold) {
+                this.state.oldOpens = JSON.parse(JSON.stringify(this.state.opens));
+                this.foldAll();
+            } else {
+                this.state.opens = this.state.oldOpens;
+                this.state.oldOpens = {};
+                this.setState({});
+            }
+        } 
+        if (menus !== (this as any).props.menus) {
+            this.init();
+        } 
     }
 
     componentDidMount () {
         this.init();
-
-        setTimeout(() => {
-            // alert(123)
-            // this.foldAll();
-            this.active("/test3");
-            // setTimeout(() => {
-            //     this.unActive();
-            //     this.foldAll();
-            // }, 2000);
-        }, 5000);
+        History.on("change", () => {
+            this.active(location.pathname);
+        });
     }
 
+    //初始化menus属性以及相关数据结构
     init (): void {
         const menus: Menu[] = (this as any).props.menus;
         let id: number = 0, deep = 0, parent = null;
@@ -57,6 +76,7 @@ export default class Menus extends React.Component {
                     this.state.opens[menu.$ID] = false;
                     parent = menu;
                     deep ++;
+                    if (deep > MAX_DEEP) throw new Error(`[menu 组件] 菜单配置嵌套深度不能大于 ${MAX_DEEP} 层！`);
                     f.call(this, menu.children);
                     deep --;
                     parent = null;
@@ -76,11 +96,21 @@ export default class Menus extends React.Component {
 
     //展开与收起
     onclick (key: string): void {
+        if ((this as any).props.fold) return;
         const opens: any = this.state.opens;
         if (opens[key] !== undefined) {
             opens[key] = !opens[key];
             this.setState({});
         }
+    }
+
+    //菜单点击
+    touch (menu: Menu): void {
+        const { path, $ID } = menu;
+        console.log(path, $ID);
+        History.push({path: path});
+        this.unActive();
+        this.state.children[$ID].$ACTIVE = true;
     }
 
     //收起所有的展开
@@ -113,6 +143,7 @@ export default class Menus extends React.Component {
 
     //选中制定path的菜单；如果在展开项中则展开
     active (path: string): void {
+        this.unActive();
         const children: any = this.state.children;
         let _: Menu = null;
         for (let key of Object.keys(children)) {
@@ -137,7 +168,10 @@ export default class Menus extends React.Component {
 
     render (): any {
 
-        const opens: any = this.state.opens;
+        const 
+        opens: any = this.state.opens,
+        state: any = this.state,
+        props: any = this.props;
 
         const Children: any = ({menus}): any => {
             return (
@@ -171,7 +205,9 @@ export default class Menus extends React.Component {
                             return (
                                 <div className={menu.$ACTIVE ? "menus-item menus-item_active" : "menus-item"} style={{
                                     paddingLeft: menu.$DEEP * PADDING_LEFT + "px"
-                                }}>
+                                }}
+                                onClick={this.touch.bind(this, menu)}
+                                >
                                     {menu.icon ? <div className={"icon iconfont " + menu.icon}></div> : null}
                                     <div className="text">{menu.title}</div>
                                 </div>
@@ -183,7 +219,9 @@ export default class Menus extends React.Component {
         }
 
         return (
-            <Children menus={this.state.menus}/>
+            <div style={{width: state.fold ? "50px" : `${WIDTH}px`, overflow: "hidden"}}>
+                <Children menus={this.state.menus}/>
+            </div>
         );
     }
 }
