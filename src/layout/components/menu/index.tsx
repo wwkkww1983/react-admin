@@ -36,6 +36,10 @@ export default class Menus extends React.Component {
             // alert(123)
             // this.foldAll();
             this.active("/test3");
+            // setTimeout(() => {
+            //     this.unActive();
+            //     this.foldAll();
+            // }, 2000);
         }, 5000);
     }
 
@@ -95,6 +99,16 @@ export default class Menus extends React.Component {
             opens[key] = true;
         });
         this.setState({opens});
+    }
+
+    //取消激活
+    unActive (): void {
+        const chilren: any = this.state.children;
+        for (let key of Object.keys(chilren)) {
+            const menu = chilren[key];
+            menu.$ACTIVE && (menu.$ACTIVE = false);
+        }
+        this.setState({});
     }
 
     //选中制定path的菜单；如果在展开项中则展开
