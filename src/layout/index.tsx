@@ -27,8 +27,7 @@ const menus: any[] = [
     },
     {
         icon: "icon-guanbi",
-        title: "充电管理",
-        path: "",
+        title: "测试展开1",
         children: [
             {
                 icon: "icon-dianchi",
@@ -37,52 +36,17 @@ const menus: any[] = [
             },
             {
                 icon: "icon-iconset0499",
-                title: "充电柜管理",
-                path: "",
+                title: "测试展开2",
                 children: [
                     {
                         icon: "icon-dianchi",
-                        title: "电池管理",
-                        path: "/batteryManage"
+                        title: "测试3",
+                        path: "/test3"
                     },
                     {
                         icon: "icon-guanbi",
                         title: "充电柜管理",
-                        path: "icon-iconset0499"
-                    },
-                    {
-                        icon: "icon-iconset0499",
-                        title: "充电柜管理",
-                        path: "",
-                        children: [
-                            {
-                                icon: "icon-dianchi",
-                                title: "电池管理",
-                                path: "/batteryManage"
-                            },
-                            {
-                                icon: "icon-guanbi",
-                                title: "充电柜管理",
-                                path: "icon-iconset0499"
-                            },
-                            {
-                                icon: "icon-iconset0499",
-                                title: "充电柜管理",
-                                path: "",
-                                children: [
-                                    {
-                                        icon: "icon-dianchi",
-                                        title: "电池管理",
-                                        path: "/batteryManage"
-                                    },
-                                    {
-                                        icon: "icon-guanbi",
-                                        title: "充电柜管理",
-                                        path: "icon-iconset0499"
-                                    }
-                                ]
-                            }
-                        ]
+                        path: "/icon-iconset0499"
                     }
                 ]
             }
@@ -90,13 +54,13 @@ const menus: any[] = [
     },
     {
         icon: "icon-yonghu",
-        title: "用户管理",
-        path: "/userManage"
+        title: "测试1",
+        path: "/test1"
     },
     {
         icon: "icon-weixiu",
-        title: "运维人员管理",
-        path: "/OPSManage"
+        title: "测试2",
+        path: "/test2"
     }
 ]
 

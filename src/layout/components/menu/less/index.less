@@ -1,48 +1,46 @@
-.menus-container {
-    height: auto;
-    box-sizing: border-box;
-    padding-right: 20px;
-    display: block;
-    .menus-wrap {
+
+    .menus-group {
         width: 100%;
-        height: auto;
+        // height: js;
+        overflow: hidden;
+    }
+    .menus-item {
+        min-width: 150px;
+        height: 50px;
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        justify-content: space-between;
         box-sizing: border-box;
-        padding-left: 20px;
-        .menus-group {
-            height: auto;
-            width: 100%;
-            overflow: hidden;
+        padding-right: 8px;
+        // padding-left: js
+        color: #fff;
+        cursor: pointer;
+        &:hover {
+            color: #409efe;
         }
-        .menus-item {
+        .icon {
             height: 50px;
-            width: 100%;
-            display: flex;
-            .icon {
-                height: 50px;
-                line-height: 50px;
-                text-align: center;
-                box-sizing: border-box;
-                padding: 0 8px;
-                flex-shrink: 0;
-                color: #909399;
-                font-size: 20px!important;
-            }
-            .text {
-                height: 50px;
-                flex-grow: 1;
-                // text-align: center;
-                line-height: 50px;
-                font-size: 14px;
-                color: #fff;
-            }
-            .right-icon {
-                height: 50px;
-                line-height: 50px;
-                box-sizing: border-box;
-                padding: 0;
-                color: #909399; 
-                transform: rotate(0deg);     
-            }
+            line-height: 50px;
+            width: 50px;
+            text-align: center;
+            font-size: 18px!important;
+            flex-shrink: 0;
+        }
+        .text {
+            height: 50px;
+            line-height: 50px;
+            flex-grow: 1;
+        }
+        .right-icon {
+            height: 50px;
+            line-height: 50px;
         }
     }
-}
+    .menus-item_active {
+        &:hover {
+            color: #fff;
+        }
+        background: #409efe;
+    }
+
