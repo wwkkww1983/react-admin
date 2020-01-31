@@ -9,17 +9,10 @@ import { createStore, combineReducers } from "redux";
  * 2. 在reducer中，必须要有一个默认返回值，可以为null， 但不能为undefined。 因为初始化的时候需要这个默认返回值。
  */
 
-/**
- * 信息状态 
- */
-import message from "./reducer/message";
-
-/**
- * user信息 
- */
 import user from "./reducer/user";
+import layout from "./reducer/layout";
 
 export default createStore(combineReducers({
-    message,
-    user
+    user,
+    layout
 }));

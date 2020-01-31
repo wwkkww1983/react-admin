@@ -1,6 +1,5 @@
 import React from "react";
 import "./less/index.less";
-
 import { History } from "../../../components/my-router";
 
 interface Menu {
@@ -15,7 +14,6 @@ interface Menu {
     $PARENT: object
 }
 
-//每层左侧间隔
 const 
 PADDING_LEFT: number= 10,
 MAX_DEEP: number = 2,

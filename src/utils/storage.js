@@ -1,10 +1,10 @@
 "use strict"
 
 /**
- * 存储类， 来这里统一声明key， 方便统一管理 
+ * 本地存储操作类
  */
 
-import keys from "./keys";
+import keys from "../config/storageKey.config";
 
 class Storage {
 

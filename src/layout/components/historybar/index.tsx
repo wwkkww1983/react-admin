@@ -1,16 +1,42 @@
 import React from "react";
 import "./less/index.less";
-
 import { Button, Dropdown, Icon, Menu } from "antd";
+import store from "../../../store";
 
 export default class HistoryBar extends React.Component {
 
     state = {
+        asideMenusFold: false,
         childs: ["首页", "电池管理", "用户管理", "运维人员管理", "首页", "电池管理", "用户管理", "运维人员管理", "首页", "电池管理", "用户管理", "运维人员管理", "首页", "电池管理", "用户管理", "运维人员管理", "首页", "电池管理", "用户管理", "运维人员管理"]
     }
 
     constructor (props) {
         super(props);
+    }
+
+    componentDidMount () {
+        this.init();
+    }
+
+    init () {
+        this.initUseStore();
+    }
+
+    initUseStore () {
+        const { layout } = store.getState();
+        this.state.asideMenusFold = layout.asideMenus.fold;
+        this.setState({});
+        store.subscribe(() => {
+            const { layout } = store.getState();
+            this.state.asideMenusFold = layout.asideMenus.fold;
+            this.setState({});
+        });
+    }
+
+    //侧边菜单折叠按钮
+    asideSetBtn () {
+         const asideMenusFold: boolean = this.state.asideMenusFold;       
+         store.dispatch({type: "layout/SET_ASIDE_MENUS", playload: !asideMenusFold});
     }
 
     render (): any {
@@ -27,7 +53,7 @@ export default class HistoryBar extends React.Component {
         return (
             <div className="history-bar">
                 <div className="end-wrap">
-                    <Button type="primary" shape="circle" icon="menu-fold" />
+                    <Button type="primary" onClick={this.asideSetBtn.bind(this)} shape="circle" icon={state.asideMenusFold ? "menu-unfold" : "menu-fold"}/>
                 </div>
                 <div className="history">
                     <div className="child-inwrap">

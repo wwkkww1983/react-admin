@@ -1,80 +1,44 @@
 import React from "react";
 import "./less/index.less";
-
 import MyRouter from "../components/my-router";
-
 import Menus from "./components/menu";
 import RightBar from "./components/rightbar";
 import HistoryBar from "./components/historybar";
-
 import { Breadcrumb } from "antd";
-
-const menus: any[] = [
-    {
-        icon: "icon-guanbi",
-        title: "首页",
-        path: "/"
-    },
-    {
-        icon: "icon-yonghu",
-        title: "用户管理",
-        path: "/userManage"
-    },
-    {
-        icon: "icon-weixiu",
-        title: "运维人员管理",
-        path: "/OPSManage"
-    },
-    {
-        icon: "icon-guanbi",
-        title: "测试展开1",
-        children: [
-            {
-                icon: "icon-dianchi",
-                title: "电池管理",
-                path: "/batteryManage"
-            },
-            {
-                icon: "icon-iconset0499",
-                title: "测试展开2",
-                children: [
-                    {
-                        icon: "icon-dianchi",
-                        title: "测试3",
-                        path: "/test3"
-                    },
-                    {
-                        icon: "icon-guanbi",
-                        title: "充电柜管理",
-                        path: "/icon-iconset0499"
-                    }
-                ]
-            }
-        ]
-    },
-    {
-        icon: "icon-yonghu",
-        title: "测试1",
-        path: "/test1"
-    },
-    {
-        icon: "icon-weixiu",
-        title: "测试2",
-        path: "/test2"
-    }
-]
+import menus from "../config/menus.config.js";
+import store from "../store";
 
 export default class Layout extends React.Component {
 
     componentDidMount () {
-        // console.log(this.props);
-        setInterval(() => {
-            this.setState({asideFold: !this.state.asideFold});
-        }, 2000);
+        this.init();
     }
 
     state = {
-        asideFold: false
+        title: "",
+        asideFold: false,
+    }
+
+    init (): void {
+        this.initUseStore();
+    }
+
+    initUseStore () {
+        const 
+        state = this.state,
+        { layout } = store.getState();
+        //初始化
+        state.asideFold = layout.asideMenus.fold;
+        state.title = layout.title;
+        //监听变动
+        store.subscribe(() => {
+            const 
+            state = this.state,
+            { layout } = store.getState();
+            state.asideFold = layout.asideMenus.fold;
+            state.title = layout.title;
+            this.setState({});
+        });
     }
     
     render (): any {
@@ -84,7 +48,7 @@ export default class Layout extends React.Component {
                 <div className="layout-header">
                     <div className="log-wrap">
                         <img className="log" src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt=""/>
-                        <h2 className="title">腾跃物联后台管理系统</h2>
+                        <h2 className="title">{state.title}</h2>
                     </div>
                     <div className="right-wrap">
                         <RightBar/>
@@ -93,7 +57,6 @@ export default class Layout extends React.Component {
                 <div className="layout-content">
                     <div className="layout-content-aside">
                         <Menus menus={menus} fold={state.asideFold}/>
-                        {/* <div style={{width: "300px", height: "200px", background: "red"}}>123</div> */}
                     </div>
                     <div className="layout-content-content">
                         <div className="history-bar-wrap">
