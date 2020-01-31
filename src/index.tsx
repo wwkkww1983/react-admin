@@ -22,11 +22,11 @@ import store from "./store";
 !async function () {
     
 	//全局store测试
-	let index = 1;
-	setInterval(() => {
-		store.dispatch({type: "message/SET_MESSAGE", playload: index ++});
-		index === 99 && (index = 0);
-    }, 1000);
+	// let index = 1;
+	// setInterval(() => {
+	// 	store.dispatch({type: "message/SET_MESSAGE", playload: index ++});
+	// 	index === 99 && (index = 0);
+    // }, 1000);
     
     ReactDOM.render(
         <MyRouter debugName="根路由" routes={routes} transition={true} changeRules={["login"]}/>

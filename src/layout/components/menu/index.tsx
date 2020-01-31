@@ -27,8 +27,8 @@ export default class Menus extends React.Component {
     }
 
     state = {
-        fold: false,
-        oldOpens: {},
+        fold: false, //是否折叠
+        oldOpens: {}, // 旧的opens
         menus: [], //菜单集合
         opens: {}, //是否打开
         children: {}// item集合， 不包含展开项
@@ -105,10 +105,10 @@ export default class Menus extends React.Component {
     //菜单点击
     touch (menu: Menu): void {
         const { path, $ID } = menu;
-        console.log(path, $ID);
         History.push({path: path});
         this.unActive();
         this.state.children[$ID].$ACTIVE = true;
+        this.setState({});
     }
 
     //收起所有的展开
@@ -117,7 +117,7 @@ export default class Menus extends React.Component {
         Object.keys(opens).forEach(key => {
             opens[key] = false;
         });
-        this.setState({opens});
+        this.setState({});
     }
 
     //展开所有
@@ -126,7 +126,7 @@ export default class Menus extends React.Component {
         Object.keys(opens).forEach(key => {
             opens[key] = true;
         });
-        this.setState({opens});
+        this.setState({});
     }
 
     //取消激活
@@ -155,7 +155,6 @@ export default class Menus extends React.Component {
         if (_) {
             let parent: any = _.$PARENT;
             while (parent) {
-                console.log(parent);
                 this.state.opens[parent.$ID] = true;
                 parent = parent.$PARENT;
             }
@@ -187,11 +186,11 @@ export default class Menus extends React.Component {
                                         {menu.icon ? <div className={"icon iconfont " + menu.icon}></div> : null}
                                         <div className="text">{menu.title}</div>
                                         <div className="right-icon iconfont icon-zhankai" style={{
-                                            transform : opens[menu.$ID] ? "rotate(180deg)" : "rotate(0deg)"
+                                            transform : opens[menu.$ID] && !state.fold ? "rotate(180deg)" : "rotate(0deg)"
                                         }}></div>
                                     </div>
                                     <div className="menus-group" style={{
-                                        height: opens[menu.$ID] ? "auto" : "0px"
+                                        height: opens[menu.$ID] && !state.fold ? "auto" : "0px"
                                     }}>
                                         <Children menus={menu.children}/>
                                     </div>

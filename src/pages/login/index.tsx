@@ -6,7 +6,6 @@ import {
     Button,
     message
 } from "antd";
-import _message from "../../store/reducer/message";
 
 export default class NotFound extends React.Component {
 
