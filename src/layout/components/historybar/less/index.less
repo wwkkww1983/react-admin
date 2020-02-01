@@ -21,16 +21,20 @@
     .history {
         flex-grow: 1;
         height: 100%;
-        box-sizing: border-box;
-        padding: 0 8px;
-        overflow-x: auto;
-        overflow-y: hidden;
+        overflow: hidden;
         display: flex;
         align-items: center;
+        position: relative;
         .child-inwrap {
-            height: auto;
+            height: 40px;
             width: auto;
+            box-sizing: border-box;
+            padding: 0 8px;
             display: inline-flex;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
         .child-btn {
             height: 30px;
