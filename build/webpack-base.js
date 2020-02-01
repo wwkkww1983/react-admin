@@ -65,7 +65,7 @@ module.exports = {
       template: path.resolve("./index.html"), // 基于index.html模板进行生成html文件
     }),
     new webpack.DefinePlugin({
-      _WEBPACK_MODE_: process.env._WEBPACK_MODE_ ? JSON.stringify(process.env._WEBPACK_MODE_) : console.log("没有_WEBPACK_DEV_环境变量！"),
+      _WEBPACK_MODE_: process.env._WEBPACK_MODE_ ? JSON.stringify(process.env._WEBPACK_MODE_) : console.log("没有_WEBPACK_MODE_环境变量！"),
       _ENV_: JSON.stringify(parseEnv(
         process.env._WEBPACK_MODE_ === "production" ?
         "./env/production.env" :

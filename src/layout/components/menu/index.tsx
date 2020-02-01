@@ -85,10 +85,11 @@ export default class Menus extends React.Component {
             });
         }).call(this, menus);
         
-        console.log("debug1");
-        console.log(menus);
-        console.log(this.state.opens);
-        console.log(this.state.children);
+        if (_WEBPACK_MODE_ === "development") {
+            console.log("debug1");
+            console.log(menus);
+        }
+        
         this.setState({menus});
     }
 
