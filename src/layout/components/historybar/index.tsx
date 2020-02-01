@@ -34,6 +34,7 @@ export default class HistoryBar extends React.Component {
         });
     }
 
+    //初始化history鼠标滚动
     initMouseWheel () {
         const $out: any = this.refs["out"], $in: any = this.refs["in"];
         $out.addEventListener("mousewheel", ({ wheelDelta }): void => {
@@ -46,7 +47,7 @@ export default class HistoryBar extends React.Component {
         });
         //state大于0滚轮上滚动，小于0滚轮下滚动
         function action(state: number): void {
-            const step = 20;
+            const step = 30;
             if ($in.offsetWidth <= $out.offsetWidth) return;
             if (state > 0) {
                 console.log("上滚动");
@@ -61,7 +62,7 @@ export default class HistoryBar extends React.Component {
                 $in.style.left = (oldLeft + offset) + "px";
             }
             if (state < 0) {
-                console.log("下滚动");
+                console.log("下滚动");                  
                 const 
                 scrollRange: number = $in.offsetWidth - $out.offsetWidth,
                 oldLeft: number = parseFloat(getComputedStyle($in).left);
