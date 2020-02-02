@@ -5,6 +5,8 @@
  * 具体请参考：https://github.com/lilindog/react-router-test/blob/master/src/components/my-router/README.md
  */
 
+import { History } from "../components/my-router";
+
 import Error404 from "../pages/404";
 import Error401 from "../pages/401";
 import Login from "../pages/login";
@@ -73,3 +75,14 @@ export default [
         component: Error404
     }
 ]
+
+History.intercept = (page, next) => {
+    console.log("路由拦截");
+    console.log(page);
+    document.title = page.title;
+    if (page.path === "/") {
+        History.replace({path: "/401"});
+    } else {
+        next();
+    }
+}

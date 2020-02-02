@@ -14,7 +14,7 @@ import routes from './router/index';
 import MyRouter from "./components/my-router";
 
 //store
-import store from "./store";
+// import store from "./store";
 
 /**
  * 启动初始化

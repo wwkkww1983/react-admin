@@ -161,8 +161,8 @@ export default class MyRouter extends React.Component {
             //路由拦截
             //如有history拦截器存在则使用
             //如果没有设置拦截器，则直接执行
-            if (history.intercept) {
-                history.interecpt(next);
+            if (history.intercept && typeof history.intercept === "function") {
+                history.intercept(newPage, next);
             } else {
                 next();
             }

@@ -42,7 +42,7 @@ export default class HistoryBar extends React.Component {
             }
         });
         History.on("routeChange", ({ data: {title, path}, routerName }): void => {
-            if (routerName === "内页路由") {
+            if (routerName === "内页路由" && path !== "/401") {
                 DEBUG && console.log("history监控到了路由变化");
                 handlerRouteChange.call(this, title, path);
             }
@@ -144,15 +144,15 @@ export default class HistoryBar extends React.Component {
             $childleft + $childwidth - $left < $outwidth &&
             $childleft - $left > 0
         ) {
-            DEBUG && console.error("位于视窗中");
+            DEBUG && console.timeLog("位于视窗中");
             return;
         }
         if ($childleft - $left < 0 ) {
-            DEBUG && console.error("位于视窗左侧");
+            DEBUG && console.log("位于视窗左侧");
             leftToCenter.call(this);
         }
         if ($childleft + $childwidth - $left > $outwidth) {
-            DEBUG && console.error("位于视窗右侧");
+            DEBUG && console.log("位于视窗右侧");
             rightToCenter.call(this);
         }
         //左移中
