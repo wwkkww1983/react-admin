@@ -3,12 +3,14 @@
  */
 
 import config from "../../config/index.config.js";
+import menus from "../../config/menus.config.js";
 
 let layout = {
     title: config.title,
     copyright: config.copyright,
     asideMenus: {
-        fold: false
+        fold: false,
+        menus
     }
 };
 

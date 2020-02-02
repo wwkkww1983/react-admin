@@ -47,7 +47,8 @@ export default class Menus extends React.Component {
                 this.setState({});
             }
         } 
-        if (menus !== (this as any).props.menus) {
+        if (menus !== (this as any).state.menus) {
+            (this as any).props.menus = menus;
             this.init();
         } 
     }
@@ -86,7 +87,7 @@ export default class Menus extends React.Component {
         }).call(this, menus);
         
         if (_WEBPACK_MODE_ === "development") {
-            console.log("debug1");
+            console.log("menus初始化后的菜单数据");
             console.log(menus);
         }
         

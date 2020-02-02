@@ -8,6 +8,7 @@ export default class NotFound extends React.Component {
         return (
             <div className="notfound">
                 <h1>404</h1>
+                <p>页面不存在</p>
                 <div className="content-wrap">
                     <Button onClick={() => {(this as any).props.history.push({path: "/"})}}>返回首页</Button>
                 </div>

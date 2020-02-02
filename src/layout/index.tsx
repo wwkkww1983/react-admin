@@ -4,8 +4,7 @@ import MyRouter from "../components/my-router";
 import Menus from "./components/menu";
 import RightBar from "./components/rightbar";
 import HistoryBar from "./components/historybar";
-import { Breadcrumb } from "antd";
-import menus from "../config/menus.config.js";
+import BreadCrumb from "./components/breadcrumb";
 import store from "../store";
 
 export default class Layout extends React.Component {
@@ -18,6 +17,7 @@ export default class Layout extends React.Component {
         title: "",
         copyright: "",
         asideFold: false,
+        menus: []
     }
 
     init (): void {
@@ -32,6 +32,8 @@ export default class Layout extends React.Component {
         state.asideFold = layout.asideMenus.fold;
         state.copyright = layout.copyright;
         state.title = layout.title;
+        state.menus = layout.asideMenus.menus;
+        this.setState({});
         //监听变动
         store.subscribe(() => {
             const 
@@ -40,6 +42,7 @@ export default class Layout extends React.Component {
             state.asideFold = layout.asideMenus.fold;
             state.copyright = layout.copyright;
             state.title = layout.title;
+            state.menus = layout.asideMenus.menus;
             this.setState({});
         });
     }
@@ -59,7 +62,7 @@ export default class Layout extends React.Component {
                 </div>
                 <div className="layout-content">
                     <div className="layout-content-aside">
-                        <Menus menus={menus} fold={state.asideFold}/>
+                        <Menus menus={state.menus} fold={state.asideFold}/>
                     </div>
                     <div className="layout-content-content">
                         <div className="history-bar-wrap">
@@ -67,13 +70,7 @@ export default class Layout extends React.Component {
                         </div>
                         <div className="content">
                             <div className="breadcrumb">
-                                <Breadcrumb>
-                                    <Breadcrumb.Item>首页</Breadcrumb.Item>
-                                    <Breadcrumb.Item>
-                                    {/* <a href="">运维人员管理</a> */}
-                                    运维人员管理
-                                    </Breadcrumb.Item>
-                                </Breadcrumb>
+                                <BreadCrumb/>
                             </div>
                             <div className="content">
                                 <MyRouter name="内页路由" routes={props.route.children} transition={true}/>

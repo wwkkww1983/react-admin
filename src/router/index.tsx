@@ -18,6 +18,46 @@ import boxManage from "../pages/boxManage";
 import OPSManage from "../pages/OPSManage";
 import userManage from "../pages/userManage";
 
+export const inRoutes = [
+    {
+        title: "首页",
+        path: "/",
+        component: Home
+    },
+    {
+        title: "用户管理",
+        path: "/userManage",
+        component: userManage
+    },
+    {
+        title: "运维人员管理",
+        path: "/OPSManage",
+        component: OPSManage
+    },
+    {
+        title: "电池管理",
+        path: "/batteryManage",
+        component: batteryManage,
+        keepAlive: true
+    },
+    {
+        title: "充电柜管理",
+        path: "/boxManage",
+        component: boxManage,
+        keepAlive: true
+    },
+    {
+        title: "401",
+        path: "/401",
+        component: Error401
+    },
+    {
+        title: "404",
+        path: "*",
+        component: Error404
+    }
+]
+
 export default [
     {
         title: "登录",
@@ -29,45 +69,7 @@ export default [
         path: /^(?!login)/,
         component: Layout,
         keepAlive: true,
-        children: [
-            {
-                title: "首页",
-                path: "/",
-                component: Home
-            },
-            {
-                title: "用户管理",
-                path: "/userManage",
-                component: userManage
-            },
-            {
-                title: "运维人员管理",
-                path: "/OPSManage",
-                component: OPSManage
-            },
-            {
-                title: "电池管理",
-                path: "/batteryManage",
-                component: batteryManage,
-                keepAlive: true
-            },
-            {
-                title: "充电柜管理",
-                path: "/boxManage",
-                component: boxManage,
-                keepAlive: true
-            },
-            {
-                title: "401",
-                path: "/401",
-                component: Error401
-            },
-            {
-                title: "404",
-                path: "*",
-                component: Error404
-            }
-        ]
+        children: inRoutes
     },
     {
         title: "404",
@@ -80,9 +82,5 @@ History.intercept = (page, next) => {
     console.log("路由拦截");
     console.log(page);
     document.title = page.title;
-    if (page.path === "/") {
-        History.replace({path: "/401"});
-    } else {
-        next();
-    }
+    next();
 }
