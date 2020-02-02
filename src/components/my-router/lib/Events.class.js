@@ -3,7 +3,8 @@ export default class Event {
         this._events = {
             "change": [],
             "push": [],
-            "back": []
+            "back": [],
+            "routeChange": []
         }
     }
     emit (eventname, data) {

@@ -39,20 +39,10 @@ export default [
                     {
                         icon: "icon-guanbi",
                         title: "充电柜管理",
-                        path: "/icon-iconset0499"
+                        path: "/boxManage"
                     }
                 ]
             }
         ]
-    },
-    {
-        icon: "icon-yonghu",
-        title: "测试1",
-        path: "/test1"
-    },
-    {
-        icon: "icon-weixiu",
-        title: "测试2",
-        path: "/test2"
     }
 ]

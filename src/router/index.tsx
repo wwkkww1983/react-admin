@@ -10,6 +10,10 @@ import Login from "../pages/login";
 import Layout from "../layout";
 
 import Home from "../pages/home";
+import batteryManage from "../pages/batteryManage";
+import boxManage from "../pages/boxManage";
+import OPSManage from "../pages/OPSManage";
+import userManage from "../pages/userManage";
 
 export default [
     {
@@ -27,6 +31,28 @@ export default [
                 title: "首页",
                 path: "/",
                 component: Home
+            },
+            {
+                title: "用户管理",
+                path: "/userManage",
+                component: userManage
+            },
+            {
+                title: "运维人员管理",
+                path: "/OPSManage",
+                component: OPSManage
+            },
+            {
+                title: "电池管理",
+                path: "/batteryManage",
+                component: batteryManage,
+                keepAlive: true
+            },
+            {
+                title: "充电柜管理",
+                path: "/boxManage",
+                component: boxManage,
+                keepAlive: true
             },
             {
                 title: "404",

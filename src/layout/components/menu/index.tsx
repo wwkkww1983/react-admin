@@ -187,7 +187,7 @@ export default class Menus extends React.Component {
                                         {menu.icon ? <div className={"icon iconfont " + menu.icon}></div> : null}
                                         <div className="text">{menu.title}</div>
                                         <div className="right-icon iconfont icon-zhankai" style={{
-                                            transform : opens[menu.$ID] && !state.fold ? "rotate(180deg)" : "rotate(0deg)"
+                                            transform : opens[menu.$ID] && !state.fold ? "rotate(180deg)" : "rotate(-90deg)"
                                         }}></div>
                                     </div>
                                     <div className="menus-group" style={{

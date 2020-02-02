@@ -1,9 +1,29 @@
 import React from "react";
 import "./less/index.less";
-
-import { Dropdown, Menu } from "antd";
+import { History } from "../../../components/my-router";
+import { Dropdown, Menu, Modal } from "antd";
 
 export default class RightBar extends React.Component {
+
+    //退出登录
+    logout () {
+        Modal.confirm({
+            title: '确定退出吗?',
+            content: "",
+            okText: "确定",
+            okType: 'danger',
+            cancelText: '取消',
+            onOk() {
+                confirm.call(this);
+            },
+            onCancel() {
+            console.log('Cancel');
+            },
+        });
+        function confirm () {
+            History.replace({path: "/login"});
+        }
+    }
     
     render (): any {
 
@@ -14,7 +34,7 @@ export default class RightBar extends React.Component {
                     <div className="iconfont icon-mima"> 修改密码</div>
                 </Menu.Item>
                 <Menu.Item>
-                    <div className="iconfont icon-tuichu"> 退出登录</div>
+                    <div className="iconfont icon-tuichu" onClick={this.logout.bind(this)}> 退出登录</div>
                 </Menu.Item>
             </Menu>
         );

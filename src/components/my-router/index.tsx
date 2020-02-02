@@ -17,6 +17,7 @@ ANIMATION_TIME = 500;
 
 export default class MyRouter extends React.Component {
     static defaultProps: Props = {
+        name: "未命名",
         routes: [],
         deep: 0,
         transition: false,
@@ -50,7 +51,7 @@ export default class MyRouter extends React.Component {
 
     log (str: string|number): void {
         DEBUG && 
-        console.log(`%c [${(this as any).props.debugName ? (this as any).props.debugName : "未命名"}-${(this as any).props.deep}]%c : %c ${str}`, "color: green", "color: red", "color: black; font-weight: 900");
+        console.log(`%c [${(this as any).props.name ? (this as any).props.name : "未命名"}-${(this as any).props.deep}]%c : %c ${str}`, "color: green", "color: red", "color: black; font-weight: 900");
     }
 
     hasChange (): boolean {
@@ -153,6 +154,8 @@ export default class MyRouter extends React.Component {
             this.log(1);
             newPage.$DISPLAY = true;
             if (hasTransition) newPage.$ANIMATION = ANIMATION_CLASS;
+            //触发路由变化事件
+            history.emit("routeChange", {data: deepClone(newPage), routerName: (this as any).props.name});
         } 
         else if (error404) {
             this.log(2);

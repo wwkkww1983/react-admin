@@ -73,7 +73,7 @@ export default class Layout extends React.Component {
                             </Breadcrumb>
                             </div>
                             <div className="content">
-                                <MyRouter debugName="内页路由" routes={props.route.children} transition={true}/>
+                                <MyRouter name="内页路由" routes={props.route.children} transition={true}/>
                             </div>
                         </div>
                     </div>

@@ -29,7 +29,7 @@ import store from "./store";
     // }, 1000);
     
     ReactDOM.render(
-        <MyRouter debugName="根路由" routes={routes} transition={true} changeRules={["login"]}/>
+        <MyRouter name="根路由" routes={routes} transition={true} changeRules={["login"]}/>
     , document.getElementById('root'));
 
 }();
