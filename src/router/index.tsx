@@ -6,6 +6,7 @@
  */
 
 import Error404 from "../pages/404";
+import Error401 from "../pages/401";
 import Login from "../pages/login";
 import Layout from "../layout";
 
@@ -53,6 +54,11 @@ export default [
                 path: "/boxManage",
                 component: boxManage,
                 keepAlive: true
+            },
+            {
+                title: "401",
+                path: "/401",
+                component: Error401
             },
             {
                 title: "404",

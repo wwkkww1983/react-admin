@@ -1,5 +1,6 @@
 import React from "react";
 import "./less/index.less";
+import store from "../../store";
 import {
     Form,
     Input,
@@ -14,7 +15,20 @@ export default class NotFound extends React.Component {
             user: "",
             pass: ""
         },
-        disabledAll: false
+        disabledAll: false,
+        copyright: ""
+    }
+    componentDidMount () {
+        this.initUseStore();
+    }
+
+    initUseStore () {
+        const { layout } = store.getState();
+        this.setState({copyright: layout.copyright});
+        store.subscribe(() => {
+            const { layout } = store.getState();
+            this.setState({copyright: layout.copyright});
+        });
     }
 
     loading () {
@@ -48,6 +62,7 @@ export default class NotFound extends React.Component {
                     <Form.Item>
                         <Button loading={state.disabledAll} style={{width: "100%"}} type="primary" onClick={this.actionLogin.bind(this)}>{state.disabledAll ? "正在登录..." : "登录"}</Button>
                     </Form.Item>
+                    <div className="copyright">&copy; {state.copyright}</div>
                 </Form>
             </div>
         );

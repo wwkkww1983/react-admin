@@ -5,6 +5,7 @@ class History extends Event{
     constructor () {
         super();
         this._init();
+        this.intercept = null;
     }
 
     _init () {

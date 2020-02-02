@@ -16,6 +16,7 @@ export default class Layout extends React.Component {
 
     state = {
         title: "",
+        copyright: "",
         asideFold: false,
     }
 
@@ -29,6 +30,7 @@ export default class Layout extends React.Component {
         { layout } = store.getState();
         //初始化
         state.asideFold = layout.asideMenus.fold;
+        state.copyright = layout.copyright;
         state.title = layout.title;
         //监听变动
         store.subscribe(() => {
@@ -36,6 +38,7 @@ export default class Layout extends React.Component {
             state = this.state,
             { layout } = store.getState();
             state.asideFold = layout.asideMenus.fold;
+            state.copyright = layout.copyright;
             state.title = layout.title;
             this.setState({});
         });
@@ -64,17 +67,18 @@ export default class Layout extends React.Component {
                         </div>
                         <div className="content">
                             <div className="breadcrumb">
-                            <Breadcrumb>
-                                <Breadcrumb.Item>首页</Breadcrumb.Item>
-                                <Breadcrumb.Item>
-                                {/* <a href="">运维人员管理</a> */}
-                                运维人员管理
-                                </Breadcrumb.Item>
-                            </Breadcrumb>
+                                <Breadcrumb>
+                                    <Breadcrumb.Item>首页</Breadcrumb.Item>
+                                    <Breadcrumb.Item>
+                                    {/* <a href="">运维人员管理</a> */}
+                                    运维人员管理
+                                    </Breadcrumb.Item>
+                                </Breadcrumb>
                             </div>
                             <div className="content">
                                 <MyRouter name="内页路由" routes={props.route.children} transition={true}/>
                             </div>
+                            <div className="copyright">&copy; {state.copyright}</div>
                         </div>
                     </div>
                 </div>

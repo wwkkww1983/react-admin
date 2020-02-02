@@ -3,5 +3,6 @@
  */
 
 export default {
-    title: "腾跃物联后台"
+    title: "腾跃物联后台",
+    copyright: "腾跃物联版权所有"
 }

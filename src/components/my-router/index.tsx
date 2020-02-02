@@ -141,32 +141,42 @@ export default class MyRouter extends React.Component {
     }
 
     changePage (): void {
-        this.resetPages();
-
         const 
         hasTransition: boolean = (this as any).props.transition,
-        path = this.getRoutePath(),
         newPage: Page = this.find(),
         error404: Page = (this as any).state.pages.find((page: Page): boolean => page.path === "*");
 
         //显示匹配页面
         if (newPage) {
             this.log(1);
-            newPage.$DISPLAY = true;
-            if (hasTransition) newPage.$ANIMATION = ANIMATION_CLASS;
-            //触发路由变化事件
-            history.emit("routeChange", {data: deepClone(newPage), routerName: (this as any).props.name});
+            //next函数，用于在拦截器中调用
+            const next = () => {
+                this.resetPages();
+                newPage.$DISPLAY = true;
+                if (hasTransition) newPage.$ANIMATION = ANIMATION_CLASS;
+                this.setState({});
+                //触发路由变化事件
+                history.emit("routeChange", {data: deepClone(newPage), routerName: (this as any).props.name});
+            }
+            //路由拦截
+            //如有history拦截器存在则使用
+            //如果没有设置拦截器，则直接执行
+            if (history.intercept) {
+                history.interecpt(next);
+            } else {
+                next();
+            }
         } 
         else if (error404) {
             this.log(2);
+            this.resetPages();
             error404.$DISPLAY = true;
             if (hasTransition) error404.$ANIMATION = ANIMATION_CLASS;
+            this.setState({});
         } 
         else {
             this.log("哦，谢特；没有任何page匹配上！");
         }
-        
-        this.setState({});
     }
 
     getRoutePath (): string {

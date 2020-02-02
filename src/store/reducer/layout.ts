@@ -6,6 +6,7 @@ import config from "../../config/index.config.js";
 
 let layout = {
     title: config.title,
+    copyright: config.copyright,
     asideMenus: {
         fold: false
     }
