@@ -8,6 +8,11 @@ import {
     message
 } from "antd";
 
+/**
+ * 静态资源 
+ */
+import logo from "../../assets/img/logo.jpg";
+
 export default class NotFound extends React.Component {
 
     state = {
@@ -16,7 +21,8 @@ export default class NotFound extends React.Component {
             pass: ""
         },
         disabledAll: false,
-        copyright: ""
+        copyright: "",
+        title: ""
     }
     componentDidMount () {
         this.initUseStore();
@@ -24,10 +30,16 @@ export default class NotFound extends React.Component {
 
     initUseStore () {
         const { layout } = store.getState();
-        this.setState({copyright: layout.copyright});
+        this.setState({
+            copyright: layout.copyright,
+            title: layout.title
+        });
         store.subscribe(() => {
             const { layout } = store.getState();
-            this.setState({copyright: layout.copyright});
+            this.setState({
+                copyright: layout.copyright,
+                title: layout.title
+            });
         });
     }
 
@@ -51,7 +63,10 @@ export default class NotFound extends React.Component {
             <div className="login-wrap">
                 <Form className="form">
                     <Form.Item>
-                        <h2 className="title">腾跃物联后台管理系统</h2>
+                        <div className="title-wrap">
+                            <img src={logo} alt=""/>
+                            <h2 className="title">{state.title}</h2>
+                        </div>
                     </Form.Item>
                     <Form.Item className="Item">
                         <Input placeholder="请输入用户名" disabled={state.disabledAll}/>

@@ -9,13 +9,26 @@
         transform: translate(-50%, -50%);
         // height: 100px;
         width: 300px;
-        .title {
+        .title-wrap {
             text-align: center;
-            font-weight: 900;
+            height: 30px;
+            >img {
+                height: 30px;
+                width: 30px;
+                display: inline-block;
+                margin-right: 16px;
+                vertical-align: middle;
+            }
+            .title {
+                // text-align: center;
+                display: inline-block;
+                font-weight: 900;
+                vertical-align: middle;
+            }
         }
         .copyright {
             text-align: center;
-            color: rgba(0,0,0,0.1);
+            color: rgba(0,0,0,0.2);
             margin: 16px 0;
         }
     }

@@ -7,6 +7,11 @@ import HistoryBar from "./components/historybar";
 import BreadCrumb from "./components/breadcrumb";
 import store from "../store";
 
+/**
+ * 静态资源
+ */
+import logo from "../assets/img/logo.jpg";
+
 export default class Layout extends React.Component {
 
     componentDidMount () {
@@ -53,7 +58,7 @@ export default class Layout extends React.Component {
             <div className="layout-wrap">
                 <div className="layout-header">
                     <div className="log-wrap">
-                        <img className="log" src="https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg" alt=""/>
+                        <img className="log" src={logo} alt=""/>
                         <h2 className="title">{state.title}</h2>
                     </div>
                     <div className="right-wrap">

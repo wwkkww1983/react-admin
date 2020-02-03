@@ -4,6 +4,42 @@
 
 export default [
     {
+        icon: "icon-yibiaopan",
+        title: "首页",
+        path: "/"
+    },
+    {
+        icon: "icon-yonghu",
+        title: "用户管理",
+        path: "/userManage"
+    },
+    {
+        icon: "icon-xinxinicon",
+        title: "运维人员管理",
+        path: "/OPSManage"
+    },
+    {
+        icon: "icon-dianchi",
+        title: "电池管理",
+        path: "/batteryManage"
+    },
+    {
+        icon: "icon-iconset0499",
+        title: "换电柜管理",
+        path: "/boxManage"
+    },
+    {
+        icon: "icon-chongdianzhuang",
+        title: "充电站管理",
+        path: "/chargeStationManage"
+    },
+]
+
+/**
+ * 测试用的菜单配置 
+ */
+export const testMenus = [
+    {
         icon: "icon-guanbi",
         title: "首页",
         path: "/"

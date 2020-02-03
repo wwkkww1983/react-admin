@@ -50,6 +50,7 @@ export default class Menus extends React.Component {
         if (menus !== (this as any).state.menus) {
             (this as any).props.menus = menus;
             this.init();
+            this.active(location.pathname);
         } 
     }
 
