@@ -53,6 +53,8 @@ export default class NotFound extends React.Component {
         setTimeout(() => {
             this.loading();
             // message.error("登录失败");
+            //模拟保存登陆后的token
+            store.dispatch({type: "token/SET_TOKEN", playload: "test-token"});
             (this as any).props.history.push({path: "/"});
         }, 1500);
     }

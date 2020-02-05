@@ -3,6 +3,10 @@
  */
 
 export default {
+    
     //存储用户数据的key
-    USER: Object
+    USER_INFO: Object,
+
+    //存储token
+    TOKEN: String
 }

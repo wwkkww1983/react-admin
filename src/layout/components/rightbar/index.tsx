@@ -2,6 +2,7 @@ import React from "react";
 import "./less/index.less";
 import { History } from "../../../components/my-router";
 import { Dropdown, Menu, Modal } from "antd";
+import store from "../../../store";
 
 export default class RightBar extends React.Component {
 
@@ -17,10 +18,11 @@ export default class RightBar extends React.Component {
                 confirm.call(this);
             },
             onCancel() {
-            console.log('Cancel');
+                console.log('Cancel');
             },
         });
         function confirm () {
+            store.dispatch({type: "token/DEL_TOKEN"});
             History.replace({path: "/login"});
         }
     }
@@ -44,7 +46,7 @@ export default class RightBar extends React.Component {
                 <Dropdown overlay={memberMenu}>
                     <div className="child">
                         <div className="label">管理员</div>
-                        <div className="member-img"></div>
+                        <div className="member-img iconfont icon-touxiang"></div>
                     </div>
                 </Dropdown>
             </div>

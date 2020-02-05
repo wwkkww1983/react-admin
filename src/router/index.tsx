@@ -7,6 +7,7 @@
 
 import { History } from "../components/my-router";
 import NProgress from "nprogress";
+import storage from "../utils/storage.js";
 
 import Error404 from "../pages/404";
 import Error401 from "../pages/401";
@@ -63,10 +64,10 @@ export default [
     {
         title: "登录",
         path: "/login",
-        component: Login,
-        keepAlive: true
+        component: Login
     },
     {
+        title: "首页",
         path: /^(?!login)/,
         component: Layout,
         keepAlive: true,
@@ -84,11 +85,15 @@ export default [
 History.intercept = (page, next) => {
     document.title = "请稍等...";
     NProgress.start();
-    setTimeout(() => {
+
+    //已经登录状态，跳回主页
+    if (page.path === "/login" && storage.get("TOKEN")) {
         NProgress.done();
-        console.log("路由拦截");
-        console.log(page);
-        document.title = page.title;
-        next();
-    }, 100);
+        History.replace({path: "/"});
+        return;
+    }
+    
+    document.title = page.title;
+    NProgress.done();
+    next();
 }

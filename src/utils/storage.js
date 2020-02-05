@@ -90,7 +90,7 @@ class Storage {
 	 * 清空左右声明的key 
 	 */
 	clear () {
-		this._keys.forEach(key => {
+		Object.keys(this._keys).forEach(key => {
 			localStorage.removeItem(key);
 		});
 	}

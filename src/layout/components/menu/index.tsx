@@ -31,7 +31,7 @@ export default class Menus extends React.Component {
         oldOpens: {}, // 旧的opens
         menus: [], //菜单集合
         opens: {}, //是否打开
-        children: {}// item集合， 不包含展开项
+        children: {}// item扁平处理后的集合， 不包含展开项
     }
 
     componentWillReceiveProps (props) {
