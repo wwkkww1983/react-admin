@@ -45,6 +45,7 @@ export default class Menus extends React.Component {
                 this.state.opens = this.state.oldOpens;
                 this.state.oldOpens = {};
                 this.setState({});
+                this.unfoldActiveParent();
             }
         } 
         if (menus !== (this as any).state.menus) {
@@ -155,14 +156,25 @@ export default class Menus extends React.Component {
                 break;
             }
         }
-        if (_) {
-            let parent: any = _.$PARENT;
-            while (parent) {
-                this.state.opens[parent.$ID] = true;
-                parent = parent.$PARENT;
+        this.unfoldActiveParent();
+    }
+
+    //展开当前焦点项的所有父级选项卡（如果有）
+    unfoldActiveParent (): void {
+        let menu: Menu = null;
+        for (let key of Object.keys(this.state.children)) {
+            if (this.state.children[key].$ACTIVE === true) {
+                menu = this.state.children[key];
+                break;
             }
-            this.setState({});
         }
+        if (!menu) return;
+        let parent: any = menu.$PARENT;
+        while (parent) {
+                this.state.opens[parent.$ID] = true;
+                parent = parent.$PARENT;   
+        }
+        this.setState({});
     }
 
 
