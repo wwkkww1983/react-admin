@@ -5,9 +5,14 @@ import ReactDOM from 'react-dom';
 import './index.less';
 import 'antd/dist/antd.css';
 import "./assets/iconfont/iconfont.css";
+import "nprogress/nprogress.css";
 
-//图标样式
-// import './assets/style.css'
+//配置页面加载进度条
+import NProgress from "nprogress";
+NProgress.configure({
+	parent: "#root",
+	template: `<div class="bar" role="bar"><div class="peg"></div></div><div class="spinner" role="spinner"></div>'`
+});
 
 //路由相关
 import routes from './router/index';

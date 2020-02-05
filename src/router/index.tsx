@@ -6,6 +6,7 @@
  */
 
 import { History } from "../components/my-router";
+import NProgress from "nprogress";
 
 import Error404 from "../pages/404";
 import Error401 from "../pages/401";
@@ -78,9 +79,15 @@ export default [
     }
 ]
 
+//路由拦截器
 History.intercept = (page, next) => {
-    console.log("路由拦截");
-    console.log(page);
-    document.title = page.title;
-    next();
+    document.title = "请稍等...";
+    NProgress.start();
+    setTimeout(() => {
+        NProgress.done();
+        console.log("路由拦截");
+        console.log(page);
+        document.title = page.title;
+        next();
+    }, 300);
 }
