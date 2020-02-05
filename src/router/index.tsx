@@ -80,6 +80,7 @@ export default [
 ]
 
 //路由拦截器
+//路由权限可以在这里进行处理
 History.intercept = (page, next) => {
     document.title = "请稍等...";
     NProgress.start();
@@ -89,5 +90,5 @@ History.intercept = (page, next) => {
         console.log(page);
         document.title = page.title;
         next();
-    }, 300);
+    }, 100);
 }

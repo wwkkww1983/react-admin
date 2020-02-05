@@ -19,20 +19,26 @@ export default [
         path: "/OPSManage"
     },
     {
-        icon: "icon-dianchi",
-        title: "电池管理",
-        path: "/batteryManage"
-    },
-    {
-        icon: "icon-iconset0499",
-        title: "换电柜管理",
-        path: "/boxManage"
-    },
-    {
-        icon: "icon-chongdianzhuang",
-        title: "充电站管理",
-        path: "/chargeStationManage"
-    },
+        icon: "icon-Group-",
+        title: "设备管理",
+        children: [
+            {
+                icon: "icon-dianchi",
+                title: "电池管理",
+                path: "/batteryManage"
+            },
+            {
+                icon: "icon-iconset0499",
+                title: "换电柜管理",
+                path: "/boxManage"
+            },
+            {
+                icon: "icon-chongdianzhuang",
+                title: "充电站管理",
+                path: "/chargeStationManage"
+            }
+        ]
+    }
 ]
 
 /**
