@@ -13,6 +13,6 @@ export function login({username, password}) {
     return request({
         url: '/account/admin/auth/login',
         method: 'POST',
-        params: {username, password}
+        data: {username, password}
     });
 }

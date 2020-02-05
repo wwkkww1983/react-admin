@@ -1,5 +1,6 @@
 import axios from 'axios';
 import store from "../store";
+import { message } from "antd";
 
 // 创建axios实例
 const service = axios.create({
@@ -33,7 +34,7 @@ service.interceptors.response.use(
 			return Promise.reject('error')
 		}
 
-		alert(res.message);
+		message.error(res.message);
 		return Promise.reject('error');
 	},
 	error => {

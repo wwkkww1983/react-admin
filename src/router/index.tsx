@@ -86,6 +86,13 @@ History.intercept = (page, next) => {
     document.title = "请稍等...";
     NProgress.start();
 
+    //未登录， 跳转到登录页面
+    if (!storage.get("TOKEN") && page.path !== "/login") {
+        History.replace({path: "/login"});
+        NProgress.done();
+        return;
+    }
+
     //已经登录状态，跳回主页
     if (page.path === "/login" && storage.get("TOKEN")) {
         NProgress.done();

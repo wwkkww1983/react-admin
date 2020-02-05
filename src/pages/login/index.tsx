@@ -8,6 +8,7 @@ import {
     message
 } from "antd";
 import { login } from "../../api/user";
+import { input } from "../../utils/utils";
 
 /**
  * 静态资源 
@@ -15,6 +16,8 @@ import { login } from "../../api/user";
 import logo from "../../assets/img/logo.jpg";
 
 export default class NotFound extends React.Component {
+
+    input = input;
 
     state = {
         form: {
@@ -49,34 +52,18 @@ export default class NotFound extends React.Component {
         this.setState({});
     }
 
-    input (target, {target: {value}}) {
-        if (target.indexOf(".") > -1) {
-            const arr = target.split(".");
-            let _ = this.state;
-            for (let i = 0; i < arr.length; i ++) {
-                if (i === arr.length - 1) break;
-                _ = _[arr[i]];
-            }
-            _[arr[arr.length - 1]] = value;
-        } else {
-            this.state[target] = value;
-        }
-        this.setState({});
-    }
-
     actionLogin () {
+        const username: string = this.state.form.user, password: string = this.state.form.pass;
         this.loading();
-        setTimeout(async () => {
+        login({username, password})
+        .then(res => {
             this.loading();
-            // login({username, password})
-            // .then(res => {
-
-            // });
-            // message.error("登录失败");
-            //模拟保存登陆后的token
-            // store.dispatch({type: "token/SET_TOKEN", playload: "test-token"});
-            // (this as any).props.history.push({path: "/"});
-        }, 1500);
+            store.dispatch({type: "token/SET_TOKEN", playload: "test-token"});
+            (this as any).props.history.push({path: "/"});
+        })
+        .catch(err => {
+            this.loading();
+        });
     }
 
     render (): any {
