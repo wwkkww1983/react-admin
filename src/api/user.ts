@@ -8,51 +8,11 @@
 
 import request from '../utils/request';
 
-//获取微信公众号授权跳转地址
-export function getWxAuthUrl(data) {
+//登录
+export function login({username, password}) {
     return request({
-        url: '/account/weixinJSOAuth/getAuthUrl',
-        method: 'get',
-        params: data
-    })
-}
-
-//微信授权
-export function weixinJSOAuth(data) {
-    return request({
-        url: '/account/weixinJSOAuth/auth',
-        method: 'post',
-        data: data
-    });
-}
-
-//获取wxjssdk config
-export function getSdkConfig (weixinAccountId: string): any {
-    const data = {
-        weixinAccountId,
-        url: location.href
-    }
-    return request({
-        url: "/weixin/jssdk/getConfig",
-        method: "GET",
-        params: data
-    });
-}
-
-//发送绑定手机验证码
-export function sendCaptcha (data: any): any {
-    return request({
-        url: "/account/OAuthBind/sendSms",
-        method: "POST",
-        data
-    });
-}
-
-//绑定手机号
-export function bindPhone (data: any): any {
-    return request({
-        url: "/account/OAuthBind/bind",
-        method: "POST",
-        data
+        url: '/account/admin/auth/login',
+        method: 'POST',
+        params: {username, password}
     });
 }
