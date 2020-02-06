@@ -1,23 +1,25 @@
 import axios from 'axios';
 import store from "../store";
 import { message } from "antd";
+import { History } from "../components/my-router";
 
 // 创建axios实例
 const service = axios.create({
-  baseURL: _ENV_.HOST, // api的base_url
-  timeout: 5000// 请求超时时间
+	baseURL: _ENV_.HOST,
+	timeout: _ENV_.AJAX_TIME_OUT
 })
 
 // request拦截器
 service.interceptors.request.use(
-  config => {
-    // config.headers['Authorization'] = 'Bearer '+ token // 让每个请求携带自定义token 请根据实际情况自行修改
-    return config
-  }, 
-  error => {
-    console.log(error);
-    Promise.reject(error);
-  }
+	config => {
+		const token: string = store.getState().token;
+		if (token) config.headers['Authorization'] = 'Bearer '+ token;
+		return config;
+	}, 
+	error => {
+		console.log(error);
+		Promise.reject(error);
+	}
 );
 
 // respone拦截器
@@ -31,6 +33,7 @@ service.interceptors.response.use(
 		// Token鉴权失败
 		if (res.code === 401) {
 			store.dispatch({type: "token/DEL_TOKEN"});
+			History.replace({path: "/"});
 			return Promise.reject('error')
 		}
 
@@ -40,7 +43,7 @@ service.interceptors.response.use(
 	error => {
 
 		/* 网络超时处理 */
-		if (error == 'Error: timeout of 5000ms exceeded') {
+		if (error == `Error: timeout of ${_ENV_.AJAX_TIME_OUT}ms exceeded`) {
 			alert("网络超时");
 			return Promise.reject('error')
 		}

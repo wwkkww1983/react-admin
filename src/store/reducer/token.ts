@@ -10,12 +10,17 @@ export default function (state = token, {type, playload}) {
 
     switch (type) {
 
+        case "token/TEST":
+            return "haha";
+            break;
+
         /**
          * 获取token
          */
         case "token/GET_TOKEN":
-            token = storage.get("TOKEN");
-            return token;
+            // token = storage.get("TOKEN");
+            // return token;
+            return "123";
             break;
 
         /**

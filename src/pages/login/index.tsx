@@ -56,9 +56,11 @@ export default class NotFound extends React.Component {
         const username: string = this.state.form.user, password: string = this.state.form.pass;
         this.loading();
         login({username, password})
-        .then(res => {
+        .then((res: any): void => {
             this.loading();
-            store.dispatch({type: "token/SET_TOKEN", playload: "test-token"});
+            const token: string = res.token, member: any = res.member;
+            store.dispatch({type: "token/SET_TOKEN", playload: token});
+            store.dispatch({type: "user/SET_USER", playload: member});
             (this as any).props.history.push({path: "/"});
         })
         .catch(err => {
