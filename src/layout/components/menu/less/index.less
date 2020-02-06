@@ -1,45 +1,45 @@
 
-    .menus-group {
-        width: auto;
-        height: auto;
-        overflow: hidden;
+.menus-group {
+    width: auto;
+    height: auto;
+    overflow: hidden;
+}
+.menus-item {
+    height: 50px;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: space-between;
+    // padding-left: js
+    color: #fff;
+    cursor: pointer;
+    &:hover {
+        color: #409efe;
     }
-    .menus-item {
+    .icon {
         height: 50px;
-        display: flex;
-        flex-flow: row nowrap;
-        align-items: center;
-        justify-content: space-between;
-        // padding-left: js
+        line-height: 50px;
+        width: 50px;
+        text-align: center;
+        font-size: 18px!important;
+        flex-shrink: 0;
+    }
+    .text {
+        height: 50px;
+        line-height: 50px;
+        flex-grow: 1;
+    }
+    .right-icon {
+        height: 50px;
+        width: 50px;
+        text-align: center;
+        line-height: 50px;
+    }
+}
+.menus-item_active {
+    &:hover {
         color: #fff;
-        cursor: pointer;
-        &:hover {
-            color: #409efe;
-        }
-        .icon {
-            height: 50px;
-            line-height: 50px;
-            width: 50px;
-            text-align: center;
-            font-size: 18px!important;
-            flex-shrink: 0;
-        }
-        .text {
-            height: 50px;
-            line-height: 50px;
-            flex-grow: 1;
-        }
-        .right-icon {
-            height: 50px;
-            width: 50px;
-            text-align: center;
-            line-height: 50px;
-        }
     }
-    .menus-item_active {
-        &:hover {
-            color: #fff;
-        }
-        background: #409efe;
-    }
+    background: #409efe;
+}
 

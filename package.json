@@ -42,7 +42,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "antd": "^2.13.14",
+    "antd": "^3.26.8",
     "axios": "^0.19.2",
     "nprogress": "^0.2.0",
     "react": "^16.10.2",

@@ -6,6 +6,32 @@ import store from "../../../store";
 
 export default class RightBar extends React.Component {
 
+    componentDidMount () {
+        this.init();
+    }
+
+    state = {
+        username: "",
+        headImg: ""
+    }
+
+    init () {
+        this.initUseStore();
+    }
+
+    initUseStore () {
+        const userinfo: any = store.getState().user;
+        this.state.username = userinfo.username;
+        this.state.headImg = ""; //api暂时没有这个数据
+        this.setState({});
+        store.subscribe(() => {
+            const userinfo: any = store.getState().user;
+            this.state.username = userinfo.username;
+            this.state.headImg = ""; //api暂时没有这个数据
+            this.setState({});
+        });
+    }
+
     //退出登录
     logout () {
         Modal.confirm({
@@ -17,9 +43,7 @@ export default class RightBar extends React.Component {
             onOk() {
                 confirm.call(this);
             },
-            onCancel() {
-                console.log('Cancel');
-            },
+            onCancel() {}
         });
         function confirm () {
             store.dispatch({type: "token/DEL_TOKEN"});
@@ -28,6 +52,7 @@ export default class RightBar extends React.Component {
     }
     
     render (): any {
+        const state: any = this.state;
 
         //头像下拉菜单
         const memberMenu: any = (
@@ -45,8 +70,8 @@ export default class RightBar extends React.Component {
             <div className="rightbar-wrap">
                 <Dropdown overlay={memberMenu}>
                     <div className="child">
-                        <div className="label">管理员</div>
-                        <div className="member-img iconfont icon-touxiang"></div>
+                        <div className="label">{state.username}</div>
+                        {state.headImg ? <img src={state.headImg} className="member-img"/> : <div className="member-img iconfont icon-touxiang"></div>}
                     </div>
                 </Dropdown>
             </div>
