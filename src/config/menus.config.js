@@ -35,9 +35,14 @@ export default [
             {
                 icon: "icon-chongdianzhuang",
                 title: "充电站管理",
-                path: "/chargeStationManage"
+                path: "/chargePileManage"
             }
         ]
+    },
+    {
+        icon: "icon-shezhi_huaban",
+        title: "系统设置",
+        path: "/sysSetting"
     }
 ]
 

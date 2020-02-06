@@ -11,7 +11,7 @@ export default class Home extends React.Component {
         const state = this.state;
         return (
             <div className="login-wrap">
-                <h1>电池管理</h1>
+                <h1>充电站管理</h1>
             </div>
         );
     }

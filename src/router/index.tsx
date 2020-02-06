@@ -7,7 +7,7 @@
 
 import { History } from "../components/my-router";
 import NProgress from "nprogress";
-import storage from "../utils/storage.js";
+import store from "../store";
 
 import Error404 from "../pages/404";
 import Error401 from "../pages/401";
@@ -19,6 +19,8 @@ import batteryManage from "../pages/batteryManage";
 import boxManage from "../pages/boxManage";
 import OPSManage from "../pages/OPSManage";
 import userManage from "../pages/userManage";
+import sysSetting from "../pages/sysSetting";
+import chargePileManage from "../pages/chargePileManage";
 
 export const inRoutes = [
     {
@@ -46,6 +48,18 @@ export const inRoutes = [
         title: "充电柜管理",
         path: "/boxManage",
         component: boxManage,
+        keepAlive: true
+    },
+    {
+        title: "充电站管理",
+        path: "/chargePileManage",
+        component: chargePileManage,
+        keepAlive: true
+    },
+    {
+        title: "系统设置",
+        path: "/sysSetting",
+        component: sysSetting,
         keepAlive: true
     },
     {
@@ -87,14 +101,14 @@ History.intercept = (page, next) => {
     NProgress.start();
 
     //未登录， 跳转到登录页面
-    if (!storage.get("TOKEN") && page.path !== "/login") {
+    if (!store.getState().token && page.path !== "/login") {
         History.replace({path: "/login"});
         NProgress.done();
         return;
     }
 
     //已经登录状态，跳回主页
-    if (page.path === "/login" && storage.get("TOKEN")) {
+    if (page.path === "/login" && store.getState().token) {
         NProgress.done();
         History.replace({path: "/"});
         return;

@@ -12,7 +12,6 @@ export default class Home extends React.Component {
         return (
             <div className="login-wrap">
                 <h1>充电柜管理</h1>
-                <input type="text"/>
             </div>
         );
     }
