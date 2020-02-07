@@ -144,7 +144,7 @@ export default class HistoryBar extends React.Component {
             $childleft + $childwidth - $left < $outwidth &&
             $childleft - $left > 0
         ) {
-            DEBUG && console.timeLog("位于视窗中");
+            DEBUG && console.log("位于视窗中");
             return;
         }
         if ($childleft - $left < 0 ) {

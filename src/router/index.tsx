@@ -26,17 +26,20 @@ export const inRoutes = [
     {
         title: "首页",
         path: "/",
-        component: Home
+        component: Home,
+        keepAlive: true
     },
     {
         title: "用户管理",
         path: "/userManage",
-        component: userManage
+        component: userManage,
+        keepAlive: true
     },
     {
         title: "运维人员管理",
         path: "/OPSManage",
-        component: OPSManage
+        component: OPSManage,
+        keepAlive: true
     },
     {
         title: "电池管理",

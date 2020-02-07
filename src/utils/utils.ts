@@ -18,3 +18,19 @@ export function input (target, {target: {value}}) {
     }
     this.setState({});
 }
+
+/**
+ * 时间戳转日期字符串 
+ * 
+ * @param {String} time 时间戳
+ * @param {String} spacing 间隔符
+ * @return {String}
+ */
+export function timeToDateStr (time: string|number, spacing: string = "\/"): string {
+    const obj = new Date(Number(time));
+    let str = "";
+    str += obj.getFullYear() + spacing;
+    str += (obj.getMonth() + 1 < 10 ? "0" + (obj.getMonth() + 1) : obj.getMonth() + 1) + spacing;
+    str += obj.getDate() < 10 ? "0" + obj.getDate() : obj.getDate();
+    return str;
+}
