@@ -21,14 +21,18 @@ export default class RightBar extends React.Component {
 
     initUseStore () {
         const userinfo: any = store.getState().user;
-        this.state.username = userinfo.username;
-        this.state.headImg = ""; //api暂时没有这个数据
-        this.setState({});
-        store.subscribe(() => {
-            const userinfo: any = store.getState().user;
+        if (userinfo) {
             this.state.username = userinfo.username;
             this.state.headImg = ""; //api暂时没有这个数据
             this.setState({});
+        }
+        store.subscribe(() => {
+            const userinfo: any = store.getState().user;
+            if (userinfo) {
+                this.state.username = userinfo.username;
+                this.state.headImg = ""; //api暂时没有这个数据
+                this.setState({});
+            }
         });
     }
 
