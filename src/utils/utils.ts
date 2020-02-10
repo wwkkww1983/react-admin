@@ -1,22 +1,38 @@
 /**
  * 表单输入绑定
  * 
- * @param {String} target
- * @param {Object} event
+ * @param {String} target 目标
  */
-export function input (target, {target: {value}}) {
-    if (target.indexOf(".") > -1) {
-        const arr = target.split(".");
-        let _ = this.state;
-        for (let i = 0; i < arr.length; i ++) {
-            if (i === arr.length - 1) break;
+export function input (target, { target: { value } }) {
+    const arr = handleTarget(target);
+    let _ = this.state;
+    for (let i = 0; i < arr.length - 1; i ++) {
+        if (/^\d+$/g.test(arr[i])) {
+            _ = _[Number(arr[i])];
+        } else {
             _ = _[arr[i]];
         }
-        _[arr[arr.length - 1]] = value;
+    }
+    //处理最后一个赋值
+    if (/^\d+$/g.test(arr[arr.length - 1])) {
+        _[Number(arr[arr.length - 1])] = value;
     } else {
-        this.state[target] = value;
+        _[arr[arr.length - 1]] = value;
     }
     this.setState({});
+    //处理target链
+    function handleTarget (target) {
+        const arr = target.split(".");
+        for (let i = 0; i < arr.length; i ++) {
+            let c = arr[i];
+            if (/(?:\[\d\])/.test(c)) {
+                const cArr = c.replace(/[\[\]]/g, "+").replace(/\+{2,}/g, "+").split("+").filter(i => i);
+                arr.splice(i, 1, ...cArr);
+                i += cArr.length - 1;
+            }
+        }
+        return arr;
+    }
 }
 
 /**

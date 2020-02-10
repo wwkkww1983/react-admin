@@ -17,7 +17,9 @@ import logo from "../../assets/img/logo.jpg";
 
 export default class NotFound extends React.Component {
 
-    input = input;
+    constructor (props) {
+        super(props);
+    }
 
     state = {
         form: {
@@ -80,10 +82,10 @@ export default class NotFound extends React.Component {
                         </div>
                     </Form.Item>
                     <Form.Item className="Item">
-                        <Input placeholder="请输入用户名" disabled={state.disabledAll} value={state.form.user} onChange={this.input.bind(this, "form.user")}/>
+                        <Input placeholder="请输入用户名" disabled={state.disabledAll} value={state.form.user} onChange={input.bind(this, "form.user")}/>
                     </Form.Item>
                     <Form.Item className="Item">
-                        <Input placeholder="请输入密码" type="password" disabled={state.disabledAll} value={state.form.pass} onChange={this.input.bind(this, "form.pass")}/>
+                        <Input placeholder="请输入密码" type="password" disabled={state.disabledAll} value={state.form.pass} onChange={input.bind(this, "form.pass")}/>
                     </Form.Item>
                     <Form.Item>
                         <Button loading={state.disabledAll} style={{width: "100%"}} type="primary"  disabled={!state.form.pass || !state.form.user} onClick={this.actionLogin.bind(this)}>

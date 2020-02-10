@@ -27,8 +27,6 @@ interface ListItem {
 
 export default class Home extends React.Component {
 
-    input = input;
-
     state = {
         list: [],
         limit: 10,
@@ -254,13 +252,13 @@ export default class Home extends React.Component {
                 >
                     <Form>
                         <Form.Item>
-                            <Input placeholder="用户名" value={state.modal.name} onChange={this.input.bind(this, "modal.name")}></Input>
+                            <Input placeholder="用户名" value={state.modal.name} onChange={input.bind(this, "modal.name")}></Input>
                         </Form.Item>
                         <Form.Item>
-                            <Input placeholder="手机号" type="number" value={state.modal.phone} onChange={this.input.bind(this, "modal.phone")}></Input>
+                            <Input placeholder="手机号" type="number" value={state.modal.phone} onChange={input.bind(this, "modal.phone")}></Input>
                         </Form.Item>
                         <Form.Item>
-                            <Input placeholder="密码" type="password" value={state.modal.pass} onChange={this.input.bind(this, "modal.pass")}></Input>
+                            <Input placeholder="密码" type="password" value={state.modal.pass} onChange={input.bind(this, "modal.pass")}></Input>
                         </Form.Item>
                     </Form>
                 </Modal>
