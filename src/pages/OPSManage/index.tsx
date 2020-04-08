@@ -7,7 +7,7 @@ import {
     editOPS,
     delOPS
 } from "../../api/OPSManage";
-import { input, timeToDateStr } from "../../utils/utils";
+import { input, timeToDateStr, initLife } from "../../utils/utils";
 import { 
     Table,
     Button,
@@ -95,11 +95,16 @@ export default class Home extends React.Component {
     }
 
     componentDidMount () {
-        this.init();
+        initLife(this, this.init, this.$onShow);
     }
 
     init () {
+        console.error("初始化----- 2");
         this.loadList();
+    }
+
+    $onShow () {
+        console.error("显示了----- 2");
     }
 
     //加载列表

@@ -25,18 +25,15 @@ service.interceptors.request.use(
 // respone拦截器
 service.interceptors.response.use(
 	({ data: res }) => {
-
 		// 请求成功
 		if (res.code === 0) {
 			return res;
 		}
 		// Token鉴权失败
-		if (res.code === 401) {
+		if (res.code === 11001) {
 			store.dispatch({type: "token/DEL_TOKEN"});
 			History.replace({path: "/"});
-			return Promise.reject('error')
 		}
-
 		message.error(res.message);
 		return Promise.reject('error');
 	},
