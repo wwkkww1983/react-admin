@@ -1,11 +1,10 @@
 import React from "react";
 import "./less/index.less";
 
-import { Table, Form, Button, Input, Select } from "antd";
+import { Table, Form, Button, Input, Select, Tag, Switch, message } from "antd";
 import NProgress from "nprogress";
-import { getDeviceList } from "../../api/deviceManager";
+import { getDeviceList, enableDevice, disableDevice } from "../../api/deviceManager";
 import { input, initLife } from "../../utils/utils";
-import { History } from "../../components/my-router/index";
 
 export default class Home extends React.Component {
 
@@ -15,20 +14,67 @@ export default class Home extends React.Component {
 
     state = {
         //表格标题
-        columus: [
+        columns: [
             { 
-                title: "当前状态",
-                dataIndex: "latestStatus",
-                key: "latestStatus"
+                title: "id",
+                dataIndex: "id",
+                key: "id"
             },
             { 
                 title: "设备id",
                 dataIndex: "deviceId",
                 key: "deviceId"
             },
+            { 
+                title: "项目id",
+                dataIndex: "projectId",
+                key: "projectId"
+            },
+            { 
+                title: "项目名",
+                dataIndex: "name",
+                key: "name",
+                render: item => item ? item : "-"
+            },
+            { 
+                title: "型号",
+                dataIndex: "model",
+                key: "model",
+                render: item => item ? item : "-"
+            },
+            { 
+                title: "IMSI",
+                dataIndex: "imsi",
+                key: "imsi",
+                render: item => item ? item : "-"
+            },
+            { 
+                title: "是否在线",
+                key: "online",
+                render: (item, rm, index) => <Tag color={item === "1" ? "green" : "red"}>{item === "1" ? "在线" : "离线"}</Tag>
+            },
+            { 
+                title: "状态",
+                key: "enable",
+                render: (item, rm, index) => (
+                    <Form layout="inline">
+                        <Form.Item>
+                            <Switch loading={this.state.switchLoading[index]} checkedChildren="启用" unCheckedChildren="禁用" checked={item.enable} onChange={this.enableOrDisable.bind(this, item, index)}/>
+                        </Form.Item>
+                    </Form>
+                )
+            },
+            { 
+                title: "操作",
+                render: (item, rm, index) => (
+                    <Button icon="monitor" onClick={() => message.warning("实现中")}>查看位置</Button>
+                )
+            },
         ],
         //表格数据
         list: [],
+        //启用、禁用加载
+        switchLoading: [],
         projectId: "",
         deviceId: "",
         enable: "",
@@ -43,7 +89,7 @@ export default class Home extends React.Component {
 
     $onLoad () {
         console.error("初始化-----");
-        // this.loadList();
+        this.loadList();
     }
 
     $onShow () {
@@ -51,6 +97,24 @@ export default class Home extends React.Component {
         console.error("显示了-----");
     }
 
+    //启用、禁用
+    async enableOrDisable (item, index) {
+        this.state.switchLoading[index] = true;
+        this.setState({});
+        try {
+            if (Number(item.enable) === 1) await disableDevice({id: item.id});
+            if (Number(item.enable) === 0) await enableDevice({id: item.id});
+        } catch(err) {
+            this.state.switchLoading[index] = false;
+            this.setState({});
+            return;
+        }
+        this.state.switchLoading[index] = false;
+        this.setState({});
+        this.loadList();
+    }
+
+    //记载列表
     async loadList () {
         const data = {
             type: "1",
@@ -69,7 +133,14 @@ export default class Home extends React.Component {
             return;
         }
         NProgress.done();
+        res.list && res.list.forEach(item => {
+            //不加key react会报错
+            item.key = item.id;
+            //初始化switch加载状态
+            this.state.switchLoading.push(false);
+        });
         this.setState({list: res.list || [], total: res.total});
+        console.log(this.state.list);
     }
 
     render (): any {
@@ -99,6 +170,8 @@ export default class Home extends React.Component {
                     </Form.Item>
                 </Form>
                 <Table
+                dataSource={state.list} 
+                columns={state.columns}
                 onChange={({current}) => {
                     this.state.page = current;
                     this.setState({});

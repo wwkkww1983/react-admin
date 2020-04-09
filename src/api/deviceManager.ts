@@ -20,3 +20,26 @@ export function getDeviceList (
         params: data
     });
 }
+
+
+/**
+ * 启用设备 
+ */
+export function enableDevice (data: {id: string|number}) {
+    return request({
+        url: "/device/admin/manager/enable",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 禁用设备 
+ */
+export function disableDevice (data: {id: string|number}) {
+    return request({
+        url: "/device/admin/manager/disable",
+        method: "POST",
+        data
+    });
+}
