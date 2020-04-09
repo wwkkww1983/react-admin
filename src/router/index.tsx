@@ -19,8 +19,9 @@ import batteryManage from "../pages/batteryManage";
 import boxManage from "../pages/boxManage";
 import OPSManage from "../pages/OPSManage";
 import userManage from "../pages/userManage";
-import sysSetting from "../pages/sysSetting";
+import baseSetting from "../pages/baseSetting";
 import chargePileManage from "../pages/chargePileManage";
+import projectManage from "../pages/projectManage";
 
 export const inRoutes = [
     {
@@ -48,7 +49,7 @@ export const inRoutes = [
         keepAlive: true
     },
     {
-        title: "充电柜管理",
+        title: "换电柜管理",
         path: "/boxManage",
         component: boxManage,
         keepAlive: true
@@ -60,9 +61,15 @@ export const inRoutes = [
         keepAlive: true
     },
     {
-        title: "系统设置",
-        path: "/sysSetting",
-        component: sysSetting,
+        title: "基础设置",
+        path: "/baseSetting",
+        component: baseSetting,
+        keepAlive: true
+    },
+    {
+        title: "项目管理",
+        path: "/projectManage",
+        component: projectManage,
         keepAlive: true
     },
     {
