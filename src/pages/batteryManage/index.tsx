@@ -20,12 +20,12 @@ export default class Home extends React.Component {
                 dataIndex: "id",
                 key: "id"
             },
-            { 
-                title: "型号",
-                dataIndex: "model",
-                key: "model",
-                render: item => item ? item : "-"
-            },
+            // { 
+            //     title: "型号",
+            //     dataIndex: "model",
+            //     key: "model",
+            //     render: item => item ? item : "-"
+            // },
             { 
                 title: "IMEI",
                 render: item => item.batteryGoodTaxisys.latestStatus.batteryImei

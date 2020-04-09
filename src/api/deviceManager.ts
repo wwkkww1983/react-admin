@@ -1,5 +1,4 @@
 import request from '../utils/request';
-import { compose } from 'redux';
 
 /**
  * 获取设备列表 
