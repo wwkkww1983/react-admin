@@ -1,10 +1,12 @@
 import React from "react";
 import "./less/index.less";
 
-import { Table, Form, Button, Input, Select, Tag, Switch, message } from "antd";
+import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination } from "antd";
 import NProgress from "nprogress";
 import { getDeviceList, enableDevice, disableDevice } from "../../api/deviceManager";
 import { input, initLife } from "../../utils/utils";
+import store from "../../store";
+import  DeviceInMap from "../../components/deviceInMap";
 
 export default class Home extends React.Component {
 
@@ -71,6 +73,12 @@ export default class Home extends React.Component {
                 )
             },
         ],
+        //视图类型0表格，1地图
+        viewIndex: 0, 
+        //content高度，数据来自store
+        wrapHeight: 0,
+        //用于地图显示的对象
+        latlngs: [],
         //表格数据
         list: [],
         //启用、禁用加载
@@ -88,13 +96,22 @@ export default class Home extends React.Component {
     }
 
     $onLoad () {
-        console.error("初始化-----");
         this.loadList();
+        this.initUseStore();
     }
 
     $onShow () {
         // this.loadList();
-        console.error("显示了-----");
+    }
+
+    initUseStore () {
+        const get = () => {
+            this.setState({
+                wrapHeight: store.getState().layout.contentHieght
+            });
+        }
+        store.subscribe(get);
+        get();
     }
 
     //启用、禁用
@@ -146,43 +163,70 @@ export default class Home extends React.Component {
     render (): any {
         const state = this.state;
         return (
-            <div className="boxmanager-wrap">
-                <Form layout="inline" style={{marginBottom: "16px"}}>
-                    <Form.Item label="设备id">
-                        <Input value={state.deviceId} onChange={input.bind(this, "deviceId")} placeholder="输入设备id"/>
-                    </Form.Item>
-                    <Form.Item label="项目id">
-                        <Input value={state.projectId} onChange={input.bind(this, "projectId")} placeholder="输入项目id"/>
-                    </Form.Item>
-                    <Form.Item label="状态">
-                    <Select defaultValue={state.enable} placeholder="选择状态" style={{ width: 120 }} onChange={input.bind(this, "enable")}>
-                        <Select.Option value="1">启用的</Select.Option>
-                        <Select.Option value="0">禁用的</Select.Option>
-                        <Select.Option value="">全部</Select.Option>
-                    </Select>
-                    </Form.Item>
-                    <Form.Item>
-                        <Button icon="search" onClick={() => {
-                            this.state.page = 1;
-                            this.setState({});
-                            this.loadList();
-                        }}>查找</Button>
-                    </Form.Item>
-                </Form>
+            <div className="chargepile-page-wrap"
+            style={{height: state.viewIndex === 1 ? state.wrapHeight + "px" : "100%"}} /*切换到地图视图的时候才使页面撑满，好显示地图组件*/
+            >
+
+                {/* 头部表单 */}
+                <div className="page-top">
+                    <Form layout="inline" style={{marginBottom: "16px"}}>
+                        <Form.Item>
+                            <Radio.Group onChange={({target: {value: index}}) => this.setState({viewIndex: index})} value={state.viewIndex}>
+                                <Radio.Button value={0}>表格视图</Radio.Button>
+                                <Radio.Button value={1}>地图视图</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
+                        <Form.Item label="设备id">
+                            <Input value={state.deviceId} onChange={input.bind(this, "deviceId")} placeholder="输入设备id"/>
+                        </Form.Item>
+                        <Form.Item label="项目id">
+                            <Input value={state.projectId} onChange={input.bind(this, "projectId")} placeholder="输入项目id"/>
+                        </Form.Item>
+                        <Form.Item label="状态">
+                        <Select defaultValue={state.enable} placeholder="选择状态" style={{ width: 120 }} onChange={input.bind(this, "enable")}>
+                            <Select.Option value="1">启用的</Select.Option>
+                            <Select.Option value="0">禁用的</Select.Option>
+                            <Select.Option value="">全部</Select.Option>
+                        </Select>
+                        </Form.Item>
+                        <Form.Item>
+                            <Button icon="search" onClick={() => {
+                                this.state.page = 1;
+                                this.setState({});
+                                this.loadList();
+                            }}>查找</Button>
+                        </Form.Item>
+                    </Form>
+                </div>
+                            
+                {/* 表格视图 */}
+                {state.viewIndex === 0 && <div className="page-content">
                 <Table
                 dataSource={state.list} 
                 columns={state.columns}
-                onChange={({current}) => {
-                    this.state.page = current;
-                    this.setState({});
-                    this.loadList();
-                }}
-                pagination={{
-                    pageSize: state.limit,
-                    total: state.total,
-                    defaultCurrent: state.page
-                }}
+                pagination={false}
                 />
+                </div>}
+
+                {/* 地图视图 */}
+                {state.viewIndex === 1 && <div className="page-content">
+                    <DeviceInMap latlngs={state.latlngs} pointIconUrl="public/img/充电站.png"/>
+                </div>}
+
+                {/* 底部翻页器 */}
+                <div  className="page-bottom">
+                    <Pagination 
+                    style={{margin: "16px 0", float: "right"}}
+                    current={state.page} 
+                    total={state.total} 
+                    pageSize={state.limit} 
+                    onChange={(current) => {
+                        this.state.page = current;
+                        this.setState({});
+                        this.loadList();
+                    }}/>
+                </div>
+
             </div>
         );
     }

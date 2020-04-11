@@ -11,7 +11,8 @@ let layout = {
     asideMenus: {
         fold: false,
         menus
-    }
+    },
+    contentHieght: 0,
 };
 
 export default function (state = layout, {type, playload}) {
@@ -23,6 +24,14 @@ export default function (state = layout, {type, playload}) {
          */
         case "layout/SET_ASIDE_MENUS":
             state.asideMenus.fold = playload;
+            return state;
+            break;
+
+        /**
+         * 设置content高度 
+         */
+        case "layout/SET_CONTENT_HEIGHT":
+            state.contentHieght = playload;
             return state;
             break;
 

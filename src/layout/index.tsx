@@ -26,7 +26,24 @@ export default class Layout extends React.Component {
     }
 
     init (): void {
+        this.inintListenCOntentHeight();
         this.initUseStore();
+    }
+
+    /**
+     * 监控content高度，并且在初始化和窗口发生缩放后实时更新到store layout模块里 
+     */
+    inintListenCOntentHeight () {
+        const getInnerContentHieght = () => {
+            const h: any = (this as any).refs["innerContent"].clientHeight;
+            const height = h - 32/*自身上下内边距*/ - 53 /*底部版权栏占据高度*/ - 29 /*面包屑占用高度*/ - (64 + 2) /*内页路由外框上下内边距*/;
+            store.dispatch({type: "layout/SET_CONTENT_HEIGHT", playload: height});
+        }
+        //异步执行初始化
+        setTimeout(() => {
+            getInnerContentHieght();
+        });
+        window.addEventListener("resize", getInnerContentHieght);
     }
 
     initUseStore () {
@@ -73,7 +90,7 @@ export default class Layout extends React.Component {
                         <div className="history-bar-wrap">
                             <HistoryBar/>
                         </div>
-                        <div className="content">
+                        <div className="content" ref="innerContent">
                             <div className="breadcrumb">
                                 <BreadCrumb/>
                             </div>

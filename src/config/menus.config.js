@@ -35,7 +35,19 @@ export default [
             {
                 icon: "icon-chongdianzhuang",
                 title: "充电站管理",
-                path: "/chargePileManage"
+                // path: "/chargePileManage"
+                children: [
+                    {
+                        icon: "icon-dianchi",
+                        title: "通讯主机",
+                        path: "/404"
+                    },
+                    {
+                        icon: "icon-iconset0499",
+                        title: "充电头模块",
+                        path: "/404"
+                    },
+                ]
             }
         ]
     },

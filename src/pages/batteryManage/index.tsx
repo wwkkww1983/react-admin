@@ -1,10 +1,12 @@
 import React from "react";
 import "./less/index.less";
 
-import { Table, Form, Button, Input, Tag, Select, Switch, message, Popover} from "antd";
+import { Table, Form, Button, Input, Tag, Select, Switch, message, Popover, Radio, Pagination } from "antd";
 import NProgress from "nprogress";
 import { getDeviceList, enableDevice, disableDevice } from "../../api/deviceManager";
 import { input, initLife } from "../../utils/utils";
+import store from "../../store";
+import DeviceInMap from "../../components/deviceInMap";
 
 export default class Home extends React.Component {
 
@@ -165,8 +167,14 @@ export default class Home extends React.Component {
             "09": "环境高温告警",
             "000": "无"
         },
+        //视图类型0表格，1地图
+        viewIndex: 0, 
+        //content高度，数据来自store
+        wrapHeight: 0,
         //表格数据
         list: [],
+        //用于地图显示的对象
+        latlngs: [],
         //启用、禁用加载
         switchLoading: [],
         projectId: "",
@@ -181,14 +189,23 @@ export default class Home extends React.Component {
         initLife(this, this.$onLoad, this.$onShow);
     }
 
+    initUseStore () {
+        const get = () => {
+            this.setState({
+                wrapHeight: store.getState().layout.contentHieght
+            });
+        }
+        store.subscribe(get);
+        get();
+    }
+
     $onLoad () {
-        console.error("初始化-----");
         this.loadList();
+        this.initUseStore();
     }
 
     $onShow () {
         // this.loadList();
-        console.error("显示了-----");
     }
 
     //启用、禁用
@@ -227,14 +244,19 @@ export default class Home extends React.Component {
             return;
         }
         NProgress.done();
+        const latlngs = [];
         res.list && res.list.forEach(item => {
             //不加key react会报错
             item.key = item.id;
             //初始化switch加载状态
             this.state.switchLoading.push(false);
+            //生成地图显示需要的经纬度数据
+            latlngs.push({
+                lat: item.batteryGoodTaxisys.latestStatus.gdLat,
+                lng: item.batteryGoodTaxisys.latestStatus.gdLng,
+            });
         });
-        this.setState({list: res.list || [], total: res.total});
-        console.log(this.state.list);
+        this.setState({list: res.list || [], total: res.total, latlngs});
     }
 
     //获取数组中最大值
@@ -258,43 +280,69 @@ export default class Home extends React.Component {
     render (): any {
         const state = this.state;
         return (
-            <div className="boxmanager-wrap">
-                <Form layout="inline" style={{marginBottom: "16px"}}>
-                    <Form.Item label="电池序列号">
-                        <Input value={state.deviceId} onChange={input.bind(this, "deviceId")} placeholder="输入电池序列号"/>
-                    </Form.Item>
-                    {/* <Form.Item label="项目id">
-                        <Input value={state.projectId} onChange={input.bind(this, "projectId")} placeholder="输入项目id"/>
-                    </Form.Item> */}
-                    <Form.Item label="状态">
-                    <Select defaultValue={state.enable} placeholder="选择状态" style={{ width: 120 }} onChange={input.bind(this, "enable")}>
-                        <Select.Option value="1">启用的</Select.Option>
-                        <Select.Option value="0">禁用的</Select.Option>
-                        <Select.Option value="">全部</Select.Option>
-                    </Select>
-                    </Form.Item>
-                    <Form.Item>
-                        <Button icon="search" onClick={() => {
-                            this.state.page = 1;
-                            this.setState({});
-                            this.loadList();
-                        }}>查找</Button>
-                    </Form.Item>
-                </Form>
-                <Table
-                dataSource={state.list} 
-                columns={state.columns}
-                onChange={({current}) => {
-                    this.state.page = current;
-                    this.setState({});
-                    this.loadList();
-                }}
-                pagination={{
-                    pageSize: state.limit,
-                    total: state.total,
-                    defaultCurrent: state.page
-                }}
-                />
+            <div className="batterymanager-wrap" 
+            style={{height: state.viewIndex === 1 ? state.wrapHeight + "px" : "100%"}} /*切换到地图视图的时候才使页面撑满，好显示地图组件*/
+            >
+
+                {/* 头部表单 */}
+                <div className="page-top">
+                    <Form layout="inline" style={{marginBottom: "16px"}}>
+                        <Form.Item>
+                            <Radio.Group onChange={({target: {value: index}}) => this.setState({viewIndex: index})} value={state.viewIndex}>
+                                <Radio.Button value={0}>表格视图</Radio.Button>
+                                <Radio.Button value={1}>地图视图</Radio.Button>
+                            </Radio.Group>
+                        </Form.Item>
+                        <Form.Item label="电池序列号">
+                            <Input value={state.deviceId} onChange={input.bind(this, "deviceId")} placeholder="输入电池序列号"/>
+                        </Form.Item>
+                        {/* <Form.Item label="项目id">
+                            <Input value={state.projectId} onChange={input.bind(this, "projectId")} placeholder="输入项目id"/>
+                        </Form.Item> */}
+                        <Form.Item label="状态">
+                        <Select defaultValue={state.enable} placeholder="选择状态" style={{ width: 120 }} onChange={input.bind(this, "enable")}>
+                            <Select.Option value="1">启用的</Select.Option>
+                            <Select.Option value="0">禁用的</Select.Option>
+                            <Select.Option value="">全部</Select.Option>
+                        </Select>
+                        </Form.Item>
+                        <Form.Item>
+                            <Button icon="search" onClick={() => {
+                                this.state.page = 1;
+                                this.setState({});
+                                this.loadList();
+                            }}>查找</Button>
+                        </Form.Item>
+                    </Form>
+                </div>
+                
+                {/* 表格视图 */}
+                {state.viewIndex === 0 && <div className="page-content">
+                    <Table
+                    dataSource={state.list} 
+                    columns={state.columns}
+                    pagination={false}
+                    />
+                </div>}
+
+                {/* 地图视图 */}
+                {state.viewIndex === 1 && <div className="page-content">
+                    <DeviceInMap latlngs={state.latlngs} pointIconUrl="public/img/电池.png"/>
+                </div>}
+
+                {/* 底部翻页器 */}
+                <div  className="page-bottom">
+                    <Pagination 
+                    style={{margin: "16px 0", float: "right"}}
+                    current={state.page} 
+                    total={state.total} 
+                    pageSize={state.limit} 
+                    onChange={(current) => {
+                        this.state.page = current;
+                        this.setState({});
+                        this.loadList();
+                    }}/>
+                </div>
                 
             </div>
         );
