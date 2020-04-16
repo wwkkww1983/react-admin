@@ -1,37 +1,28 @@
 import request from '../utils/request';
 
 //获取运维人员列表
-export function getOPSList ({page, limit}) {
+export function requestOPSList (data: {page: number, limit: number}) {
     return request({
-        url: "/account/admin/workerMember/query",
+        url: "/staff/admin/query",
         method: 'GET',
-        params: {page, limit}
+        params: data
     });
 }
 
-//新增运维人员
-export function addOPS ({name, phone, password}) {
+//启用运维人员
+export function enableOPS (data: {memberId: string|number}) {
     return request({
-        url: "/account/admin/workerMember/create",
+        url: "/staff/admin/enable",
         method: "POST",
-        data: {name, phone, password}
+        data
     });
 }
 
-//编辑运维人员
-export function editOPS ({id, name, phone, password}) {
+//禁用运维人员
+export function disableOPS (data: {memberId: string|number}) {
     return request({
-        url: "/account/admin/workerMember/update",
+        url: "/staff/admin/disable",
         method: "POST",
-        data: {id, name, phone, password}
-    });
-}
-
-//删除运维人员
-export function delOPS ({id}) {
-    return request({
-        url: "/account/admin/workerMember/delete",
-        method: "POST",
-        data: {id}
+        data
     });
 }
