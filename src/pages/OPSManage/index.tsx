@@ -12,59 +12,76 @@ import {
     Button,
     Modal,
     Form,
-    Input
+    Switch,
+    Input,
+    message
 } from "antd";
 import UserList from "./components/userList";
 
-const columns: any[] = [
-    {
-        title: "ID",
-        dataIndex: "id",
-        key: "id"
-    }, 
-    {
-        title: "手机号",
-        dataIndex: "phone",
-        key: "phone"
-    },
-    {
-        title: "名字",
-        dataIndex: "name",
-        key: "name"
-    }, 
-    {
-        title: "注册时间",
-        dataIndex: "registerTime",
-        key: "registerTime",
-        render: item => item > 0 ? timeToDateStr((item * 1000)) : "-"
-    }, 
-    {
-        title: "首次登录",
-        dataIndex:"firstLoginTime",
-        key: "firstLoginTime",
-        render: item => item > 0 ? timeToDateStr((item * 1000)) : "-"
-    }, 
-    {
-        title: "最后登录",
-        dataIndex: "lastLoginTime",
-        key: "lastLoginTime",
-        render: item => item > 0 ? timeToDateStr((item * 1000)) : "-"
-    },
-    {
-        title: "操作",
-        render: (item, rm, index) => (
-            <Form layout="inline">
-                <Form.Item>
-                    <Button type="danger" >删除</Button>
-                </Form.Item>
-            </Form>
-        )
-    }
-];
+function buildColumns () {
+    return [
+        {
+            title: "ID",
+            dataIndex: "memberId",
+            key: "memberId"
+        },
+        {
+            title: "名字",
+            dataIndex: "name",
+            key: "name",
+            render: item => item ? item : "-"
+        },  
+        {
+            title: "手机号",
+            dataIndex: "phone",
+            key: "phone"
+        },
+        {
+            title: "性别",
+            dataIndex: "genderText",
+            key: "genderText",
+            render: item => item ? item : "-"
+        },
+        {
+            title: "注册时间",
+            dataIndex: "registerTime",
+            key: "registerTime",
+            render: item => item > 0 ? timeToDateStr((item * 1000)) : "-"
+        }, 
+        {
+            title: "首次登录",
+            dataIndex:"firstLoginTime",
+            key: "firstLoginTime",
+            render: item => item > 0 ? timeToDateStr((item * 1000)) : "-"
+        }, 
+        {
+            title: "最后登录",
+            dataIndex: "lastLoginTime",
+            key: "lastLoginTime",
+            render: item => item > 0 ? timeToDateStr((item * 1000)) : "-"
+        },
+        {
+            title: "操作",
+            render: (item, rm, index) => (
+                <Form layout="inline">
+                    <Form.Item>
+                        <Switch 
+                        checkedChildren="启用" 
+                        unCheckedChildren="禁用" 
+                        loading={this.state.listLoadings[index]}
+                        onChange={this.switchChange.bind(this, index)}
+                        />
+                    </Form.Item>
+                </Form>
+            )
+        }
+    ];
+}
 
 export default class Home extends React.Component {
 
     state = {
+        columns: buildColumns.call(this),
         userListShow: false, //用户选择弹窗是否显示
         listLoadings: [], //列表每个行禁用启用开关的加载动画控制变量集合，由loadList函数来初始化
         list: [],
@@ -151,6 +168,13 @@ export default class Home extends React.Component {
         this.loadList();
     }
 
+    //列表启用禁用开关切换
+    switchChange (index: number): void {
+        message.warning('等待api完善激活状态字段');
+        //根据传入index获取item，判段item的激活状态做出对应的请求
+        return;
+    }
+
     //打开或关闭用户选择弹窗
     openOrOffUserList (state) {
         this.setState({userListShow: state});
@@ -172,7 +196,7 @@ export default class Home extends React.Component {
                 <Table
                 style={{marginTop: "16px"}}
                 dataSource={state.list}
-                columns={columns}
+                columns={state.columns}
                 pagination={{
                     pageSize: state.limit,
                     total: state.total,
