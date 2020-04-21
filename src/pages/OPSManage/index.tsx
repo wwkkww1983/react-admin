@@ -65,12 +65,7 @@ function buildColumns () {
             render: (item, rm, index) => (
                 <Form layout="inline">
                     <Form.Item>
-                        <Switch 
-                        checkedChildren="启用" 
-                        unCheckedChildren="禁用" 
-                        loading={this.state.listLoadings[index]}
-                        onChange={this.switchChange.bind(this, index)}
-                        />
+                        <Button icon="stop" onClick={this.disable.bind(this, item.memberId)}>禁用</Button>
                     </Form.Item>
                 </Form>
             )
@@ -83,7 +78,7 @@ export default class Home extends React.Component {
     state = {
         columns: buildColumns.call(this),
         userListShow: false, //用户选择弹窗是否显示
-        listLoadings: [], //列表每个行禁用启用开关的加载动画控制变量集合，由loadList函数来初始化
+        q: "", //搜索手机号
         list: [],
         limit: 10,
         total: 0,
@@ -105,49 +100,29 @@ export default class Home extends React.Component {
     //加载列表
     async loadList () {
         NProgress.start();
-        const page: number = this.state.page, limit: number = this.state.limit;
+        const page: number = this.state.page, limit: number = this.state.limit, q: string = this.state.q;
         let res: any = null;
         try {
-            res = await requestOPSList({page, limit});
+            res = await requestOPSList({page, limit, q});
         } catch(err) {
             NProgress.done();
             return;
         }
         NProgress.done();
-        res.list&& res.list.forEach(item => this.state.listLoadings.push(false)); //初始化列表行禁用、启用人员开关加载动画控制变量集合
         this.setState({list: res.list || []});
     }
 
     //禁用运维人员
-    async disable (index) {
-        this.state.listLoadings[index] = true;
-        this.setState({});
-        const id = "";
+    //根据后端口述，目前的禁用就是删除，启用时再去弹出用户列表里边选择即可。
+    async disable (id: string|number) {
+        NProgress.start();
         try {
             await disableOPS({memberId: id});
         } catch(err) {
-            this.state.listLoadings[index] = false;
-            this.setState({});
+            NProgress.done();
             return;
         }
-        this.state.listLoadings[index] = false;
-        this.loadList();
-    }
-
-    //启用运维人员
-    async enable (index) {
-        this.state.listLoadings[index] = true;
-        this.setState({});
-        const id = "";
-        try {
-            await enableOPS({memberId: id});
-        } catch(err) {
-            this.state.listLoadings[index] = false;
-            this.setState({});
-            return;
-        }
-        this.state.listLoadings[index] = false;
-        this.setState({});
+        NProgress.done();
         this.loadList();
     }
 
@@ -168,11 +143,11 @@ export default class Home extends React.Component {
         this.loadList();
     }
 
-    //列表启用禁用开关切换
-    switchChange (index: number): void {
-        message.warning('等待api完善激活状态字段');
-        //根据传入index获取item，判段item的激活状态做出对应的请求
-        return;
+    //搜索
+    search () {
+        this.state.page = 1;
+        this.setState({});
+        this.loadList();
     }
 
     //打开或关闭用户选择弹窗
@@ -190,10 +165,17 @@ export default class Home extends React.Component {
                     <Form.Item>
                         <Button icon="plus" onClick={this.openOrOffUserList.bind(this, true)}>新增</Button>
                     </Form.Item>
+                    <Form.Item>
+                        <Input value={state.q} onChange={input.bind(this, "q")}></Input>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button icon="search" onClick={this.search.bind(this)}>查找</Button>
+                    </Form.Item>
                 </Form>
 
                 {/* 运维人员显示表格 */}
                 <Table
+                rowKey={item => item.memberId}
                 style={{marginTop: "16px"}}
                 dataSource={state.list}
                 columns={state.columns}

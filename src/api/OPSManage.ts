@@ -1,7 +1,7 @@
 import request from '../utils/request';
 
 //获取运维人员列表
-export function requestOPSList (data: {page: number, limit: number}) {
+export function requestOPSList (data: {page: number, limit: number, q: string}) {
     return request({
         url: "/staff/admin/query",
         method: 'GET',
