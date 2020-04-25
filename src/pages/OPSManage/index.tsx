@@ -166,7 +166,7 @@ export default class Home extends React.Component {
                         <Button icon="plus" onClick={this.openOrOffUserList.bind(this, true)}>新增</Button>
                     </Form.Item>
                     <Form.Item>
-                        <Input value={state.q} onChange={input.bind(this, "q")}></Input>
+                        <Input value={state.q} onChange={input.bind(this, "q")} placeholder="输入手机号"></Input>
                     </Form.Item>
                     <Form.Item>
                         <Button icon="search" onClick={this.search.bind(this)}>查找</Button>
