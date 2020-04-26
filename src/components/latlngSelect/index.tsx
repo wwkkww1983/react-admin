@@ -1,6 +1,6 @@
 import React from "react";
 import "./index.less";
-import { Alert, Modal } from "antd";
+import { Alert, Modal, message } from "antd";
 import store from "../../store";
 
 interface Props {
@@ -8,7 +8,9 @@ interface Props {
     lng?: string|number,
     province: string,
     city: string,
-    district: string
+    district: string,
+    confirm(data: any): void,
+    cancel(): void
 }
 
 export default class Home extends React.Component {
@@ -22,7 +24,9 @@ export default class Home extends React.Component {
         lng: "",
         province: "",
         city: "",
-        district: ""
+        district: "",
+        confirm: () => {},
+        cancel: () => {}
     }
 
     constructor (props) {
@@ -30,20 +34,10 @@ export default class Home extends React.Component {
     }
 
     state = {
-        latlngs: [],
-        map: null,
+        lat: "",
+        lng: "",
         height: 0,
-        width: 0,
-        //已经绘制的点集合
-        marks: [],
-        //警告提示语
-        warningText: "",
-    }
-
-    componentWillReceiveProps (props) {
-        //只要有更新，就重新绘制，就是这么简洁
-        // (this as any).state.latlngs = props.latlngs;
-        // this.drawAllPoint();
+        width: 0
     }
 
     componentDidMount () {
@@ -72,6 +66,12 @@ export default class Home extends React.Component {
         }
         f();
         window.addEventListener("resize", f);
+    }
+
+    //监听行政区域点击，获取经纬度，并画点
+    areaClick ({lnglat: {lat, lng}}) {
+        this.setState({lat, lng});
+        this.drawPointer(lat, lng);
     }
 
     //画出行政区范围
@@ -103,10 +103,10 @@ export default class Home extends React.Component {
                             // strokeColor: '#CC66CC'
                             strokeColor: '#1acebc' //腾悦绿
                         });
-                        polygons.push(polygon)
+                        polygons.push(polygon);
+                        polygon.on("click", this.areaClick.bind(this));
                     }
                     // 地图自适应
-                    console.log(map);
                     map.setFitView();
                 }
             }
@@ -114,14 +114,15 @@ export default class Home extends React.Component {
     }
 
     //绘制定位点，并显示经纬度
-    drawPointer () {
+    drawPointer (lat?: number|string, lng?:string|number) {
+        if (!lat || !lng) return;
         const map: any = this.map;
         if (this.pointerMarker) map.remove(this.pointerMarker); 
         const content = '<img style="height: 30px" src="./public/img/我的位置.png"/>'; //暂定30px宽高
         const marker = this.pointerMarker = new AMap.Marker({
             content: content, 
-            position:  [116.397428, 39.90923],
-            // offset: new AMap.Pixel(-17, -42) 
+            position:  [lng, lat],
+            offset: new AMap.Pixel(-15, -15) 
         });
         map.add(marker);
     }
@@ -134,19 +135,37 @@ export default class Home extends React.Component {
             setTimeout(() => {
                 const map = new AMap.Map((this as any).refs["map-container"], {
                     zoom: 4,//级别
-                    center: [116.397428, 39.90923],//中心点坐标
+                    // center: [],//中心点坐标
                     viewMode:'2D',//使用3D视图
                     mapStyle: 'amap://styles/whitesmoke', //设置地图的显示样式
                 });
                 map.on("complete", () => {
+                    //设置鼠标样式为十字样式
+                    map.setDefaultCursor("crosshair");
                     //加载行政区处理以及显示插件
-                    // map.plugin(new AMap.DistrictSearch());
                     AMap.plugin(["AMap.DistrictSearch"], function(){//异步同时加载多个插件
                         resolve(map); 
                     });
                 });
             });
         });
+    }
+
+    confirm () {
+        const state: any = (this as any).state, props: any = (this as any).props;
+        if (state.lat && state.lng) {
+            props.confirm.call(this, {lat: state.lat, lng: state.lng});
+        } 
+        else if (props.lat && props.lng) {
+            props.confirm.call(null, {lat: props.lat, lng: props.lng});
+        }
+        else {
+            message.warning("请选择位置");
+        }
+    }
+
+    cancel () {
+        (this as any).props.cancel.call(null);
     }
 
     render (): any {
@@ -159,10 +178,13 @@ export default class Home extends React.Component {
                 maskClosable={false}
                 title="选择经纬度坐标"
                 visible={true}
-                onOk={() => {}}
-                onCancel={() => {}}
+                onOk={this.confirm.bind(this)}
+                onCancel={this.cancel.bind(this)}
                 >
-                    <div style={{height: state.height + "px", width: "100%"}}>
+                    <div style={{height: state.height + "px", width: "100%", position: "relative"}}>
+                        <div className="latlngselect-component-wrap-warning-wrap">
+                            <Alert message="请在绿色选区内选取位置" type="success"/>
+                        </div>
                         <div style={{height: "100%", width: "100%"}} ref="map-container"></div>
                     </div>
                 </Modal>

@@ -306,7 +306,7 @@ export default class Home extends React.Component {
                 }
 
                 {/* 地图经纬度选择组件 */}
-                <LatLngSelect province="贵州省" city="遵义市" district="道真仡佬族苗族自治县"/>
+                <LatLngSelect province="贵州省" city="遵义市" district="道真仡佬族苗族自治县" confirm={data => console.log(data)}/>
 
             </div>
         );
