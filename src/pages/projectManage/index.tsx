@@ -3,10 +3,9 @@ import "./less/index.less";
 import { Tabs } from "antd";
 import Box from "./components/box";
 import Pile from "./components/pile";
+import { initLife } from "../../utils/utils";
 
 const { TabPane } = Tabs;
-
-import { initLife } from "../../utils/utils";
 
 export default class Home extends React.Component {
 

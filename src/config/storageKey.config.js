@@ -8,5 +8,8 @@ export default {
     USER_INFO: Object,
 
     //存储token
-    TOKEN: String
+    TOKEN: String,
+
+    //城市数据, 省、市、区，层层嵌套
+    CITY_DATA: Array
 }

@@ -12,9 +12,11 @@ import { createStore, combineReducers } from "redux";
 import user from "./reducer/user";
 import layout from "./reducer/layout";
 import token from "./reducer/token";
+import city from "./reducer/city";
 
 export default createStore(combineReducers({
     user,
     layout,
-    token
+    token,
+    city
 }));

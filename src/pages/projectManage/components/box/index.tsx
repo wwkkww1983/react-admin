@@ -15,22 +15,13 @@ const { Option } = Select;
 import { input } from "../../../../utils/utils";
 import NProgress from "nprogress";
 import { getProjectList } from "../../../../api/projectManage";
+import CitySelect from "../../components/citySelect";
+import LatLngSelect from "../../../../components/latlngSelect";
 
-const addOrEditFormData = {
-    "id": "",
-    "title": "",// 项目标题
-    "description": "",// 描述
-    "cityCode": "",// 城市编码
-    "adCode": "",// 区域编码
-    "province": "",// 省-冗余字段
-    "city": "",// 市-冗余字段
-    "district": "",// 区-冗余字段
-    "address": "",// 地址
-    "longitude": "",// 经度
-    "latitude": "",// 纬度
-    "contactName": "",// 联系人
-    "contactPhone": ""// 联系电话  
-}
+const types = [
+    {name: "换电柜", value: 1},
+    {name: "充电站", value: 2},
+]
 
 export default class Home extends React.Component {
 
@@ -39,7 +30,22 @@ export default class Home extends React.Component {
             projectTitle: "",
             status: "0"
         },
-        addOrEditForm: addOrEditFormData ,
+        addOrEditForm: {
+            "type": undefined,
+            "id": "",
+            "title": "",// 项目标题
+            "description": "",// 描述
+            "cityCode": "",// 城市编码
+            "adCode": "",// 区域编码
+            "province": "",// 省-冗余字段
+            "city": "",// 市-冗余字段
+            "district": "",// 区-冗余字段
+            "address": "",// 地址
+            "longitude": "",// 经度
+            "latitude": "",// 纬度
+            "contactName": "",// 联系人
+            "contactPhone": ""// 联系电话  
+        },
         addOrEditShow: false,
         addOrEditTitle: "新增",
         columns: [
@@ -120,6 +126,7 @@ export default class Home extends React.Component {
                 )
             },
         ],
+        cityToastShow: false,
         list: [],
         limit: 10,
         page: 1,
@@ -136,20 +143,21 @@ export default class Home extends React.Component {
 
     //打开编辑窗口
     openToast (item) {
+        this.state.addOrEditShow = true;
         if (item) {
             this.state.addOrEditTitle = "编辑项目";
             //。。。
         } else {
             this.state.addOrEditTitle = "新增项目";
-            this.state.addOrEditForm = addOrEditFormData;
         }
         this.setState({});
     }
 
     //关闭编辑窗口
     offToast () {
-        this.state.addOrEditShow = false;
-        this.state.addOrEditForm = addOrEditFormData;
+        const state = this.state;
+        state.addOrEditShow = false;
+        Object.keys(state.addOrEditForm).forEach(key => state.addOrEditForm[key] = undefined);
         this.setState({});
     }
 
@@ -169,7 +177,8 @@ export default class Home extends React.Component {
         const data = {
             status: this.state.headerForm.status,
             page: this.state.page,
-            limit: this.state.limit
+            limit: this.state.limit,
+            type: 1
         }
         let res = null;
         try {
@@ -182,10 +191,21 @@ export default class Home extends React.Component {
         this.setState({list: res.list || [], total: res.total});
     }
 
+    //城市选择组件确定回掉
+    citySelect ({ province, city, district, ad_code, city_code }): void {
+        const _: any = (this as any).state.addOrEditForm;
+        _["cityCode"] = city_code; // 城市编码
+        _["adCode"]= ad_code; // 区域编码
+        _["province"] = province; // 省-冗余字段
+        _["city"] = city; // 市-冗余字段
+        _["district"] = district; // 区-冗余字段
+        this.setState({});
+    }
+
     render (): any {
         const state: any = this.state;
         return (
-            <div className="projectmanage-page-wrap">
+            <div className="box-component-wrap">
 
                 {/* 换电柜头部表单 */}
                 <Form layout="inline">
@@ -208,7 +228,7 @@ export default class Home extends React.Component {
                         }}>查找</Button>
                     </Form.Item>
                     <Form.Item>
-                        <Button icon="plus" onClick={() => {}}>新建</Button>
+                        <Button icon="plus" onClick={this.openToast.bind(this)}>新建</Button>
                     </Form.Item>
                 </Form>
                 
@@ -232,6 +252,7 @@ export default class Home extends React.Component {
                 {/* 编辑，新增项目弹窗 */}
                 <Modal
                 closable={false}
+                maskClosable={false}
                 title={state.addOrEditTitle}
                 visible={state.addOrEditShow}
                 onOk={this.save.bind(this)}
@@ -239,16 +260,53 @@ export default class Home extends React.Component {
                 >
                     <Form>
                         <Form.Item>
+                            <Select placeholder="选择项目类型" value={state.addOrEditForm.type} onChange={input.bind(this, "addOrEditForm.type")}>
+                                {types.map(item => <Option value={item.value}>{item.name}</Option>)}
+                            </Select>
+                        </Form.Item>
+                        <Form.Item>
                             <Input placeholder="项目标题" value={state.addOrEditForm.title} onChange={input.bind(this, "addOrEditForm.title")}/>
                         </Form.Item>
                         <Form.Item>
                             <Input placeholder="描述" value={state.addOrEditForm.description} onChange={input.bind(this, "addOrEditForm.description")}/>
                         </Form.Item>
-                        <Form.Item label="描述">
-                            <Input placeholder="项目描述" value={state.addOrEditForm.description} onChange={input.bind(this, "addOrEditForm.description")}/>
+                        <Form.Item>
+                            <Input placeholder="城市选择" 
+                            value={state.addOrEditForm.province && state.addOrEditForm.city && state.addOrEditForm.district && state.addOrEditForm.province + "/" + state.addOrEditForm.city + "/" + state.addOrEditForm.district} 
+                            onFocus={() => this.setState({cityToastShow: true})}/>
+                        </Form.Item>
+                        <Form.Item>
+                            <Input placeholder="详细地址"
+                            value={state.addOrEditForm.address}
+                            onInput={input.bind(this, "addOrEditForm.address")}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Input placeholder="经纬度"
+                            value={''}
+                            onFocus={() => {}}
+                            />
                         </Form.Item>
                     </Form>
                 </Modal>
+
+                {/* 编辑，新增项目弹窗 */}
+                {state.cityToastShow && 
+                    <CitySelect 
+                    province="河南省" 
+                    city="洛阳市" 
+                    district="新安县" 
+                    confirm={data => {
+                        this.setState({cityToastShow: false});
+                        this.citySelect(data);
+                    }} 
+                    cancel={() => {
+                        this.setState({cityToastShow: false});
+                    }}/>
+                }
+
+                {/* 地图经纬度选择组件 */}
+                <LatLngSelect/>
 
             </div>
         );
