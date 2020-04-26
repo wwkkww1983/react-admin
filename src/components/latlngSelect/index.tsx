@@ -4,15 +4,25 @@ import { Alert, Modal } from "antd";
 import store from "../../store";
 
 interface Props {
-    lat?: string,
-    lng?: string
+    lat?: string|number,
+    lng?: string|number,
+    province: string,
+    city: string,
+    district: string
 }
 
 export default class Home extends React.Component {
 
+    map = null;
+
+    pointerMarker = null;
+
     static defaultProps: Props = {
         lat: "",
-        lng: ""
+        lng: "",
+        province: "",
+        city: "",
+        district: ""
     }
 
     constructor (props) {
@@ -43,14 +53,16 @@ export default class Home extends React.Component {
     async init () {
         this.initUseStore();
         this.initListenWindowWidth();
-        this.state.map = await this.initMap();
-        // this.drawAllPoint();
+        this.map = await this.initMap();
+        this.drawArea((this as any).props.district || (this as any).props.city || (this as any).props.province);
+        this.drawPointer();
     }
 
     initUseStore () {
         const f = () => {
             this.setState({height: store.getState().layout.contentHieght});
         }
+        f();
         store.subscribe(f);
     }
     
@@ -60,6 +72,58 @@ export default class Home extends React.Component {
         }
         f();
         window.addEventListener("resize", f);
+    }
+
+    //画出行政区范围
+    drawArea (areaName = "") {
+        if (!areaName) return;
+        const map = this.map;
+        // 创建行政区查询对象
+        const district = new AMap.DistrictSearch({
+            // 返回行政区边界坐标等具体信息
+            extensions: 'all',
+            // 设置查询行政区级别为 区 
+            level: 'district'
+        });
+        district.search(
+            areaName, 
+            (status, result) => {
+                // 获取朝阳区的边界信息
+                var bounds = result.districtList[0].boundaries;
+                var polygons = [];
+                if (bounds) {
+                    for (var i = 0, l = bounds.length; i < l; i++) {
+                        //生成行政区划polygon
+                        var polygon = new AMap.Polygon({
+                            map: map,
+                            strokeWeight: 2,
+                            path: bounds[i],
+                            fillOpacity: 0.1,
+                            fillColor: '#CCF3FF',
+                            // strokeColor: '#CC66CC'
+                            strokeColor: '#1acebc' //腾悦绿
+                        });
+                        polygons.push(polygon)
+                    }
+                    // 地图自适应
+                    console.log(map);
+                    map.setFitView();
+                }
+            }
+        );
+    }
+
+    //绘制定位点，并显示经纬度
+    drawPointer () {
+        const map: any = this.map;
+        if (this.pointerMarker) map.remove(this.pointerMarker); 
+        const content = '<img style="height: 30px" src="./public/img/我的位置.png"/>'; //暂定30px宽高
+        const marker = this.pointerMarker = new AMap.Marker({
+            content: content, 
+            position:  [116.397428, 39.90923],
+            // offset: new AMap.Pixel(-17, -42) 
+        });
+        map.add(marker);
     }
 
     /**
@@ -75,40 +139,13 @@ export default class Home extends React.Component {
                     mapStyle: 'amap://styles/whitesmoke', //设置地图的显示样式
                 });
                 map.on("complete", () => {
-                    resolve(map);
+                    //加载行政区处理以及显示插件
+                    // map.plugin(new AMap.DistrictSearch());
+                    AMap.plugin(["AMap.DistrictSearch"], function(){//异步同时加载多个插件
+                        resolve(map); 
+                    });
                 });
             });
-        });
-    }
-
-    //构建点并返回
-    buildPoint (item: any) {
-        const html = `
-            <img class="point-icon" src="${(this as any).props.pointIconUrl}"/>
-        `;
-        const marker = new AMap.Marker({
-            content: html,  // 自定义点标记覆盖物内容
-            position:  [item.lng, item.lat], // 基点位置
-            offset: new AMap.Pixel(-40, 0) // 相对于基点的偏移位置
-        });
-        return marker;
-    }
-
-    //绘制所有点
-    drawAllPoint () {
-        this.removeAllPoint();
-        const marks: any[] = (this as any).state.marks = (this as any).state.latlngs.filter((item: any) => item.lat && item.lng).map((item: any): any => this.buildPoint(item));
-        marks.forEach(mark => (this as any).state.map.add(mark));
-        //没有位置的点有几个，并显示警告语
-        if (marks.length !== (this as any).state.latlngs.length) {
-            this.setState({warningText: `共${(this as any).state.latlngs.length}个点位，有${(this as any).state.latlngs.length - marks.length}个点没有位置信息，无法在地图上标识；建议前往表格视图`});
-        }
-    }
-    
-    //删除所有点
-    removeAllPoint () {
-        (this as any).state.marks.forEach(mark => {
-            (this as any).state.map.remove(mark);
         });
     }
 
