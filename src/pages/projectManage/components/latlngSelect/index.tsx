@@ -1,7 +1,7 @@
 import React from "react";
 import "./index.less";
 import { Alert, Modal, message } from "antd";
-import store from "../../store";
+import store from "../../../../store";
 
 interface Props {
     lat?: string|number,
@@ -37,7 +37,6 @@ export default class Home extends React.Component {
         lat: "",
         lng: "",
         height: 0,
-        width: 0
     }
 
     componentDidMount () {
@@ -46,7 +45,6 @@ export default class Home extends React.Component {
 
     async init () {
         this.initUseStore();
-        this.initListenWindowWidth();
         this.map = await this.initMap();
         this.drawArea((this as any).props.district || (this as any).props.city || (this as any).props.province);
         this.drawPointer((this as any).props.lat, (this as any).props.lng);
@@ -58,14 +56,6 @@ export default class Home extends React.Component {
         }
         f();
         store.subscribe(f);
-    }
-    
-    initListenWindowWidth () {
-        const f = () => {
-            this.setState({width: innerWidth - 500});
-        }
-        f();
-        window.addEventListener("resize", f);
     }
 
     //监听行政区域点击，获取经纬度，并画点
@@ -173,7 +163,7 @@ export default class Home extends React.Component {
         return (
             <div className="latlngselect-component-wrap">
                 <Modal
-                width={state.width}
+                width={"80%"}
                 closable={false}
                 maskClosable={false}
                 title="选择经纬度坐标"

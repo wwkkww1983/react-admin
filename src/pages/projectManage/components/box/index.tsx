@@ -25,9 +25,8 @@ import {
     disableProject
 } from "../../../../api/projectManage";
 import CitySelect from "../../components/citySelect";
-import LatLngSelect from "../../../../components/latlngSelect";
-import Item from "antd/lib/list/Item";
-import { enableDevice } from "../../../../api/deviceManager";
+import LatLngSelect from "../latlngSelect";
+import OPSOfProject from "../OPSOfProject";
 
 const types = [
     {name: "换电柜", value: 1},
@@ -161,22 +160,6 @@ export default class Home extends React.Component {
                         </Dropdown>
                     );
                 }
-                // render: item => (
-                //     <Form layout="inline">
-                //         <Form.Item>
-                //             <Button icon="setting">运维人员设置</Button>
-                //         </Form.Item>
-                //         <Form.Item>
-                //             <Button icon="setting">价格设置</Button>
-                //         </Form.Item>
-                //         <Form.Item>
-                //             <Button type="danger" icon="delete">删除</Button>
-                //         </Form.Item>
-                //         <Form.Item>
-                //             <Button>审核</Button>
-                //         </Form.Item>
-                //     </Form>
-                // )
             },
         ],
         cityToastShow: false,
@@ -464,19 +447,6 @@ export default class Home extends React.Component {
                     </Form>
                 </Modal>
 
-                {/* 弹窗 */}
-                {/* <Modal
-                width={state.width}
-                closable={false}
-                maskClosable={false}
-                title="选择经纬度坐标"
-                visible={true}
-                onOk={this.confirm.bind(this)}
-                onCancel={this.cancel.bind(this)}
-                >
-                    123
-                </Modal> */}
-
                 {/* 编辑，新增项目弹窗 */}
                 {state.cityToastShow && 
                     <CitySelect 
@@ -503,6 +473,9 @@ export default class Home extends React.Component {
                 confirm={this.latlngConfirm.bind(this)}
                 cancel={() => this.setState({positionToastShow: false})}
                 />}
+
+                {/* 运维人员管理弹窗 */}
+                {/* <OPSOfProject id="123"/> */}
 
             </div>
         );
