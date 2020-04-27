@@ -43,3 +43,25 @@ export function deleteProject (data: {id: string|number}) {
         data
     });
 }
+
+/**
+ * 启用项目 
+ */
+export function enableProject (data: {id: string|number}) {
+    return request({
+        url: "/project/admin/enable",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 禁用项目 
+ */
+export function disableProject (data: {id: string|number}) {
+    return request({
+        url: "/project/admin/disable",
+        method: "POST",
+        data
+    });
+}

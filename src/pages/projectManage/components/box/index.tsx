@@ -16,10 +16,18 @@ import {
 const { Option } = Select;
 import { input, timeToDateStr } from "../../../../utils/utils";
 import NProgress from "nprogress";
-import { getProjectList, createProject, updateProject, deleteProject as delProject } from "../../../../api/projectManage";
+import { 
+    getProjectList,
+    createProject, 
+    updateProject, 
+    deleteProject as delProject,
+    enableProject,
+    disableProject
+} from "../../../../api/projectManage";
 import CitySelect from "../../components/citySelect";
 import LatLngSelect from "../../../../components/latlngSelect";
 import Item from "antd/lib/list/Item";
+import { enableDevice } from "../../../../api/deviceManager";
 
 const types = [
     {name: "换电柜", value: 1},
@@ -113,8 +121,14 @@ export default class Home extends React.Component {
             // },
             {
                 title: "状态",
-                render: item => (
-                    <Switch checkedChildren="启用" unCheckedChildren="禁用" defaultChecked={false} ></Switch>
+                render: (item, record, index) => (
+                    <Switch 
+                    checkedChildren="启用" 
+                    unCheckedChildren="禁用" 
+                    checked={Number(item.status) !== 4} 
+                    loading={this.state.switchLoadings[index]}
+                    onChange={this.enableOrDisable.bind(this, index)}
+                    ></Switch>
                 )
             },
             {
@@ -167,6 +181,7 @@ export default class Home extends React.Component {
         ],
         cityToastShow: false,
         positionToastShow: false,
+        switchLoadings: [],
         list: [],
         limit: 10,
         page: 1,
@@ -179,6 +194,23 @@ export default class Home extends React.Component {
 
     init () {
         this.loadList();
+    }
+
+    //启用禁用项目switch切换
+    async enableOrDisable (index: number|string) {
+        const item: any = (this as any).state.list[index];
+        setSwitchLoading.call(this, index, true);
+        if (Number(item.status) === 4) { //status === 代表当前状态处于禁用，其他则为启用
+            await enableProject({id: item.id});
+        } else {
+            await disableProject({id: item.id});
+        }
+        setSwitchLoading.call(this, index, false);
+        this.loadList();
+        function setSwitchLoading (index: number, is = false) {
+            this.state.switchLoadings[index] = is;
+            this.setState({});
+        }
     }
 
     //删除项目
@@ -303,7 +335,9 @@ export default class Home extends React.Component {
             return;
         }
         NProgress.done();
-        this.setState({list: res.list || [], total: res.total});
+        const switchLoadings: boolean[] = [];
+        res.list.forEach(item => switchLoadings.push(false));
+        this.setState({list: res.list || [], total: res.total, switchLoadings});
     }
 
     //城市选择组件确定回掉
@@ -342,6 +376,7 @@ export default class Home extends React.Component {
                             <Option value="1">等待审核</Option>
                             <Option value="2">正常</Option>
                             <Option value="3">审核失败</Option>
+                            <Option value="4">已禁用</Option>
                         </Select>
                     </Form.Item>
                     <Form.Item>
