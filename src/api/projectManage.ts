@@ -108,3 +108,48 @@ export function delProjectOPS (data: {
         data
     });
 }
+
+/**
+ *  获取项目计费规则
+ */
+export function getSaleSetting (data: {
+    "projectId": string|number
+}) {
+    return request({
+        url: "/project/admin/getBillingRule",
+        method: "GET",
+        params: data
+    });
+}
+
+/**
+ * 保存项目计费规则
+ */
+export function saveSaleSetting (data: {
+    "projectId": number|string,
+    "everyTimePrice": number|string, // 按次计费价格
+    "everyTimeDepositCheck": boolean, // 按次计费押金检测开关
+    "hourlyPrice": number|string, // 按时计费每小时费用
+    "hourlyPriceMaxDaily": number|string, // 按时计费每小时费用，每天封顶价格
+    "hourlyDepositCheck": boolean, // 按时计费押金检测开关
+    "monthlyPrice": number|string, // 包月计费，每月费用
+    "monthlyPriceMaxTimes": number|string, // 包月计费，每月最多次数
+    "monthlyDepositCheck": boolean // 包月计费押金检测开关
+}) {
+    return request({
+        url: "/project/admin/saveBillingRule",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 项目审核 
+ */
+export function aduit (data: {id: string|number, pass: boolean}) {
+    return request({
+        url: "/project/admin/review",
+        method: "POST",
+        data
+    });
+}

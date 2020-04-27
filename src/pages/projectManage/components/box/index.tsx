@@ -22,11 +22,13 @@ import {
     updateProject, 
     deleteProject as delProject,
     enableProject,
-    disableProject
+    disableProject,
+    aduit
 } from "../../../../api/projectManage";
 import CitySelect from "../../components/citySelect";
 import LatLngSelect from "../latlngSelect";
 import OPSOfProject from "../OPSOfProject";
+import SaleSetting from "../saleSetting";
 
 const types = [
     {name: "换电柜", value: 1},
@@ -142,10 +144,10 @@ export default class Home extends React.Component {
                                 <span onClick={this.openOPSOfProject.bind(this, item)}>运维人员设置</span>
                             </Menu.Item>
                             <Menu.Item>
-                                价格设置
+                                <span onClick={this.openSaleSetting.bind(this, item)}>价格设置</span>
                             </Menu.Item>
-                            {Number(item.status) === 1 && <Menu.Item>
-                                审核
+                            {Number(item.status) === 1 && <Menu.Item> {/*当前项目处于待审核状态才可以审核，才显示审核按钮*/}
+                                <span onClick={this.audit.bind(this, item)}>审核</span>
                             </Menu.Item>}
                             <Menu.Item>
                                 <span onClick={this.deleleProject.bind(this, item)}>删除</span>
@@ -166,7 +168,13 @@ export default class Home extends React.Component {
         positionToastShow: false,
         OPSOfProjectState: {
             show: false,
+            title: "",
             id: ""
+        },
+        saleSettingState: {
+            show: false,
+            id: "",
+            title: ""
         },
         switchLoadings: [],
         list: [],
@@ -181,6 +189,33 @@ export default class Home extends React.Component {
 
     init () {
         this.loadList();
+    }
+
+    //审核按钮回调
+    audit ({title, id}) {
+        Modal.confirm({
+            title: `项目审核`,
+            content: `"${title}" 是否给予通过`,
+            okText: '通过',
+            cancelText: '不通过',
+            onOk: () => {
+                aduitAction.call(this, true);  
+            },
+            onCancel: () => {
+                aduitAction.call(this, false);
+            }
+        });
+        async function aduitAction (pass: boolean) {
+            NProgress.start();
+            try {
+                await aduit({id, pass});
+            } catch(err) {
+                NProgress.done();
+                return;
+            }
+            NProgress.done();
+            this.loadList();
+        }
     }
 
     //启用禁用项目switch切换
@@ -225,28 +260,6 @@ export default class Home extends React.Component {
             message.success(`已删除 "${item.title}"`);
             this.loadList();
         }
-    }
-
-    //打开编辑窗口
-    openToast (item: any) {
-        this.state.addOrEditShow = true;
-        if (item.id) {
-            this.state.addOrEditTitle = "编辑项目";
-            const _: any = (this as any).state.addOrEditForm;
-            const keys = Object.keys(this.state.addOrEditForm);
-            keys.forEach(key => this.state.addOrEditForm[key] = item[key] || undefined);
-        } else {
-            this.state.addOrEditTitle = "新增项目";
-        }
-        this.setState({});
-    }
-
-    //关闭编辑窗口
-    offToast () {
-        const state = this.state;
-        state.addOrEditShow = false;
-        Object.keys(state.addOrEditForm).forEach(key => state.addOrEditForm[key] = undefined);
-        this.setState({});
     }
 
     //保存新增、编辑
@@ -347,6 +360,28 @@ export default class Home extends React.Component {
         this.setState({});
     }
 
+    //打开编辑窗口
+    openToast (item: any) {
+        this.state.addOrEditShow = true;
+        if (item.id) {
+            this.state.addOrEditTitle = "编辑项目";
+            const _: any = (this as any).state.addOrEditForm;
+            const keys = Object.keys(this.state.addOrEditForm);
+            keys.forEach(key => this.state.addOrEditForm[key] = item[key] || undefined);
+        } else {
+            this.state.addOrEditTitle = "新增项目";
+        }
+        this.setState({});
+    }
+
+    //关闭编辑窗口
+    offToast () {
+        const state = this.state;
+        state.addOrEditShow = false;
+        Object.keys(state.addOrEditForm).forEach(key => state.addOrEditForm[key] = undefined);
+        this.setState({});
+    }
+
     //打开项目运维人员管理弹窗
     openOPSOfProject ({id, title}) {
         const state: any = (this as any).state;
@@ -362,6 +397,24 @@ export default class Home extends React.Component {
         state.OPSOfProjectState.id = "";
         state.OPSOfProjectState.title = "";
         state.OPSOfProjectState.show = false;
+        this.setState({});
+    }
+
+    //打开价格设置
+    openSaleSetting ({id, title}) {
+        const _: any = (this as any).state.saleSettingState;
+        _["id"] = id;
+        _["title"] = title;
+        _["show"] = true;
+        this.setState({});
+    }
+
+    //关闭价格设置
+    offSaleSetting () {
+        const _: any = (this as any).state.saleSettingState;
+        _["id"] = "";
+        _["title"] = "";
+        _["show"] = false;
         this.setState({});
     }
 
@@ -498,6 +551,17 @@ export default class Home extends React.Component {
 
                 {/* 运维人员管理弹窗 */}
                 {state.OPSOfProjectState.show && <OPSOfProject id={state.OPSOfProjectState.id} title={state.OPSOfProjectState.title} close={this.offOPSOfProject.bind(this)}/>}
+
+                {/* 价格设置弹窗 */}
+                {
+                state.saleSettingState.show &&
+                <SaleSetting 
+                title={state.saleSettingState.title} 
+                id={state.saleSettingState.id} 
+                confirm={this.offSaleSetting.bind(this)}
+                cancel={this.offSaleSetting.bind(this)}
+                />
+                }
 
             </div>
         );
