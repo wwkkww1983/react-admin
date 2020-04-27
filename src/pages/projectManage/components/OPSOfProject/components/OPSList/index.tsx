@@ -60,7 +60,7 @@ function buildColumns () {
             render: (item, rm, index) => (
                 <Form layout="inline">
                     <Form.Item>
-                        <Button icon="check" onClick={this.confirm.bind(this, item)}>选择</Button>
+                        <Button icon="check" onClick={this.confirm.bind(this, item)} disabled={(this as any).props.disabledIds.includes(item.memberId)}>选择</Button>
                     </Form.Item>
                 </Form>
             )
@@ -71,6 +71,7 @@ function buildColumns () {
 export default class Home extends React.Component {
 
     props = {
+        disabledIds: [],
         confirm: () => {},
         close: () => {}
     }
