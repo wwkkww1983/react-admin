@@ -49,7 +49,7 @@ export default class Home extends React.Component {
         this.initListenWindowWidth();
         this.map = await this.initMap();
         this.drawArea((this as any).props.district || (this as any).props.city || (this as any).props.province);
-        this.drawPointer();
+        this.drawPointer((this as any).props.lat, (this as any).props.lng);
     }
 
     initUseStore () {

@@ -9,14 +9,17 @@ import {
     Modal,
     Switch,
     Table,
-    Select
+    Select,
+    Menu,
+    Dropdown
 } from "antd";
 const { Option } = Select;
-import { input } from "../../../../utils/utils";
+import { input, timeToDateStr } from "../../../../utils/utils";
 import NProgress from "nprogress";
-import { getProjectList } from "../../../../api/projectManage";
+import { getProjectList, createProject, updateProject, deleteProject as delProject } from "../../../../api/projectManage";
 import CitySelect from "../../components/citySelect";
 import LatLngSelect from "../../../../components/latlngSelect";
+import Item from "antd/lib/list/Item";
 
 const types = [
     {name: "换电柜", value: 1},
@@ -57,76 +60,110 @@ export default class Home extends React.Component {
             },
             {
                 title: "项目名",
-                dataIndex: "id",
-                key: "id",
+                dataIndex: "title",
+                key: "title",
             },
             {
                 title: "地址",
-                dataIndex: "id",
-                key: "id",
+                render: item => {
+                    return (
+                        <div>
+                            <span>{item.province + ", " + item.city + ", " + item.district}</span><br/>
+                            {item.address && <span>{item.address}</span>}
+                        </div>
+                    );
+                }
             },
             {
                 title: "联系人",
-                dataIndex: "id",
-                key: "id",
+                render: item => item.contactName + ":" + item.contactPhone
             },
-            {
-                title: "创建人",
-                dataIndex: "id",
-                key: "id",
-            },
+            // {
+            //     title: "创建人",
+            //     dataIndex: "id",
+            //     key: "id",
+            // },
             {
                 title: "备注",
-                dataIndex: "id",
-                key: "id",
+                dataIndex: "description",
+                key: "description",
             },
             {
                 title: "GPS",
-                dataIndex: "id",
-                key: "id",
+                render: item => (
+                    <div>
+                        <span>经度：{item.longitude}</span><br/>
+                        <span>纬度：{item.latitude}</span>
+                    </div>
+                )
             },
-            {
-                title: "维护人",
-                dataIndex: "id",
-                key: "id",
-            },
+            // {
+            //     title: "维护人",
+            //     dataIndex: "id",
+            //     key: "id",
+            // },
             {
                 title: "创建时间",
-                dataIndex: "id",
-                key: "id",
+                render: item => timeToDateStr(item.createTime * 1000)
             },
-            {
-                title: "最后修改时间",
-                dataIndex: "id",
-                key: "id",
-            },
+            // {
+            //     title: "最后修改时间",
+            //     dataIndex: "id",
+            //     key: "id",
+            // },
             {
                 title: "状态",
                 render: item => (
-                    <Switch></Switch>
+                    <Switch checkedChildren="启用" unCheckedChildren="禁用" defaultChecked={false} ></Switch>
                 )
             },
             {
                 title: "操作",
-                render: item => (
-                    <Form layout="inline">
-                        <Form.Item>
-                            <Button icon="setting">运维人员设置</Button>
-                        </Form.Item>
-                        <Form.Item>
-                            <Button icon="setting">价格设置</Button>
-                        </Form.Item>
-                        <Form.Item>
-                            <Button type="danger" icon="delete">删除</Button>
-                        </Form.Item>
-                        <Form.Item>
-                            <Button>审核</Button>
-                        </Form.Item>
-                    </Form>
-                )
+                render: item => {
+                    const menu: any = (
+                        <Menu>
+                            <Menu.Item>
+                                运维人员设置
+                            </Menu.Item>
+                            <Menu.Item>
+                                价格设置
+                            </Menu.Item>
+                            {Number(item.status) === 1 && <Menu.Item>
+                                审核
+                            </Menu.Item>}
+                            <Menu.Item>
+                                <span onClick={this.deleleProject.bind(this, item)}>删除</span>
+                            </Menu.Item>
+                        </Menu>
+                    );
+                    return (
+                        <Dropdown overlay={menu}>
+                            <a className="ant-dropdown-link">
+                                设置 <Icon type="down" />
+                            </a>
+                        </Dropdown>
+                    );
+                }
+                // render: item => (
+                //     <Form layout="inline">
+                //         <Form.Item>
+                //             <Button icon="setting">运维人员设置</Button>
+                //         </Form.Item>
+                //         <Form.Item>
+                //             <Button icon="setting">价格设置</Button>
+                //         </Form.Item>
+                //         <Form.Item>
+                //             <Button type="danger" icon="delete">删除</Button>
+                //         </Form.Item>
+                //         <Form.Item>
+                //             <Button>审核</Button>
+                //         </Form.Item>
+                //     </Form>
+                // )
             },
         ],
         cityToastShow: false,
+        positionToastShow: false,
         list: [],
         limit: 10,
         page: 1,
@@ -139,6 +176,33 @@ export default class Home extends React.Component {
 
     init () {
         this.loadList();
+    }
+
+    //删除项目
+    deleleProject (item: any) {
+        if (!item) return;
+        Modal.confirm({
+            title: `确定删除 "${item.title}" ?`,
+            // content: 'Some descriptions',
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk: () => {
+                deleteProject.call(this);    
+            }
+        });
+        async function deleteProject () {
+            NProgress.start();
+            try {
+                await delProject({id: item.id});
+            } catch(err) {
+                NProgress.done();
+                return;
+            }
+            NProgress.done();
+            message.success(`已删除 "${item.title}"`);
+            this.loadList();
+        }
     }
 
     //打开编辑窗口
@@ -163,11 +227,57 @@ export default class Home extends React.Component {
 
     //保存新增、编辑
     async save () {
-        if (this.state.addOrEditForm.id) {
-
+        const _: any = (this as any).state.addOrEditForm;
+        if (!checkParams.call(this, _)) return;
+        if (_.id) {
+            edit.call(this, _);    
         }
         else {
-
+            create.call(this, _);
+        }
+        async function create (data: any) {
+            NProgress.start();
+            try {
+                await createProject(data);
+            } catch(err) {
+                NProgress.done();
+                return;
+            }
+            NProgress.done();
+            message.success("已创建");
+            this.offToast();
+            this.loadList();
+        }
+        async function edit (data: any) {
+            NProgress.start();
+            try {
+                await updateProject(data);
+            } catch(err) {
+                NProgress.done();
+                return;
+            }
+            NProgress.done();
+            message.success("已更新");
+            this.offToast();
+            this.loadList();
+        }
+        function checkParams (data: any) {
+            let msg = "";
+            if (!data.type) msg = "请选择项目类型";
+            else if (!data.title) msg = "请完成项目标题";
+            else if (!data.description) msg = "请完成项目描述";
+            else if (!data.province) msg = "请选择城市";
+            else if (!data.city) msg = "请选择城市";
+            else if (!data.district) msg = "请选择城市";
+            else if (!data.address) msg = "地址未填写";
+            else if (!data.longitude || !data.latitude) msg = "经纬度未选择";
+            else if (!data.contactName) msg = "请填写联系人";
+            else if (!data.contactPhone) msg = "请填写联系人电话";
+            if (msg) {
+                message.warning(msg);
+                return false;
+            }
+            return true;
         }
     }
 
@@ -199,6 +309,15 @@ export default class Home extends React.Component {
         _["province"] = province; // 省-冗余字段
         _["city"] = city; // 市-冗余字段
         _["district"] = district; // 区-冗余字段
+        this.setState({});
+    }
+
+    //经纬度选择回掉
+    latlngConfirm ({lat, lng}) {
+        const state: any = (this as any).state
+        state.positionToastShow = false;
+        state.addOrEditForm.latitude = lat;
+        state.addOrEditForm.longitude = lng;
         this.setState({});
     }
 
@@ -282,20 +401,48 @@ export default class Home extends React.Component {
                             />
                         </Form.Item>
                         <Form.Item>
-                            <Input placeholder="经纬度"
-                            value={''}
-                            onFocus={() => {}}
+                            <Input placeholder="经纬度选择"
+                            disabled={!state.addOrEditForm.province || !state.addOrEditForm.city || !state.addOrEditForm.district}
+                            value={state.addOrEditForm.longitude && state.addOrEditForm.latitude && "lat:" + state.addOrEditForm.latitude + " / lng:" + state.addOrEditForm.longitude}
+                            onFocus={() => {
+                                this.setState({positionToastShow: true});
+                            }}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Input placeholder="联系人"
+                            value={state.addOrEditForm.contactName}
+                            onInput={input.bind(this, "addOrEditForm.contactName")}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Input placeholder="联系人电话"
+                            value={state.addOrEditForm.contactPhone}
+                            onInput={input.bind(this, "addOrEditForm.contactPhone")}
                             />
                         </Form.Item>
                     </Form>
                 </Modal>
 
+                {/* 弹窗 */}
+                {/* <Modal
+                width={state.width}
+                closable={false}
+                maskClosable={false}
+                title="选择经纬度坐标"
+                visible={true}
+                onOk={this.confirm.bind(this)}
+                onCancel={this.cancel.bind(this)}
+                >
+                    123
+                </Modal> */}
+
                 {/* 编辑，新增项目弹窗 */}
                 {state.cityToastShow && 
                     <CitySelect 
-                    province="河南省" 
-                    city="洛阳市" 
-                    district="新安县" 
+                    province={state.addOrEditForm.province} 
+                    city={state.addOrEditForm.city} 
+                    district={state.addOrEditForm.district}
                     confirm={data => {
                         this.setState({cityToastShow: false});
                         this.citySelect(data);
@@ -306,7 +453,16 @@ export default class Home extends React.Component {
                 }
 
                 {/* 地图经纬度选择组件 */}
-                <LatLngSelect province="贵州省" city="遵义市" district="道真仡佬族苗族自治县" confirm={data => console.log(data)}/>
+                {state.positionToastShow && 
+                <LatLngSelect 
+                province={state.addOrEditForm.province} 
+                city={state.addOrEditForm.city} 
+                district={state.addOrEditForm.district} 
+                lat={state.addOrEditForm.latitude}
+                lng={state.addOrEditForm.longitude}
+                confirm={this.latlngConfirm.bind(this)}
+                cancel={() => this.setState({positionToastShow: false})}
+                />}
 
             </div>
         );
