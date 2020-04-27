@@ -123,6 +123,9 @@ export default class Home extends React.Component {
                     const menu: any = (
                         <Menu>
                             <Menu.Item>
+                                <span onClick={this.openToast.bind(this, item)}>编辑</span>
+                            </Menu.Item>
+                            <Menu.Item>
                                 运维人员设置
                             </Menu.Item>
                             <Menu.Item>
@@ -206,11 +209,13 @@ export default class Home extends React.Component {
     }
 
     //打开编辑窗口
-    openToast (item) {
+    openToast (item: any) {
         this.state.addOrEditShow = true;
         if (item) {
             this.state.addOrEditTitle = "编辑项目";
-            //。。。
+            const _: any = (this as any).state.addOrEditForm;
+            const keys = Object.keys(this.state.addOrEditForm);
+            keys.forEach(key => this.state.addOrEditForm[key] = item[key] || undefined);
         } else {
             this.state.addOrEditTitle = "新增项目";
         }
