@@ -211,7 +211,7 @@ export default class Home extends React.Component {
     //打开编辑窗口
     openToast (item: any) {
         this.state.addOrEditShow = true;
-        if (item) {
+        if (item.id) {
             this.state.addOrEditTitle = "编辑项目";
             const _: any = (this as any).state.addOrEditForm;
             const keys = Object.keys(this.state.addOrEditForm);
