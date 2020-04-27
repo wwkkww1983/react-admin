@@ -139,7 +139,7 @@ export default class Home extends React.Component {
                                 <span onClick={this.openToast.bind(this, item)}>编辑</span>
                             </Menu.Item>
                             <Menu.Item>
-                                运维人员设置
+                                <span onClick={this.openOPSOfProject.bind(this, item.id)}>运维人员设置</span>
                             </Menu.Item>
                             <Menu.Item>
                                 价格设置
@@ -164,6 +164,10 @@ export default class Home extends React.Component {
         ],
         cityToastShow: false,
         positionToastShow: false,
+        OPSOfProjectState: {
+            show: false,
+            id: ""
+        },
         switchLoadings: [],
         list: [],
         limit: 10,
@@ -343,6 +347,22 @@ export default class Home extends React.Component {
         this.setState({});
     }
 
+    //打开项目运维人员管理弹窗
+    openOPSOfProject (id: number|string) {
+        const state: any = (this as any).state;
+        state.OPSOfProjectState.id = id;
+        state.OPSOfProjectState.show = true;
+        this.setState({});
+    }
+
+    //关闭项目运维人员管理弹窗
+    offOPSOfProject () {
+        const state: any = (this as any).state;
+        state.OPSOfProjectState.id = "";
+        state.OPSOfProjectState.show = false;
+        this.setState({});
+    }
+
     render (): any {
         const state: any = this.state;
         return (
@@ -475,7 +495,7 @@ export default class Home extends React.Component {
                 />}
 
                 {/* 运维人员管理弹窗 */}
-                {/* <OPSOfProject id="123"/> */}
+                {state.OPSOfProjectState.show && <OPSOfProject id={state.OPSOfProjectState.id} close={this.offOPSOfProject.bind(this)}/>}
 
             </div>
         );

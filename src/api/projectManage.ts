@@ -65,3 +65,46 @@ export function disableProject (data: {id: string|number}) {
         data
     });
 }
+
+/**
+ * 获取项目关联运维人员 
+ */
+export function getProjectOPS (data: {projectId: string|number}) {
+    return request({
+        url: "/project/admin/selectStaffRelation",
+        method: "POST",
+        data
+    }); 
+}
+
+/**
+ * 保存、新增项目关联运维人员 
+ */
+export function saveProjectOPS (data: {
+    "projectId": number|string,
+    "memberId": number|string,
+    "authDevice": boolean, // 设备权限
+    "authOperation": boolean, // 运营权限
+    "authStaff": boolean, // 人员权限
+    "authData": boolean // 数据权限
+}) {
+    return request({
+        url: "/project/admin/saveStaffRelation",
+        method: "POST",
+        data
+    }); 
+}
+
+/**
+ * 移除项目关联运维人员 
+ */
+export function delProjectOPS (data: {
+    "projectId": string|number,
+    "memberId": string|number
+}) {
+    return request({
+        url: "/project/admin/removeStaffRelation",
+        method: "POST",
+        data
+    });
+}
