@@ -451,6 +451,7 @@ export default class Home extends React.Component {
                 
                 {/* 换电柜表格 */}
                 <Table
+                rowKey="id"
                 style={{marginTop: "16px"}}
                 columns={state.columns}
                 dataSource={state.list}
