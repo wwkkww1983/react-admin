@@ -1,7 +1,6 @@
 import React from "react";
 import "./index.less";
-import { Alert, message, Form, Select, Modal, Input, Button, Table, Switch, List } from "antd";
-import store from "../../../../store";
+import { message, Form, Select, Modal,Button, Table, Switch } from "antd";
 import NProgress from "nprogress";
 import { getProjectOPS, saveProjectOPS, delProjectOPS } from "../../../../api/projectManage";
 import OPSList from "./components/OPSList";

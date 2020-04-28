@@ -43,7 +43,7 @@ export default class Home extends React.Component {
             status: "0"
         },
         addOrEditForm: {
-            "type": undefined,
+            "type": 1, 
             "id": "",
             "title": "",// 项目标题
             "description": "",// 描述
@@ -477,9 +477,10 @@ export default class Home extends React.Component {
                 >
                     <Form>
                         <Form.Item>
-                            <Select placeholder="选择项目类型" value={state.addOrEditForm.type} onChange={input.bind(this, "addOrEditForm.type")}>
+                            {/* 暂时注释 */}
+                            {/* <Select placeholder="选择项目类型" value={state.addOrEditForm.type} onChange={input.bind(this, "addOrEditForm.type")}>
                                 {types.map(item => <Option value={item.value}>{item.name}</Option>)}
-                            </Select>
+                            </Select> */}
                         </Form.Item>
                         <Form.Item>
                             <Input placeholder="项目标题" value={state.addOrEditForm.title} onChange={input.bind(this, "addOrEditForm.title")}/>
@@ -522,7 +523,7 @@ export default class Home extends React.Component {
                     </Form>
                 </Modal>
 
-                {/* 编辑，新增项目弹窗 */}
+                {/* 城市选择弹窗 */}
                 {state.cityToastShow && 
                     <CitySelect 
                     province={state.addOrEditForm.province} 
@@ -537,7 +538,7 @@ export default class Home extends React.Component {
                     }}/>
                 }
 
-                {/* 地图经纬度选择组件 */}
+                {/* 地图经纬度选择 */}
                 {state.positionToastShow && 
                 <LatLngSelect 
                 province={state.addOrEditForm.province} 
