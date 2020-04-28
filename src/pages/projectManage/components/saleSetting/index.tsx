@@ -57,11 +57,13 @@ export default class Home extends React.Component {
         try {
             res = await getSaleSetting({projectId: (this as any).props.id});
         } catch(err) {
+            message.error(err);
             NProgress.done();
             return;
         }
         NProgress.done();
-        this.setState({form: res.data});
+        if (Number(res.code) === 12002) return;
+        if (Number(res.code) === 0) this.setState({form: res.data});
     }
 
     async saveSetting () {

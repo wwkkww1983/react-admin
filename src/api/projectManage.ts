@@ -1,4 +1,5 @@
 import request from '../utils/request';
+import request2 from "../utils/request2";
 
 /**
  * 加载项目列表
@@ -111,11 +112,12 @@ export function delProjectOPS (data: {
 
 /**
  *  获取项目计费规则
+ *  使用了request2封装，业务逻辑错误得在调用处处理。
  */
 export function getSaleSetting (data: {
     "projectId": string|number
 }) {
-    return request({
+    return request2({
         url: "/project/admin/getBillingRule",
         method: "GET",
         params: data
