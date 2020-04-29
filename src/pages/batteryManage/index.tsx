@@ -7,6 +7,7 @@ import { getDeviceList, enableDevice, disableDevice } from "../../api/deviceMana
 import { input, initLife } from "../../utils/utils";
 import store from "../../store";
 import DeviceInMap from "../../components/deviceInMap";
+import BatteryPosition from "./components/batteryPosition";
 
 export default class Home extends React.Component {
 
@@ -34,7 +35,7 @@ export default class Home extends React.Component {
             },
             { 
                 title: "电池序列号",
-                render: item => item.batteryGoodTaxisys.latestStatus.batteryNo
+                render: item => item.batteryGoodTaxisys.latestStatus.batteryNo || "-"
             },
             { 
                 title: "软件版本号",
@@ -89,21 +90,32 @@ export default class Home extends React.Component {
                     </Popover>
                 )
             },
-            { 
-                title: "BMS警告",
-                render: (item, rm, index) => this.state.bmsWarningDict[item.batteryGoodTaxisys.latestStatus.batteryBmsWarn]
-            },
-            { 
-                title: "BMS故障",
-                render: (item, rm, index) => this.state.bmsFaultDict[item.batteryGoodTaxisys.latestStatus.batteryBmsTrouble]
-            },
-            { 
-                title: "DTU警告",
-                render: (item, rm, index) => (
-                    item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 1 ? "GPS信号异常" :
-                    item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 2 ? "GSM信号异常" : "无"
+            {
+                title: "故障/警告",
+                render: (item, record, index) => (
+                    <div>
+                        <span>BMS警告：{this.state.bmsWarningDict[item.batteryGoodTaxisys.latestStatus.batteryBmsWarn]}</span><br/>
+                        <span>BMS故障：{this.state.bmsFaultDict[item.batteryGoodTaxisys.latestStatus.batteryBmsTrouble]}</span><br/>
+                        <span>DTU警告：{item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 1 ? "GPS信号异常" : item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 2 ? "GSM信号异常" : "无"}</span>
+                    </div>
                 )
             },
+
+            // {  合并为一列了，见上面
+            //     title: "BMS警告",
+            //     render: (item, rm, index) => this.state.bmsWarningDict[item.batteryGoodTaxisys.latestStatus.batteryBmsWarn]
+            // },
+            // { 
+            //     title: "BMS故障",
+            //     render: (item, rm, index) => this.state.bmsFaultDict[item.batteryGoodTaxisys.latestStatus.batteryBmsTrouble]
+            // },
+            // { 
+            //     title: "DTU警告",
+            //     render: (item, rm, index) => (
+            //         item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 1 ? "GPS信号异常" :
+            //         item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 2 ? "GSM信号异常" : "无"
+            //     )
+            // },
             { 
                 title: "电芯电压",
                 render: item => (
@@ -130,11 +142,17 @@ export default class Home extends React.Component {
                     </Form>
                 )
             },
+            {
+                title: "位置",
+                width: 200,
+                render: item => item.batteryGoodTaxisys.latestStatus.gdLocation || "暂无位置信息"
+            },
             { 
                 title: "操作",
-                render: (item, rm, index) => (
-                    <Button icon="monitor" onClick={() => message.warning("实现中")}>查看位置</Button>
-                )
+                render: (item, rm, index) => {
+                    const { gdLat, gdLng, gdLocation } = item.batteryGoodTaxisys.latestStatus;
+                    return <Button icon="compass" onClick={this.openBatteryPositionToast.bind(this, gdLat, gdLng)} disabled={!item.batteryGoodTaxisys.latestStatus.gdLocation}>查看位置</Button>
+                }
             },
         ],
         //bms故障状态字典
@@ -177,6 +195,12 @@ export default class Home extends React.Component {
         latlngs: [],
         //启用、禁用加载
         switchLoading: [],
+        //电池详情弹窗状态
+        batteryPositionToastState: {
+            show: false,
+            lat: "",
+            lng: ""
+        },
         projectId: "",
         deviceId: "",
         enable: "",
@@ -277,6 +301,24 @@ export default class Home extends React.Component {
         return num;
     }
 
+    //打开电池位置弹窗
+    openBatteryPositionToast (lat: string|number, lng: string|number): void {
+        const _: any = (this as any).state.batteryPositionToastState;
+        _.show = true;
+        _.lat = lat;
+        _.lng = lng;
+        this.setState({});
+    }
+
+    //关闭电池位置弹窗
+    offBatteryPositionToast () {
+        const _: any = (this as any).state.batteryPositionToastState;
+        _.show = false;
+        _.lat = "";
+        _.lng = "";
+        this.setState({});
+    }
+
     render (): any {
         const state = this.state;
         return (
@@ -343,6 +385,9 @@ export default class Home extends React.Component {
                         this.loadList();
                     }}/>
                 </div>
+
+                {/* 单个电池位置弹窗 */}
+                {state.batteryPositionToastState.show && <BatteryPosition close={this.offBatteryPositionToast.bind(this)} lat={state.batteryPositionToastState.lat} lng={state.batteryPositionToastState.lng}/>}
                 
             </div>
         );
