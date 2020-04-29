@@ -89,6 +89,8 @@ export default class Home extends React.Component {
         if (marks.length !== (this as any).state.latlngs.length) {
             this.setState({warningText: `共${(this as any).state.latlngs.length}个点位，有${(this as any).state.latlngs.length - marks.length}个点没有位置信息，无法在地图上标识；建议前往表格视图`});
         }
+        //地图自适应
+        (this as any).state.map.setFitView();
     }
     
     //删除所有点
