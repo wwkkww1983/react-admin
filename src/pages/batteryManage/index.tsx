@@ -1,7 +1,7 @@
 import React from "react";
 import "./less/index.less";
 
-import { Table, Form, Button, Input, Tag, Select, Switch, message, Popover, Radio, Pagination } from "antd";
+import { Table, Form, Button, Input, Select, Switch, Popover, Radio, Pagination } from "antd";
 import NProgress from "nprogress";
 import { getDeviceList, enableDevice, disableDevice } from "../../api/deviceManager";
 import { input, initLife } from "../../utils/utils";
@@ -328,7 +328,7 @@ export default class Home extends React.Component {
 
                 {/* 头部表单 */}
                 <div className="page-top">
-                    <Form layout="inline" style={{marginBottom: "16px"}}>
+                    <Form layout="inline" style={{marginBottom: "16px", float: "left"}}>
                         <Form.Item>
                             <Radio.Group onChange={({target: {value: index}}) => this.setState({viewIndex: index})} value={state.viewIndex}>
                                 <Radio.Button value={0}>表格视图</Radio.Button>
@@ -356,6 +356,10 @@ export default class Home extends React.Component {
                             }}>查找</Button>
                         </Form.Item>
                     </Form>
+                    <div style={{float: "right", marginBottom: "16px"}}>
+                        电池总数: {state.total}
+                    </div>
+                    
                 </div>
                 
                 {/* 表格视图 */}
