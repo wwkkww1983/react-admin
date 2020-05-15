@@ -31,19 +31,19 @@ export default class Home extends React.Component {
             // },
             { 
                 title: "IMEI",
-                render: item => item.batteryGoodTaxisys.latestStatus.batteryImei
+                render: item => item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryImei : "-"
             },
             { 
                 title: "电池序列号",
-                render: item => item.batteryGoodTaxisys.latestStatus.batteryNo || "-"
+                render: item => item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryNo : "-"
             },
             { 
                 title: "软件版本号",
-                render: item => item.batteryGoodTaxisys.softwareVersion
+                render: item => item.batteryGoodTaxisys ? item.batteryGoodTaxisys.softwareVersion : "-"
             },
             { 
                 title: "硬件版本号",
-                render: item => item.batteryGoodTaxisys.deviceVersion
+                render: item => item.batteryGoodTaxisys ? item.batteryGoodTaxisys.deviceVersion : "-"
             },
             { 
                 title: "电池物理属性",
@@ -52,9 +52,9 @@ export default class Home extends React.Component {
                     title="电池物理属性详情" 
                     content={
                         <div>
-                            <p>电芯数量： {item.batteryGoodTaxisys.latestStatus.batteryCellNum}</p>
-                            <p>循环次数： {item.batteryGoodTaxisys.latestStatus.batteryLoopCount} 次</p>
-                            <p>剩余容量： {item.batteryGoodTaxisys.latestStatus.batteryResidualCapacity / 100} AH</p>
+                            <p>电芯数量： {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryCellNum : "-"}</p>
+                            <p>循环次数： {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryLoopCount : "-"} 次</p>
+                            <p>剩余容量： {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryResidualCapacity / 100 : "-"} AH</p>
                         </div>
                     }
                     trigger="hover">
@@ -69,20 +69,20 @@ export default class Home extends React.Component {
                     title="电池物理状态详情" 
                     content={
                         <div>
-                            <p>总电压: {item.batteryGoodTaxisys.latestStatus.batteryTotalVol / 100} V</p>
-                            <p>总电流: {item.batteryGoodTaxisys.latestStatus.batteryTotalVol / 100} A</p>
-                            <p>SOC: {item.batteryGoodTaxisys.latestStatus.batterySoc}</p>
+                            <p>总电压: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryTotalVol / 100 : "-"} V</p>
+                            <p>总电流: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryTotalVol / 100 : "-"} A</p>
+                            <p>SOC: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batterySoc : "-"}</p>
                             {/* <p>SOH</p> 没有找到数据 */}
-                            <p>最高单体电压：{this.getMaxFromArr(item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(",")) / 100} V</p>
+                            <p>最高单体电压：{item.batteryGoodTaxisys ? this.getMaxFromArr(item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(",")) / 100 : "-"} V</p>
                             {/* <p>最高单体电压序号</p> 没有数据 */}
-                            <p>最低单体电压：{this.getMinFromArr(item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(",")) / 100} V</p>
+                            <p>最低单体电压：{item.batteryGoodTaxisys ? this.getMinFromArr(item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(",")) / 100 : "-"} V</p>
                             {/* <p>最低单体电压序号</p> 没数据 */}
-                            <p>最大压差：{(this.getMaxFromArr(item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(",")) - this.getMinFromArr(item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(","))) / 100} V</p>
+                            <p>最大压差：{item.batteryGoodTaxisys ? (this.getMaxFromArr(item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(",")) - this.getMinFromArr(item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(","))) / 100 : "-"} V</p>
                             {/* 无数据只有电芯温度 <p>最高温度</p>
                             <p>最高温度序号</p>
                             <p>最低温度</p>
                             <p>最低温度序号</p> */}
-                            <p>电芯温度: {item.batteryGoodTaxisys.latestStatus.batteryCellTemperature} 摄氏度</p>
+                            <p>电芯温度: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryCellTemperature : "-"} 摄氏度</p>
                         </div>
                     }
                     trigger="hover">
@@ -94,9 +94,9 @@ export default class Home extends React.Component {
                 title: "故障/警告",
                 render: (item, record, index) => (
                     <div>
-                        <span>BMS警告：{this.state.bmsWarningDict[item.batteryGoodTaxisys.latestStatus.batteryBmsWarn]}</span><br/>
-                        <span>BMS故障：{this.state.bmsFaultDict[item.batteryGoodTaxisys.latestStatus.batteryBmsTrouble]}</span><br/>
-                        <span>DTU警告：{item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 1 ? "GPS信号异常" : item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 2 ? "GSM信号异常" : "无"}</span>
+                        <span>BMS警告：{item.batteryGoodTaxisys ? this.state.bmsWarningDict[item.batteryGoodTaxisys.latestStatus.batteryBmsWarn] : "-"}</span><br/>
+                        <span>BMS故障：{item.batteryGoodTaxisys ? this.state.bmsFaultDict[item.batteryGoodTaxisys.latestStatus.batteryBmsTrouble] : "-"}</span><br/>
+                        <span>DTU警告：{item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 1 ? "GPS信号异常" : item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 2 ? "GSM信号异常" : "无" : "-"}</span>
                     </div>
                 )
             },
@@ -123,7 +123,7 @@ export default class Home extends React.Component {
                     title="各个电芯电压" 
                     content={
                         <p>
-                            {item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(",").map(item => item / 100 + "V ") || "无电芯温度详情"}
+                            {item.batteryGoodTaxisys && item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(",").map(item => item / 100 + "V ") || "无电芯温度详情"}
                         </p>
                     }
                     trigger="hover">
@@ -145,13 +145,14 @@ export default class Home extends React.Component {
             {
                 title: "位置",
                 width: 200,
-                render: item => item.batteryGoodTaxisys.latestStatus.gdLocation || "暂无位置信息"
+                render: item => item.batteryGoodTaxisys && item.batteryGoodTaxisys.latestStatus.gdLocation || "暂无位置信息"
             },
             { 
                 title: "操作",
                 render: (item, rm, index) => {
-                    const { gdLat, gdLng, gdLocation } = item.batteryGoodTaxisys.latestStatus;
-                    return <Button icon="compass" onClick={this.openBatteryPositionToast.bind(this, gdLat, gdLng)} disabled={!item.batteryGoodTaxisys.latestStatus.gdLocation}>查看位置</Button>
+                    const latestStatus: any = item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus : {};
+                    const { gdLat, gdLng, gdLocation } = latestStatus;
+                    return <Button icon="compass" onClick={this.openBatteryPositionToast.bind(this, gdLat, gdLng)} disabled={!gdLocation}>查看位置</Button>
                 }
             },
         ],
@@ -275,6 +276,10 @@ export default class Home extends React.Component {
             //初始化switch加载状态
             this.state.switchLoading.push(false);
             //生成地图显示需要的经纬度数据
+            item.batteryGoodTaxisys && 
+            item.batteryGoodTaxisys.latestStatus &&
+            item.batteryGoodTaxisys.latestStatus.gdLat && 
+            item.batteryGoodTaxisys.latestStatus.gdLng &&
             latlngs.push({
                 lat: item.batteryGoodTaxisys.latestStatus.gdLat,
                 lng: item.batteryGoodTaxisys.latestStatus.gdLng,
