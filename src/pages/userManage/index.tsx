@@ -3,7 +3,7 @@ import "./less/index.less";
 
 import { getUserList } from "../../api/userManage";
 import { input, initLife, timeToDateStr } from "../../utils/utils";
-import { Form, Input, Button, Table, Switch, message } from "antd";
+import { Form, Input, Button, Table, Switch, message, Popover } from "antd";
 import NProgress from "nprogress";
 
 const columns = [
@@ -28,26 +28,35 @@ const columns = [
     // },
     {
         title: "个人信息",
-        render: item => (
-            <div>
-                <p>姓名：{item.profile.name || "-"}</p>
-                <p>身份证：{item.profile.idcard || "-"}</p>
-                <p>性别：{item.profile.genderText || "-"}</p>
-                <p>行政区域：{item.profile.province || "-"}</p>
-            </div>
-        )
+        render: item => {
+            const content = (
+                <div>
+                    <p>姓名：{item.profile.name || "-"}</p>
+                    <p>身份证：{item.profile.idcard || "-"}</p>
+                    <p>性别：{item.profile.genderText || "-"}</p>
+                    <p>行政区域：{item.profile.province || "-"}</p>
+                </div>
+            );
+            return <Popover title="个人信息" content={content} trigger="hover">
+                <Button type="link">详情></Button>
+            </Popover>
+        }
     },
     {
         title: "物流信息",
-        render: item => (
-            // 物流信息—>默认收货信息包含姓名、联系方式、行政区域、详细地址（更多折叠）
-            <div>
-                <p>姓名：{item.profile.name || "-"}</p>
-                <p>联系方式：{item.phone || "-"}</p>
-                <p>个行政区域：{item.profile.province || "-"}</p>
-                <p>详细地址：{item.profile.address || "-"}</p>
-            </div>
-        )
+        render: item => {
+            const content = (
+                <div>
+                    <p>姓名：{item.profile.name || "-"}</p>
+                    <p>联系方式：{item.phone || "-"}</p>
+                    <p>个行政区域：{item.profile.province || "-"}</p>
+                    <p>详细地址：{item.profile.address || "-"}</p>
+                </div>
+            );
+            return <Popover title="物流信息" content={content} trigger="hover">
+                <Button type="link">详情></Button>
+            </Popover>
+        }
     },
     // { 无数据
     //     title: "支付信息",
