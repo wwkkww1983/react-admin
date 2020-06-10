@@ -53,7 +53,7 @@ export default class Home extends React.Component {
             { 
                 title: "是否在线",
                 key: "online",
-                render: (item, rm, index) => <Tag color={item === "1" ? "green" : "red"}>{item === "1" ? "在线" : "离线"}</Tag>
+                render: (item, rm, index) => <Tag color={item.online == "1" ? "green" : "red"}>{item.online == "1" ? "在线" : "离线"}</Tag>
             },
             { 
                 title: "状态",
