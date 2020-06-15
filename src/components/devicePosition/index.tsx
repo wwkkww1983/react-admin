@@ -1,9 +1,10 @@
 import React from "react";
 import "./index.less";
 import { Alert, Modal, message } from "antd";
-import store from "../../../../store";
+import store from "../../store";
 
 interface Props {
+    title: string,
     lat?: string|number,
     lng?: string|number,
     close(): void
@@ -16,6 +17,7 @@ export default class BatteryPosition extends React.Component {
     pointerMarker = null;
 
     static defaultProps: Props = {
+        title: "缺省title",
         lat: "",
         lng: "",
         close: () => {}
@@ -89,14 +91,14 @@ export default class BatteryPosition extends React.Component {
     }
 
     render (): any {
-        const state = this.state;
+        const state = this.state, props: any = (this as any).props;
         return (
             <div className="batteryposition-component-wrap">
                 <Modal
                 width={"80%"}
                 // closable={false}
                 maskClosable={false}
-                title="电池位置"
+                title={props.title}
                 visible={true}
                 // onOk={this.confirm.bind(this)}
                 onCancel={this.close.bind(this)}

@@ -6,7 +6,9 @@
   "scripts": {
     "build": "cross-env _WEBPACK_MODE_=production  webpack --config ./build/webpack-build.js",
     "dev": "cross-env _WEBPACK_MODE_=development webpack-dev-server --config ./build/webpack-dev.js",
-    "start": "cross-env _WEBPACK_MODE_=development webpack-dev-server --config ./build/webpack-dev.js"
+    "dev-mock": "concurrently --kill-others \"npm run _start-mock-server\" \"npm run _dev-mock\"",
+    "_dev-mock": "cross-env _WEBPACK_MODE_=development-mock webpack-dev-server --config ./build/webpack-dev.js",
+    "_start-mock-server": "nodemon ./mock/index.js"
   },
   "keywords": [],
   "author": "lilindog",
@@ -30,6 +32,7 @@
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "mini-css-extract-plugin": "^0.8.0",
+    "mockjs": "^1.1.0",
     "my-webpack-cleardir-plugin": "git+https://github.com/lilindog/my-webpack-clearDir-plugin.git#master",
     "my-webpack-copy-plugin": "git+https://github.com/lilindog/my-webpack-copy-plugin.git#master",
     "optimize-css-assets-webpack-plugin": "^5.0.3",

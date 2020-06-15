@@ -70,7 +70,10 @@ module.exports = {
         process.env._WEBPACK_MODE_ === "production" ?
         "./env/production.env" :
         process.env._WEBPACK_MODE_ === "development" ?
-        "./env/development.env" : console.log("没有读取到.env文件！")
+        "./env/development.env" : 
+        process.env._WEBPACK_MODE_ === "development-mock" ?
+        "./env/development-mock.env" :
+        console.log("没有读取到.env文件！")
       ))
     })   
   ]

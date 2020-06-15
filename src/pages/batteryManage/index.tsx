@@ -7,7 +7,7 @@ import { getDeviceList, enableDevice, disableDevice } from "../../api/deviceMana
 import { input, initLife } from "../../utils/utils";
 import store from "../../store";
 import DeviceInMap from "../../components/deviceInMap";
-import BatteryPosition from "./components/batteryPosition";
+import BatteryPosition from "../../components/devicePosition";
 
 export default class Home extends React.Component {
 
@@ -396,7 +396,7 @@ export default class Home extends React.Component {
                 </div>
 
                 {/* 单个电池位置弹窗 */}
-                {state.batteryPositionToastState.show && <BatteryPosition close={this.offBatteryPositionToast.bind(this)} lat={state.batteryPositionToastState.lat} lng={state.batteryPositionToastState.lng}/>}
+                {state.batteryPositionToastState.show && <BatteryPosition title="电池位置" close={this.offBatteryPositionToast.bind(this)} lat={state.batteryPositionToastState.lat} lng={state.batteryPositionToastState.lng}/>}
                 
             </div>
         );

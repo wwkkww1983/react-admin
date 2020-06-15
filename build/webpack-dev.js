@@ -8,7 +8,7 @@ const webpack = require('webpack');
 
 const dev_config = merge(base, {
   // webpack4新增属性，默认返回production,提供一些默认配置，例如cache:true
-  mode: process.env._WEBPACK_MODE_, 
+  mode: "development", 
   devtool: 'cheap-module-eval-source-map',
   // source-map每个module生成对应的map文件
   // eval 每一个module模块执行eval，不生成map文件，在尾部生成一个sourceURL对应前后关系，所以更快
