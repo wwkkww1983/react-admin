@@ -125,9 +125,9 @@ export function getSaleSetting (data: {
 }
 
 /**
- * 保存项目计费规则
+ * 保存换电柜计费规则 
  */
-export function saveSaleSetting (data: {
+export function saveBoxSaleSetting (data: {
     "projectId": number|string,
     "everyTimePrice": number|string, // 按次计费价格
     "everyTimeDepositCheck": boolean, // 按次计费押金检测开关
@@ -139,7 +139,30 @@ export function saveSaleSetting (data: {
     "monthlyDepositCheck": boolean // 包月计费押金检测开关
 }) {
     return request({
-        url: "/project/admin/saveBillingRule",
+        url: "/project/admin/saveChargingBoxBillingRule",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 保存充电站计费规则 
+ */
+interface SavePileSaleSetting_PrepaidRules_Item {
+    price: string|number, //单价
+    maxTime: number|string, //世间单位秒
+    maxKwh: number|string //最多Kwh
+}
+export function savePileSaleSetting (data: {
+    // 以下所有价格费用，单位都为分
+    "projectId": number|string,
+    "postpaidPriceHour": number|string,// 分/小时
+    "postpaidPriceKwh": number|string,// 分/KWH
+    "postpaidMaxTime": string|number,// 最长充电时间，单位：秒// 后付费规则列表，按数组里成员顺序决定index
+    "prepaidRules": SavePileSaleSetting_PrepaidRules_Item[]
+}) {
+    return request({
+        url: "/project/admin/saveChargingStationBillingRule",
         method: "POST",
         data
     });

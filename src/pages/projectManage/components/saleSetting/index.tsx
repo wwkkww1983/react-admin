@@ -3,7 +3,7 @@ import "./index.less";
 import { Alert, message, Form, Select, Modal, Input, Button, Table, Switch, List } from "antd";
 import NProgress from "nprogress";
 import { input } from "../../../../utils/utils";
-import { getSaleSetting, saveSaleSetting } from "../../../../api/projectManage";
+import { getSaleSetting, saveBoxSaleSetting } from "../../../../api/projectManage";
 
 interface Props {
     title: string,
@@ -70,7 +70,7 @@ export default class Home extends React.Component {
         if (checkParams.call(this)) {
             NProgress.start();
             try {
-                await saveSaleSetting(buildParams.call(this));
+                await saveBoxSaleSetting(buildParams.call(this));
             } catch(err) {
                 NProgress.done();
                 return;

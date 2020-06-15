@@ -176,9 +176,11 @@ export default class Home extends React.Component {
 
     render (): any {
         const state = this.state;
+        //其他元素高度，用于地图组件显示的时候去除
+        const otherElesHeight = (43.8 + 16);
         return (
             <div className="chargepile-page-wrap"
-            style={{height: state.viewIndex === 1 ? state.wrapHeight + "px" : "100%"}} /*切换到地图视图的时候才使页面撑满，好显示地图组件*/
+            style={{height: state.viewIndex === 1 ? state.wrapHeight - otherElesHeight + "px" : ""}} /*切换到地图视图的时候才使页面撑满，好显示地图组件*/
             >
 
                 {/* 头部表单 */}
