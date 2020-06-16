@@ -22,6 +22,7 @@ import userManage from "../pages/userManage";
 import baseSetting from "../pages/baseSetting";
 import chargePileManage from "../pages/chargePileManage";
 import projectManage from "../pages/projectManage";
+import UpdateSetting from "../pages/updateSetting";
 
 export const inRoutes = [
     {
@@ -70,6 +71,12 @@ export const inRoutes = [
         title: "项目管理",
         path: "/projectManage",
         component: projectManage,
+        keepAlive: true
+    },
+    {
+        title: "升级设置",
+        path: "/updateSetting",
+        component: UpdateSetting,
         keepAlive: true
     },
     {

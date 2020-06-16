@@ -54,6 +54,11 @@ export default [
                 path: "/baseSetting"
             },
             {
+                icon: "icon-shengban-shengji",
+                title: "升级设置",
+                path: "/updateSetting"
+            },
+            {
                 icon: "icon-dianchi",
                 title: "虚拟电池设置",
                 path: "/404"
@@ -61,11 +66,6 @@ export default [
             {
                 icon: "icon-qianbao",
                 title: "钱包设置",
-                path: "/404"
-            },
-            {
-                icon: "icon-shengban-shengji",
-                title: "升级设置",
                 path: "/404"
             },
             {
