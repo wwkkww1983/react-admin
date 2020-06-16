@@ -64,8 +64,8 @@ module.exports = {
             
             // 充电头类型
             "5": () => (
-                {
-                    "list":[
+                Mock.mock({
+                    "list|10":[
                         {// 充电头专属信息，字段参考文档
                             "charger":{// 最新状态
                                 "latestStatus":{
@@ -87,18 +87,18 @@ module.exports = {
                             },
                             "updateTime":1584515903,// 记录更新时间
                             "id":3,
-                            "projectId":0,// 项目ID
-                            "mainDeviceId":0,
-                            "type":1,// 类型
-                            "model":"",// 型号
-                            "imsi":"",// 卡号
+                            "projectId": 1,// 项目ID
+                            "mainDeviceId": 1,
+                            "type": 1,// 类型
+                            "model":"model",// 型号
+                            "imsi":"imsi",// 卡号
                             "deviceId":"123456789012301",// 设备编号，如：imei
                             "authCode":"000001",// 授权码
-                            "name":"",// 设备名称
-                            "online":0,// 在线状态
-                            "enable":0,// 是否启用
-                            "longitude":"0.0000000",// 经度
-                            "latitude":"0.0000000",// 纬度
+                            "name":"充电口@cname",// 设备名称
+                            "online|0-1": 0,// 在线状态
+                            "enable|0-1": 0,// 是否启用
+                            "longitude|0-10": 0.0000000,// 经度
+                            "latitude|0-10": 0.0000000,// 纬度
                             "address":"",// 地址
                             "createTime":1584515903,// 记录创建时间
                             "deleteTime":0
@@ -109,7 +109,7 @@ module.exports = {
                     "page_count":1,
                     code: 0,
                     message: ""
-                }
+                })
             )
         }
         return _[type]();

@@ -5,6 +5,7 @@ import request from '../utils/request';
  */
 export function getDeviceList (
     data: {
+        mainDeviceId?: string|number, //主设备id，用于查询主设备下的子设备
         type:string|number,       //设备类型；充电柜：1	是	[string]		
         deviceId?: string|number, //projectId	项目ID		[int]	
         projectId?: string,        //项目id	

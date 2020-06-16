@@ -1,7 +1,7 @@
 import React from "react";
 import "./index.less";
 
-import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination, Modal } from "antd";
+import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination, Modal, Popover } from "antd";
 import NProgress from "nprogress";
 import { getDeviceList, enableDevice, disableDevice } from "../../../../api/deviceManager";
 import { input, initLife } from "../../../../utils/utils";
@@ -81,6 +81,84 @@ export default class Home extends React.Component {
                     </Form>
                 )
             },
+        ],
+        //子设备列表columns
+        subDeviceListColumns: [
+            { 
+                title: "id",
+                dataIndex: "id",
+                key: "id"
+            },
+            { 
+                title: "设备id",
+                dataIndex: "deviceId",
+                key: "deviceId"
+            },
+            { 
+                title: "通讯主机id",
+                dataIndex: "mainDeviceId",
+                key: "mainDeviceId"
+            },
+            {
+                title: "项目名/型号",
+                render: (item, record, index) => {
+                    const content = (
+                        <div>
+                            <p>项目名：{item.name || "-"}</p>
+                            <p>项目ID：{item.projectId || "-"}</p>
+                            <p>型号：{item.model || "-"}</p>
+                            <p>IMSI：{item.imsi || "-"}</p>
+                        </div>
+                    );
+                    return <Popover content={content} title="项目名/IMSI">
+                        <Button type="link">详情></Button>
+                    </Popover>
+                }
+            },
+            { 
+                title: "是否在线",
+                dataIndex: "online",
+                key: "online",
+                render: (item, rm, index) => <Tag color={item == "1" ? "green" : "red"}>{item == "1" ? "在线" : "离线"}</Tag>
+            },
+            { 
+                title: "状态",
+                key: "enable",
+                render: (item, rm, index) => (
+                    <Form layout="inline">
+                        <Form.Item>
+                            <Switch checkedChildren="启用" unCheckedChildren="禁用" checked={item.enable} disabled={true}/>
+                        </Form.Item>
+                    </Form>
+                )
+            },
+            {
+                title: "设备工况",
+                render: (item, record, index) => {
+                    const _ = item.charger.latestStatus;
+                    const content = (
+                        <div>
+                            <p>端口种类：{_.portType == 1 ? "交流" : "直流"}</p>
+                            <p>交流端口状态：{_.acPortStatus == 1 ? "充电" : "空闲"}</p>
+                            <p>充电器状态：{_.chargerInBoxStatus == 1 ? "就位" : "空闲" }</p>
+                            <p>充电器插入端口状态：{_.chargerPlugPortStatus == 1 ? "插入" : "空闲"}</p>
+                            <p>NFC读卡器状态：{_.nfcReaderStatus == 1 ? "有" : "无"}</p>
+                            <p>直流分路箱状态：{_.dcBranchBoxStatus == 1 ? "打开" : "关闭"}</p>
+                            <p>直流充电模块状态：{_.dcChargingModuleStatus == 1 ? "充电" : "空闲"}</p>
+                            <p>插口电压：{_.portVoltageError == 1 ? "异常" : "正常"}</p>
+                            <p>插口电流：{_.portCurrentError == 1 ? "异常" : "正常"}</p>
+                            <p>插口温度：{_.portTemperatureError == 1 ? "异常" : "正常"}</p>
+                            <p>插口充电器/电池：{_.portChargerError == 1 ? "异常" : "正常"}</p>
+                            <p>插口继电器：{_.portRelayError == 1 ? "异常" : "正产"}</p>
+                            <p>插口插座：{_.portSocketError == 1 ? "异常" : "正常"}</p>
+                            <p>插口放置盒：{_.portBoxError == 1 ? "异常" : "正常"}</p>
+                        </div>
+                    );
+                    return <Popover content={content} title="设备工况">
+                        <Button type="link">详情></Button>
+                    </Popover>
+                }
+            }
         ],
         //视图类型0表格，1地图
         viewIndex: 0, 
@@ -178,8 +256,8 @@ export default class Home extends React.Component {
     async loadingSubDeviceListByDeviceId (deviceId: string|number) {
         NProgress.start();
         const data = {
-            type: "4",
-            deviceId,
+            type: "5",
+            mainDeviceId: deviceId,
             page: 1,
             limit: 10
         }
@@ -306,37 +384,7 @@ export default class Home extends React.Component {
                 >
                     <Table
                     scroll={{y: 500}}
-                    columns={[
-                        {
-                            title: "id",
-                            dataIndex: "id",
-                            key: "id",
-                            width: 50
-                        }
-                        , 
-                        ...state.columns.slice(1, -2), 
-                        {
-                            title: "状态",
-                            key: "enable",
-                            render: (item, rm, index) => (
-                                <Form layout="inline">
-                                    <Form.Item>
-                                        <Switch disabled={true} checkedChildren="启用" unCheckedChildren="禁用" checked={item.enable}/>
-                                    </Form.Item>
-                                </Form>
-                            )
-                        },
-                        {
-                            title: "操作",
-                            render: (item, rm, index) => (
-                                <Form layout="inline">
-                                    <Form.Item>
-                                        <Button disabled={item.longitude <= 0 || item.latitude <= 0} icon="monitor" onClick={this.openOrOffPositionToast.bind(this, item.latitude, item.longitude)}>查看GPS位置</Button>
-                                    </Form.Item>
-                                </Form>
-                            )
-                        }
-                    ]}
+                    columns={state.subDeviceListColumns}
                     dataSource={state.subDeviceListToast.list}
                     />
                 </Modal>
