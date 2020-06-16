@@ -168,7 +168,9 @@ export default class Home extends React.Component {
                             <Row>
                                 <Col span={8}>
                                     <Form.Item label="包月押金检测">
-                                        <Switch  checkedChildren="开" unCheckedChildren="关" checked={state.form.monthlyDepositCheck} onChange={input.bind(this, "form.monthlyDepositCheck")}/>
+                                        <div style={{width: "140px"}}>
+                                            <Switch  checkedChildren="开" unCheckedChildren="关" checked={state.form.monthlyDepositCheck} onChange={input.bind(this, "form.monthlyDepositCheck")}/>
+                                        </div>
                                     </Form.Item>
                                 </Col>
                                 <Col span={8}>
