@@ -28,7 +28,7 @@ import {
 import CitySelect from "../../components/citySelect";
 import LatLngSelect from "../latlngSelect";
 import OPSOfProject from "../OPSOfProject";
-import SaleSetting from "../saleSetting";
+import SaleSetting from "../pileSaleSetting";
 
 const types = [
     {name: "换电柜", value: 1},
@@ -144,8 +144,8 @@ export default class Home extends React.Component {
                                 <span onClick={this.openOPSOfProject.bind(this, item)}>运维人员设置</span>
                             </Menu.Item>
                             <Menu.Item>
-                                {/* <span onClick={this.openSaleSetting.bind(this, item)}>价格设置</span> */}
-                                <span onClick={() => alert("接口有变，等待对接")}>价格设置</span>
+                                <span onClick={this.openSaleSetting.bind(this, item)}>价格设置</span>
+                                {/* <span onClick={() => alert("接口有变，等待对接")}>价格设置</span> */}
                             </Menu.Item>
                             {Number(item.status) === 1 && <Menu.Item> {/*当前项目处于待审核状态才可以审核，才显示审核按钮*/}
                                 <span onClick={this.audit.bind(this, item)}>审核</span>

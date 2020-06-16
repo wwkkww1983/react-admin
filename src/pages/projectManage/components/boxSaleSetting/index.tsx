@@ -1,9 +1,10 @@
 import React from "react";
 import "./index.less";
-import { Alert, message, Form, Select, Modal, Input, Button, Table, Switch, List } from "antd";
+import { Alert, message, Form, Select, Modal, Input, Button, Table, Switch, List, Row , Col} from "antd";
 import NProgress from "nprogress";
 import { input } from "../../../../utils/utils";
 import { getSaleSetting, saveBoxSaleSetting } from "../../../../api/projectManage";
+import { inRoutes } from "../../../../router";
 
 interface Props {
     title: string,
@@ -134,13 +135,64 @@ export default class Home extends React.Component {
                 onCancel={this.cancel.bind(this)}
                 >
                     <div>
-                        <Form className="salesetting-component-wrap-form">
+                        <Form layout="inline">
+                            <Row>
+                                <Col span={8}>
+                                    <Form.Item label="按次计费押金检测">
+                                        <Switch  checkedChildren="开" unCheckedChildren="关" checked={state.form.everyTimeDepositCheck} onChange={input.bind(this, "form.everyTimeDepositCheck")}/>
+                                    </Form.Item>
+                                </Col>
+                                <Col span={8}>
+                                    <Form.Item label="按次计费价格">
+                                        <Input value={state.form.everyTimePrice} onInput={input.bind(this, "form.everyTimePrice")}/>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col span={8}>
+                                    <Form.Item label="按时计费押金检测">
+                                        <Switch  checkedChildren="开" unCheckedChildren="关" checked={state.form.hourlyDepositCheck} onChange={input.bind(this, "form.hourlyDepositCheck")}/>
+                                    </Form.Item>
+                                </Col>
+                                <Col span={8}>
+                                    <Form.Item label="按时计费每小时价格">
+                                        <Input value={state.form.hourlyPrice} onChange={input.bind(this, "form.hourlyPrice")}/>
+                                    </Form.Item>
+                                </Col>
+                                <Col span={8}>
+                                    <Form.Item label="按时计费每天封顶价格">
+                                        <Input value={state.form.hourlyPriceMaxDaily} onChange={input.bind(this, "form.hourlyPriceMaxDaily")}/>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col span={8}>
+                                    <Form.Item label="包月押金检测">
+                                        <Switch  checkedChildren="开" unCheckedChildren="关" checked={state.form.monthlyDepositCheck} onChange={input.bind(this, "form.monthlyDepositCheck")}/>
+                                    </Form.Item>
+                                </Col>
+                                <Col span={8}>
+                                    <Form.Item label="包月每月价格">
+                                        <Input value={state.form.monthlyPrice} onInput={input.bind(this, "form.monthlyPrice")}/>
+                                    </Form.Item>
+                                </Col>
+                                <Col span={8}>
+                                    <Form.Item label="包月每月最多次数">
+                                        <Input value={state.form.monthlyPriceMaxTimes} onInput={input.bind(this, "form.monthlyPriceMaxTimes")}/>
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                        </Form>
+
+
+                        {/* <Form className="salesetting-component-wrap-form"> 旧的
                             <Form.Item label="按次计费价格">
                                 <Input value={state.form.everyTimePrice} onInput={input.bind(this, "form.everyTimePrice")}/>
                             </Form.Item>
                             <Form.Item label="按次计费押金检测">
                                 <Switch  checkedChildren="开" unCheckedChildren="关" checked={state.form.everyTimeDepositCheck} onChange={input.bind(this, "form.everyTimeDepositCheck")}/>
                             </Form.Item>
+
                             <Form.Item label="按时计费每小时价格">
                                 <Input value={state.form.hourlyPrice} onChange={input.bind(this, "form.hourlyPrice")}/>
                             </Form.Item>
@@ -150,6 +202,7 @@ export default class Home extends React.Component {
                             <Form.Item label="按时计费押金检测">
                                 <Switch  checkedChildren="开" unCheckedChildren="关" checked={state.form.hourlyDepositCheck} onChange={input.bind(this, "form.hourlyDepositCheck")}/>
                             </Form.Item>
+
                             <Form.Item label="包月每月价格">
                                 <Input value={state.form.monthlyPrice} onInput={input.bind(this, "form.monthlyPrice")}/>
                             </Form.Item>
@@ -159,7 +212,7 @@ export default class Home extends React.Component {
                             <Form.Item label="包月押金检测">
                                 <Switch  checkedChildren="开" unCheckedChildren="关" checked={state.form.monthlyDepositCheck} onChange={input.bind(this, "form.monthlyDepositCheck")}/>
                             </Form.Item>
-                        </Form>
+                        </Form> */}
                     </div>
 
                 </Modal>

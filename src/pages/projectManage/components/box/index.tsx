@@ -28,7 +28,7 @@ import {
 import CitySelect from "../../components/citySelect";
 import LatLngSelect from "../latlngSelect";
 import OPSOfProject from "../OPSOfProject";
-import SaleSetting from "../saleSetting";
+import SaleSetting from "../boxSaleSetting";
 
 const types = [
     {name: "换电柜", value: 1},
