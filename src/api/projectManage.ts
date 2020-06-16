@@ -149,6 +149,7 @@ export function saveBoxSaleSetting (data: {
  * 保存充电站计费规则 
  */
 interface SavePileSaleSetting_PrepaidRules_Item {
+    id?: string|number, //修改要带上，id来自返回，不是组件里的项目id
     price: string|number, //单价
     maxTime: number|string, //世间单位秒
     maxKwh: number|string //最多Kwh

@@ -129,7 +129,7 @@ export default class Home extends React.Component {
         for (let i = 0; i < arr.length; i++) {
             const item = arr[i];
             for (let key of Object.keys(item)) {
-                if (!item[key]) {
+                if (!item[key] && summaryMap.hasOwnProperty(key)) {
                     message.warning("请完成后付费规则第" + (i + 1) + "行的" + summaryMap[key]);
                     return false;
                 }
