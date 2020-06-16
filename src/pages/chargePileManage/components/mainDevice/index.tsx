@@ -305,7 +305,38 @@ export default class Home extends React.Component {
                 onCancel={this.openOrOffSubDeviceListToast.bind(this, null)}
                 >
                     <Table
-                    columns={state.columns}
+                    scroll={{y: 500}}
+                    columns={[
+                        {
+                            title: "id",
+                            dataIndex: "id",
+                            key: "id",
+                            width: 50
+                        }
+                        , 
+                        ...state.columns.slice(1, -2), 
+                        {
+                            title: "状态",
+                            key: "enable",
+                            render: (item, rm, index) => (
+                                <Form layout="inline">
+                                    <Form.Item>
+                                        <Switch disabled={true} checkedChildren="启用" unCheckedChildren="禁用" checked={item.enable}/>
+                                    </Form.Item>
+                                </Form>
+                            )
+                        },
+                        {
+                            title: "操作",
+                            render: (item, rm, index) => (
+                                <Form layout="inline">
+                                    <Form.Item>
+                                        <Button disabled={item.longitude <= 0 || item.latitude <= 0} icon="monitor" onClick={this.openOrOffPositionToast.bind(this, item.latitude, item.longitude)}>查看GPS位置</Button>
+                                    </Form.Item>
+                                </Form>
+                            )
+                        }
+                    ]}
                     dataSource={state.subDeviceListToast.list}
                     />
                 </Modal>
