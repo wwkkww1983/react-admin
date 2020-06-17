@@ -61,7 +61,7 @@ export default [
             {
                 icon: "icon-dianchi",
                 title: "虚拟电池设置",
-                path: "/404"
+                path: "/batterySetting"
             },
             {
                 icon: "icon-qianbao",

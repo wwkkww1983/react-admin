@@ -183,8 +183,6 @@ export default class Home extends React.Component {
             latlngs.push({lat: item.latitude, lng: item.longitude});
         });
         this.setState({list: res.list || [], total: res.total, latlngs});
-        console.error(">>");
-        console.log(this.state);
     }
 
     //关闭或者打开位置弹窗

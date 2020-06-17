@@ -26,8 +26,8 @@ export default class Home extends React.Component {
             "hardware_upgrade_url": "", //"硬件升级地址",
             "logo_url": "", //"运营商logo文件URL",
             "wx_official": "", //"运营商微信公众号二维码URL",
-            "max_batteries": 0, // 最多拥有的电池数量
-            "battery_price": 0, // 虚拟电池售价
+            // "max_batteries": 0, // 最多拥有的电池数量
+            // "battery_price": 0, // 虚拟电池售价
         }
     }
 
@@ -36,7 +36,6 @@ export default class Home extends React.Component {
     }
 
     init () {
-        console.error("初始化33");
         this.loadSetting();
     }
 
@@ -145,14 +144,14 @@ export default class Home extends React.Component {
                         <Input value={state.data.wx_official} onChange={input.bind(this, "data.wx_official")}
                         className="long-input"></Input>
                     </Form.Item>
-                    <Form.Item className="Item" label="最多拥有电池数量">
+                    {/* <Form.Item className="Item" label="最多拥有电池数量">
                         <Input value={state.data.max_batteries} onChange={input.bind(this, "data.max_batteries")}
                         className="long-input"></Input>
                     </Form.Item>
                     <Form.Item className="Item" label="虚拟电池售价" >
                         <Input value={state.data.battery_price} onChange={input.bind(this, "data.battery_price")}
                         className="long-input"></Input>
-                    </Form.Item>
+                    </Form.Item> */}
                 
                     <Form.Item className="Item">
                         <Button icon="cloud-upload" onClick={this.save.bind(this)} loading={state.saveLoading}>保存</Button>

@@ -23,6 +23,7 @@ import baseSetting from "../pages/baseSetting";
 import chargePileManage from "../pages/chargePileManage";
 import projectManage from "../pages/projectManage";
 import UpdateSetting from "../pages/updateSetting";
+import BatterySetting from "../pages/batterySetting";
 
 export const inRoutes = [
     {
@@ -77,6 +78,12 @@ export const inRoutes = [
         title: "升级设置",
         path: "/updateSetting",
         component: UpdateSetting,
+        keepAlive: true
+    },
+    {
+        title: "虚拟电池设置",
+        path: "/batterySetting",
+        component: BatterySetting,
         keepAlive: true
     },
     {
