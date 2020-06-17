@@ -62,7 +62,7 @@ export function delSoftUpdate (data: {
 //获取硬件升级列表
 export function hardwareUpdateList (data: {
     type: number|string,	//类型；0-全部；1-柜板；2-仓板；	是	[int]	0	查看
-    hardware_ver?: number| string,	// 硬件版本号		[int]		
+    // 后算说不要穿这个参数 hardware_ver?: number| string,	// 硬件版本号		[int]		
     page?: number,	// 页码，默认为1		[int]	1	查看
     limit?: number,	 // 返回记录数量，默认15		[int]	15
 }) {

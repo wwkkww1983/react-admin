@@ -20,7 +20,8 @@ module.exports = {
       {
         test: /(\.tsx|\.ts)$/,
         include: path.resolve('src'), // 只解析src下面的文件,不推荐用exclude
-        use: ["babel-loader", "ts-loader"]
+        // use: ["babel-loader", "ts-loader"]
+        use: ["ts-loader"]
       },
       //字体处理
       {

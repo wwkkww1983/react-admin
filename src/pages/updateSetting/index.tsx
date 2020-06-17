@@ -1,5 +1,5 @@
 import React from "react";
-import "./less/index.less";
+import "./index.less";
 import {
     Form,
     Input,
