@@ -16,7 +16,7 @@ export default class Home extends React.Component {
     }
 
     state = {
-        
+        inited: false,
     }
 
     componentDidMount () {
@@ -24,6 +24,7 @@ export default class Home extends React.Component {
     }
 
     $onLoad () {
+        this.setState({inited: true});
     }
 
     $onShow () {
@@ -36,10 +37,10 @@ export default class Home extends React.Component {
             <div className="chargepile-page-wrap">
                 <Tabs defaultActiveKey="1" onChange={() => {}}>
                     <TabPane tab="通讯主机" key="1">
-                        <MainDevice></MainDevice>
+                        {state.inited && <MainDevice></MainDevice>}
                     </TabPane>
                     <TabPane tab="充电头模块" key="2">
-                        <SubDevice></SubDevice>
+                        {state.inited && <SubDevice></SubDevice>}
                     </TabPane>
                 </Tabs>
             </div>

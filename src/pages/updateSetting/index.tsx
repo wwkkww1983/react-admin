@@ -17,7 +17,7 @@ import Hardware from "./components/hardware";
 export default class UpdateSetting extends React.Component {
 
     state = {
-        
+        inited: false,
     }
 
     componentDidMount () {
@@ -25,6 +25,7 @@ export default class UpdateSetting extends React.Component {
     }
 
     init () {
+        this.setState({inited: true});
     }
 
     render (): any {
@@ -34,10 +35,10 @@ export default class UpdateSetting extends React.Component {
                 
                 <Tabs defaultActiveKey="1" onChange={() => {}}>
                     <TabPane tab="软件" key="1">
-                        <Soft></Soft>
+                        {state.inited && <Soft></Soft>}
                     </TabPane>
                     <TabPane tab="硬件" key="2">
-                        <Hardware></Hardware>
+                        {state.inited && <Hardware></Hardware>}
                     </TabPane>
                 </Tabs>
 
