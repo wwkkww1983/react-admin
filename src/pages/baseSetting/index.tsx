@@ -20,14 +20,11 @@ export default class Home extends React.Component {
         uploadLoading: false,
         saveLoading: false,
         data: {
-            "charging_pile_title": "",
-            "charging_box_title": "",
+            "operator_title": "", //运营商名称
             "software_upgrade_url": "", //"软件升级地址",
             "hardware_upgrade_url": "", //"硬件升级地址",
             "logo_url": "", //"运营商logo文件URL",
             "wx_official": "", //"运营商微信公众号二维码URL",
-            // "max_batteries": 0, // 最多拥有的电池数量
-            // "battery_price": 0, // 虚拟电池售价
         }
     }
 
@@ -126,11 +123,8 @@ export default class Home extends React.Component {
                             }
                         </Upload>
                     </Form.Item>
-                    <Form.Item className="Item" label="换电柜title">
-                        <Input value={state.data.charging_box_title} onChange={input.bind(this, "data.charging_box_title")}></Input>
-                    </Form.Item>
-                    <Form.Item className="Item" label="充电站title">
-                        <Input value={state.data.charging_pile_title} onChange={input.bind(this, "data.charging_pile_title")}></Input>
+                    <Form.Item className="Item" label="运营商名称">
+                        <Input value={state.data.operator_title} onChange={input.bind(this, "data.operator_title")}></Input>
                     </Form.Item>
                     <Form.Item className="Item" label="软件升级地址" >
                         <Input value={state.data.software_upgrade_url} onChange={input.bind(this, "data.software_upgrade_url")}
