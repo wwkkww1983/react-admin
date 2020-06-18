@@ -25,6 +25,7 @@ import projectManage from "../pages/projectManage";
 import UpdateSetting from "../pages/updateSetting";
 import BatterySetting from "../pages/batterySetting";
 import WalletSetting from "../pages/walletSetting";
+import PlatformSetting from "../pages/platformSetting";
 
 export const inRoutes = [
     {
@@ -91,6 +92,12 @@ export const inRoutes = [
         title: "钱包设置",
         path: "/walletSetting",
         component: WalletSetting,
+        keepAlive: true
+    },
+    {
+        title: "物联网平台设置",
+        path: "/platformSetting",
+        component: PlatformSetting,
         keepAlive: true
     },
     {

@@ -71,7 +71,7 @@ export default [
             {
                 icon: "icon-wulianwang",
                 title: "物联网平台设置",
-                path: "/404"
+                path: "/platformSetting"
             }
         ]
     }
