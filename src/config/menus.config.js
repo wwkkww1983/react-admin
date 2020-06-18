@@ -66,7 +66,7 @@ export default [
             {
                 icon: "icon-qianbao",
                 title: "钱包设置",
-                path: "/404"
+                path: "/walletSetting"
             },
             {
                 icon: "icon-wulianwang",

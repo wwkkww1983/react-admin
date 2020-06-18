@@ -24,6 +24,7 @@ import chargePileManage from "../pages/chargePileManage";
 import projectManage from "../pages/projectManage";
 import UpdateSetting from "../pages/updateSetting";
 import BatterySetting from "../pages/batterySetting";
+import WalletSetting from "../pages/walletSetting";
 
 export const inRoutes = [
     {
@@ -84,6 +85,12 @@ export const inRoutes = [
         title: "虚拟电池设置",
         path: "/batterySetting",
         component: BatterySetting,
+        keepAlive: true
+    },
+    {
+        title: "钱包设置",
+        path: "/walletSetting",
+        component: WalletSetting,
         keepAlive: true
     },
     {
