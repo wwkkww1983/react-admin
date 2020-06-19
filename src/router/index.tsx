@@ -26,6 +26,7 @@ import UpdateSetting from "../pages/updateSetting";
 import BatterySetting from "../pages/batterySetting";
 import WalletSetting from "../pages/walletSetting";
 import PlatformSetting from "../pages/platformSetting";
+import Nfc from "../pages/nfc";
 
 export const inRoutes = [
     {
@@ -98,6 +99,12 @@ export const inRoutes = [
         title: "物联网平台设置",
         path: "/platformSetting",
         component: PlatformSetting,
+        keepAlive: true
+    },
+    {
+        title: "NFC管理",
+        path: "/nfc",
+        component: Nfc,
         keepAlive: true
     },
     {

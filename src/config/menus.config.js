@@ -74,6 +74,11 @@ export default [
                 path: "/platformSetting"
             }
         ]
+    },
+    {
+        title: "NFC管理",
+        icon: "icon-nfc",
+        path: "/nfc"
     }
 ]
 
