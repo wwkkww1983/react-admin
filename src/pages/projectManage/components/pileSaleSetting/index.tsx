@@ -228,7 +228,7 @@ export default class Home extends React.Component {
                                 value={moment(state.form.postpaidMaxTime, 'HH:mm:ss')}
                                 />
                             </Form.Item>
-                            <Form.Item label="后付费规则">
+                            <Form.Item label="预付费规则">
                                 <Table 
                                 scroll={{y: 200}}
                                 size="small"
