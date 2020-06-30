@@ -1,10 +1,10 @@
 import React from "react";
 import "./less/index.less";
 
-import { Table, Form, Button, Input, Select, Switch, Popover, Radio, Pagination } from "antd";
+import { Table, Form, Button, Input, Select, Switch, Popover, Radio, Pagination, Row, Col, Modal, message } from "antd";
 import NProgress from "nprogress";
-import { getDeviceList, enableDevice, disableDevice } from "../../api/deviceManager";
-import { input, initLife } from "../../utils/utils";
+import { getDeviceList, enableDevice, disableDevice, importJT808Battery } from "../../api/deviceManager";
+import { input, initLife, property as P } from "../../utils/utils";
 import store from "../../store";
 import DeviceInMap from "../../components/deviceInMap";
 import BatteryPosition from "../../components/devicePosition";
@@ -23,16 +23,10 @@ export default class BatteryManagerJT808 extends React.Component {
                 dataIndex: "id",
                 key: "id"
             },
-            // { 
-            //     title: "型号",
-            //     dataIndex: "model",
-            //     key: "model",
-            //     render: item => item ? item : "-"
-            // },
             {
-                title: "电池编号",
-                dataIndex: "deviceId",
-                key: "deviceId"
+                title: "项目id",
+                dataIndex: "projectId",
+                key: "projectId"
             },
             {
                 title: "主设备id",
@@ -40,46 +34,26 @@ export default class BatteryManagerJT808 extends React.Component {
                 key: "mainDeviceId"
             },
             {
-                title: "软件/硬件版本",
+                title: "电池基本信息",
                 render: item => {
+                    function PP (k) {
+                        return P(item, "batteryJT808.latestStatus." + k);
+                    }
                     const content: React.ReactNode = (
                         <div>
-                            <p>硬件版本号: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.deviceVersion : "-"}</p>
-                            <p>软件版本号: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.softwareVersion : "-"}</p>
-                        </div>
-                    );
-                    return <Popover content={content} title="软件/硬件版本" trigger="hover">
-                        <Button type="link">详情></Button>
-                    </Popover>
-                }
-            },
-            {
-                title: "物理属性/状态",
-                render: item => {
-                    const content: React.ReactNode = (
-                        <div>
-                            <p>电芯数量： {item.batteryJT808.latestStatus.totalCurrent ? item.batteryGoodTaxisys.latestStatus.batteryCellNum : "-"}</p>
-                            <p>循环次数： {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryLoopCount : "-"} 次</p>
-                            <p>剩余容量： {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryResidualCapacity / 100 : "-"} AH</p>
-                        
-                            <p>总电压: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryTotalVol / 100 : "-"} V</p>
-                            <p>总电流: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryTotalVol / 100 : "-"} A</p>
-                            <p>SOC: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batterySoc : "-"}</p>
-                            {/* <p>SOH</p> 没有找到数据 */}
-                            <p>最高单体电压：{item.batteryGoodTaxisys ? this.getMaxFromArr(item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(",")) / 100 : "-"} V</p>
-                            {/* <p>最高单体电压序号</p> 没有数据 */}
-                            <p>最低单体电压：{item.batteryGoodTaxisys ? this.getMinFromArr(item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(",")) / 100 : "-"} V</p>
-                            {/* <p>最低单体电压序号</p> 没数据 */}
-                            <p>最大压差：{item.batteryGoodTaxisys ? (this.getMaxFromArr(item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(",")) - this.getMinFromArr(item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(","))) / 100 : "-"} V</p>
-                            {/* 无数据只有电芯温度 <p>最高温度</p>
-                            <p>最高温度序号</p>
-                            <p>最低温度</p>
-                            <p>最低温度序号</p> */}
-                            <p>电芯温度: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryCellTemperature : "-"} 摄氏度</p>
+                            <p>设备id： {PP("deviceId")}</p>
+                            <p>电池id： {PP("batteryId")}</p>
+                            <p>总电流： {PP("totalCurrent")}</p>
+                            <p>电芯数量： {PP("cellQuantity")}</p>
+                            <p>电池温度： {PP("tempQuantity")}</p>
+                            <p>海拔： {PP("altitude")}</p>
+                            <p>速度： {PP("speed")}</p>
+                            <p>方向： {PP("direction")}</p>
+                            <p>里程： {PP("mileage")}</p>
                         </div>
                     );
                     return <Popover 
-                    title="物理属性/状态"
+                    title="电池基本信息"
                     content={content}
                     trigger="hover"
                     >
@@ -87,32 +61,6 @@ export default class BatteryManagerJT808 extends React.Component {
                     </Popover>
                 }
             },
-            {
-                title: "故障/警告",
-                render: (item, record, index) => (
-                    <div>
-                        <span>BMS警告：{item.batteryGoodTaxisys ? this.state.bmsWarningDict[item.batteryGoodTaxisys.latestStatus.batteryBmsWarn] : "-"}</span><br/>
-                        <span>BMS故障：{item.batteryGoodTaxisys ? this.state.bmsFaultDict[item.batteryGoodTaxisys.latestStatus.batteryBmsTrouble] : "-"}</span><br/>
-                        <span>DTU警告：{item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 1 ? "GPS信号异常" : item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 2 ? "GSM信号异常" : "无" : "-"}</span>
-                    </div>
-                )
-            },
-
-            // {  合并为一列了，见上面
-            //     title: "BMS警告",
-            //     render: (item, rm, index) => this.state.bmsWarningDict[item.batteryGoodTaxisys.latestStatus.batteryBmsWarn]
-            // },
-            // { 
-            //     title: "BMS故障",
-            //     render: (item, rm, index) => this.state.bmsFaultDict[item.batteryGoodTaxisys.latestStatus.batteryBmsTrouble]
-            // },
-            // { 
-            //     title: "DTU警告",
-            //     render: (item, rm, index) => (
-            //         item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 1 ? "GPS信号异常" :
-            //         item.batteryGoodTaxisys.latestStatus.batteryDtuTrouble == 2 ? "GSM信号异常" : "无"
-            //     )
-            // },
             { 
                 title: "电芯电压",
                 render: item => (
@@ -120,13 +68,84 @@ export default class BatteryManagerJT808 extends React.Component {
                     title="各个电芯电压" 
                     content={
                         <p>
-                            {item.batteryGoodTaxisys && item.batteryGoodTaxisys.latestStatus.batteryCellVols.split(",").map(item => item / 100 + "V ") || "无电芯温度详情"}
+                            {P(item, "batteryJT808.latestStatus.cellVoltageDetail", []).join(", ") || "-"}
                         </p>
                     }
                     trigger="hover">
                         <Button type="link">详情></Button>
                     </Popover>
                 )
+            },
+            { 
+                title: "电芯温度",
+                render: item => (
+                    <Popover 
+                    title="各个电芯温度" 
+                    content={
+                        <p>
+                            {P(item, "batteryJT808.latestStatus.tempDetailInfo", []).join(", ") || "-"}
+                        </p>
+                    }
+                    trigger="hover">
+                        <Button type="link">详情></Button>
+                    </Popover>
+                )
+            },
+            {
+                title: "电池实时状态",
+                render: item => {
+                    function PP (k) {
+                        return P(item, "batteryJT808.latestStatus." + k);
+                    }
+                    return <Popover 
+                    title="各个电芯电压" 
+                    content={
+                        <div style={{width: "600px"}}>
+                            <Row>
+                                <Col span={8}>
+                                    <p>剩余容量：{PP("residualCapacity")}AH</p>
+                                    <p>当前满容量：{PP("currentCapacity")}AH</p>
+                                    <p>循环次数：{PP("loopTimes")}</p>
+                                    <p>最大电压：{PP("sMaxVol")}</p>
+                                    <p>最小电压：{PP("sMinVol")}</p>
+                                    <p>最大序列号：{PP("sMaxSeriesNum")}</p>
+                                    <p>最小序列号：{PP("sMinSeriesNum")}</p>
+                                    <p>电池健康值：{PP("soh")}</p>
+                                    <p>生命信号：{PP("lifeSignal")}</p>
+                                    <p>总电压：{PP("totalVoltage")}</p>
+                                    <p>充电状态：{PP("statusCharge") == 1 ? "是" : "否"}</p>
+                                </Col>
+                                <Col span={8}>
+                                    <p>温感侦测线开路：{PP("statusTempDetectOpenCircuit") == 1 ? "是" : "否"}</p>
+                                    <p>电芯温度过高：{PP("statusECoreTempOver") == 1 ? "是" : "否"}</p>
+                                    <p>充电饱和：{PP("statusFillUp") == 1 ? "是" : "否"}</p>
+                                    <p>充电过流：{PP("statusChargeOverCurrent") == 1 ? "是" : "否"}</p>
+                                    <p>电芯过压：{PP("statusECoreOverVol") == 1 ? "是" : "否"}</p>
+                                    <p>放电：{PP("statusDischarge") == 1 ? "是" : "否"}</p>
+                                    <p>短路：{PP("statusShortCut") == 1 ? "是" : "否"}</p>
+                                    <p>放电过流：{PP("statusDischargeOverCurrent") == 1 ? "是" : "否"}</p>
+                                    <p>电芯欠压：{PP("statusECoreUnderVol") == 1 ? "是" : "否"}</p>
+                                    <p>电芯温度针测线开路：{PP("statuseDetectOpenCircuit") == 1 ? "是" : "否"}</p>
+                                </Col>
+                                <Col span={8}>
+                                    <p>电芯温度过低：{PP("statusECoreTempUnder") == 1 ? "是" : "否"}</p>
+                                    <p>BMS温度过高：{PP("statusBMSTempOver") == 1 ? "是" : "否"}</p>
+                                    <p>租赁状态：{PP("statusRent") == 1 ? "是" : "否"}</p>
+                                    <p>禁止充电：{PP("statusForbidCharge") == 1 ? "是" : "否"}</p>
+                                    <p>禁止放电：{PP("statusForbidDischarge") == 1 ? "是" : "否"}</p>
+                                    <p>充电mos：{PP("statusChargeMOSStatus") == 1 ? "闭合" : "断开"}</p>
+                                    <p>放电mos：{PP("statusDisChargeMOSStatus") == 1 ? "闭合" : "断开"}</p>
+                                    <p>BMS故障状态：{PP("statusBMSFailureStatus") == 1 ? "故障" : "正常"}</p>
+                                    <p>BMS标准模式：{PP("statusBMSStandMode") == 1 ? "是" : "否"}</p>
+                                    <p>BMS断电模式：{PP("statusBMSPowerDownMode") == 1 ? "是" : "否"}</p>
+                                </Col>
+                            </Row>
+                        </div>
+                    }
+                    trigger="hover">
+                        <Button type="link">详情></Button>
+                    </Popover>
+                }
             },
             { 
                 title: "状态",
@@ -142,47 +161,16 @@ export default class BatteryManagerJT808 extends React.Component {
             {
                 title: "位置",
                 width: 200,
-                render: item => item.batteryGoodTaxisys && item.batteryGoodTaxisys.latestStatus.gdLocation || "暂无位置信息"
+                render: item => Number(P(item, "longitude", 0)) && Number(P(item, "latitude", 0)) ? P(item, "address") : "暂无位置信息"
             },
             { 
                 title: "操作",
                 render: (item, rm, index) => {
-                    const latestStatus: any = item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus : {};
-                    const { gdLat, gdLng, gdLocation } = latestStatus;
-                    return <Button icon="compass" onClick={this.openBatteryPositionToast.bind(this, gdLat, gdLng)} disabled={!gdLocation}>查看位置</Button>
+                    const lat = Number(P(item, "latitude", 0)), lng = Number(P(item, "longitude", 0));
+                    return <Button icon="compass" onClick={this.openBatteryPositionToast.bind(this, lat, lng)} disabled={!lng || !lat}>查看位置</Button>
                 }
             },
         ],
-        //bms故障状态字典
-        bmsFaultDict: {
-            "00": "短路保护",
-            "01": "单芯欠压保护",
-            "02": "单芯过压保护",
-            "03": "放电过流保护",
-            "04": "充电过流保护",
-            "05": "低温保护",
-            "06": "过温保护",
-            "07": "状态异常保护",
-            "08": "MOS异常",
-            "09": "总电压过压保护",
-            "10": "总电压欠压保护",
-            "11": "单芯间压差过大",
-            "000": "无"
-        },
-        //bms警告状态字典
-        bmsWarningDict: {
-            "00": "单芯电压低告警",
-            "01": "单芯电压高告警",
-            "02": "电芯低温告警",
-            "03": "电芯高温告警",
-            "04": "总电压高告警",
-            "05": "总电压低告警",
-            "06": "单芯压差过大告警",
-            "07": "MOS高温告警",
-            "08": "环境低温告警",
-            "09": "环境高温告警",
-            "000": "无"
-        },
         //视图类型0表格，1地图
         viewIndex: 0, 
         //content高度，数据来自store
@@ -198,6 +186,11 @@ export default class BatteryManagerJT808 extends React.Component {
             show: false,
             lat: "",
             lng: ""
+        },
+        //导入电池弹窗
+        importBatteryToast: {
+            show: false,
+            clientIds: "",
         },
         projectId: "",
         deviceId: "",
@@ -323,6 +316,40 @@ export default class BatteryManagerJT808 extends React.Component {
         this.setState({});
     }
 
+    //打开、关闭导入电池弹窗
+    openOrOffImportBatteryToast (is: boolean) {
+        const _ = this.state.importBatteryToast;
+        if (is) {
+            _.show = true;
+        } else {
+            _.show = false;
+            _.clientIds = "";
+        }
+        this.setState({});
+    }
+
+    //保存导入电池
+    async saveImportBattery () {
+        let clienIds: any = this.state.importBatteryToast.clientIds;
+        if (!clienIds) return message.warning("clientIds不能为空");
+        if (clienIds.indexOf("\n") > -1) {
+            clienIds = clienIds.split("\n").filter(item => item);
+        } else {
+            clienIds = [clienIds];
+        }
+        NProgress.start();
+        try {
+            await importJT808Battery({clientIds: clienIds});
+        } catch(err) {
+            NProgress.done();
+            return;
+        }
+        this.openOrOffImportBatteryToast(false);
+        NProgress.done();
+        message.success("导入电池成功");
+        this.loadList();
+    }
+
     render (): any {
         const state = this.state;
         return (
@@ -363,11 +390,7 @@ export default class BatteryManagerJT808 extends React.Component {
                             }}>查找</Button>
                         </Form.Item>
                         <Form.Item>
-                            <Button icon="login" onClick={() => {
-                                this.state.page = 1;
-                                this.setState({});
-                                this.loadList();
-                            }}>导入电池</Button>
+                            <Button icon="login" onClick={this.openOrOffImportBatteryToast.bind(this, true)}>导入电池</Button>
                         </Form.Item>
                     </Form>
                     <div style={{float: "right", marginBottom: "16px"}}>
@@ -403,6 +426,22 @@ export default class BatteryManagerJT808 extends React.Component {
                         this.loadList();
                     }}/>
                 </div>
+
+                {/* 导入电池弹窗 */}
+                <Modal
+                title="导入电池"
+                visible={state.importBatteryToast.show}
+                onCancel={this.openOrOffImportBatteryToast.bind(this, false)}
+                onOk={this.saveImportBattery.bind(this)}
+                maskClosable={false}
+                closable={false}
+                >
+                    <Form>
+                        <Form.Item label="clientIds">
+                            <Input.TextArea rows={10} placeholder="每行一个回车分隔" value={state.importBatteryToast.clientIds} onChange={input.bind(this, "importBatteryToast.clientIds")}/>
+                        </Form.Item>
+                    </Form>
+                </Modal>
 
                 {/* 单个电池位置弹窗 */}
                 {state.batteryPositionToastState.show && <BatteryPosition title="电池位置" close={this.offBatteryPositionToast.bind(this)} lat={state.batteryPositionToastState.lat} lng={state.batteryPositionToastState.lng}/>}

@@ -94,9 +94,9 @@ export function initLife (context: any, $onLoad: any, $onShow?: any) {
  * @param {*} replace 没有的时候替换返回值
  * @return {*} 没有找到则返回replace
  */
-export function property (origin, target, replace = "-") {
+export function property (origin, target, replace: any = "-") {
     const numberArr = target.match(/\[[0-9]\]/g);
-    numberArr.forEach(numberStr => {
+    Array.isArray(numberArr) && numberArr.forEach(numberStr => {
         target = target.replace(numberStr, numberStr.replace(/(?:\[|\])/g, "."));
     }); 
     const targetArr = target.split(".").filter(item => item);

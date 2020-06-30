@@ -43,3 +43,16 @@ export function disableDevice (data: {id: string|number}) {
         data
     });
 }
+
+/**
+ * 导入JT808电池
+ */
+export function importJT808Battery (data: {
+    clientIds: string|number[]
+}) {
+    return request({
+        url: "/battery/admin/JT808/import",
+        method: "POST",
+        data
+    });
+}
