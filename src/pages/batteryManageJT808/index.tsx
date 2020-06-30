@@ -29,46 +29,39 @@ export default class BatteryManagerJT808 extends React.Component {
             //     key: "model",
             //     render: item => item ? item : "-"
             // },
-            { 
-                title: "IMEI",
-                render: item => item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryImei : "-"
+            {
+                title: "电池编号",
+                dataIndex: "deviceId",
+                key: "deviceId"
             },
-            { 
-                title: "电池序列号",
-                render: item => item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryNo : "-"
+            {
+                title: "主设备id",
+                dataIndex: "mainDeviceId",
+                key: "mainDeviceId"
             },
-            { 
-                title: "软件版本号",
-                render: item => item.batteryGoodTaxisys ? item.batteryGoodTaxisys.softwareVersion : "-"
-            },
-            { 
-                title: "硬件版本号",
-                render: item => item.batteryGoodTaxisys ? item.batteryGoodTaxisys.deviceVersion : "-"
-            },
-            { 
-                title: "电池物理属性",
-                render: item => (
-                    <Popover 
-                    title="电池物理属性详情" 
-                    content={
+            {
+                title: "软件/硬件版本",
+                render: item => {
+                    const content: React.ReactNode = (
                         <div>
-                            <p>电芯数量： {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryCellNum : "-"}</p>
-                            <p>循环次数： {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryLoopCount : "-"} 次</p>
-                            <p>剩余容量： {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryResidualCapacity / 100 : "-"} AH</p>
+                            <p>硬件版本号: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.deviceVersion : "-"}</p>
+                            <p>软件版本号: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.softwareVersion : "-"}</p>
                         </div>
-                    }
-                    trigger="hover">
+                    );
+                    return <Popover content={content} title="软件/硬件版本" trigger="hover">
                         <Button type="link">详情></Button>
                     </Popover>
-                )
+                }
             },
-            { 
-                title: "电池物理状态",
-                render: item => (
-                    <Popover 
-                    title="电池物理状态详情" 
-                    content={
+            {
+                title: "物理属性/状态",
+                render: item => {
+                    const content: React.ReactNode = (
                         <div>
+                            <p>电芯数量： {item.batteryJT808.latestStatus.totalCurrent ? item.batteryGoodTaxisys.latestStatus.batteryCellNum : "-"}</p>
+                            <p>循环次数： {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryLoopCount : "-"} 次</p>
+                            <p>剩余容量： {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryResidualCapacity / 100 : "-"} AH</p>
+                        
                             <p>总电压: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryTotalVol / 100 : "-"} V</p>
                             <p>总电流: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryTotalVol / 100 : "-"} A</p>
                             <p>SOC: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batterySoc : "-"}</p>
@@ -84,11 +77,15 @@ export default class BatteryManagerJT808 extends React.Component {
                             <p>最低温度序号</p> */}
                             <p>电芯温度: {item.batteryGoodTaxisys ? item.batteryGoodTaxisys.latestStatus.batteryCellTemperature : "-"} 摄氏度</p>
                         </div>
-                    }
-                    trigger="hover">
+                    );
+                    return <Popover 
+                    title="物理属性/状态"
+                    content={content}
+                    trigger="hover"
+                    >
                         <Button type="link">详情></Button>
                     </Popover>
-                )
+                }
             },
             {
                 title: "故障/警告",

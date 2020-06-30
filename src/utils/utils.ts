@@ -85,3 +85,28 @@ export function initLife (context: any, $onLoad: any, $onShow?: any) {
     func();
     (History as any).on("change", func);
 }
+
+/**
+ * 属性获取，没有则返回指定替代值 
+ * 
+ * @param {Object} origin 对象类型
+ * @param {String} target 目标字符串，如obj.a[3].name这样
+ * @param {*} replace 没有的时候替换返回值
+ * @return {*} 没有找到则返回replace
+ */
+export function property (origin, target, replace = "-") {
+    const numberArr = target.match(/\[[0-9]\]/g);
+    numberArr.forEach(numberStr => {
+        target = target.replace(numberStr, numberStr.replace(/(?:\[|\])/g, "."));
+    }); 
+    const targetArr = target.split(".").filter(item => item);
+    for (let i = 0; i < targetArr.length; i++) {
+        const key = targetArr[i];
+        if (i < targetArr.length - 1) {
+            if (!origin[key]) return replace;
+            origin = origin[key];
+        } else {
+            return origin[key] ? origin[key] : replace;
+        }
+    }
+}
