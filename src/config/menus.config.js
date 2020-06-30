@@ -28,6 +28,11 @@ export default [
                 path: "/batteryManage"
             },
             {
+                icon: "icon-dianchi",
+                title: "电池管理JT808",
+                path: "/batteryManage-jt808"
+            },
+            {
                 icon: "icon-iconset0499",
                 title: "换电柜管理",
                 path: "/boxManage"

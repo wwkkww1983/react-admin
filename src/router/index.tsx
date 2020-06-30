@@ -27,6 +27,7 @@ import BatterySetting from "../pages/batterySetting";
 import WalletSetting from "../pages/walletSetting";
 import PlatformSetting from "../pages/platformSetting";
 import Nfc from "../pages/nfc";
+import batteryManageJT808 from "../pages/batteryManageJT808";
 
 export const inRoutes = [
     {
@@ -51,6 +52,12 @@ export const inRoutes = [
         title: "电池管理",
         path: "/batteryManage",
         component: batteryManage,
+        keepAlive: true
+    },
+    {
+        title: "电池管理JT808",
+        path: "/batteryManage-jt808",
+        component: batteryManageJT808,
         keepAlive: true
     },
     {
