@@ -10,7 +10,7 @@ module.exports = {
     //充电桩订单
     "GET /chargingStation/business/queryOrder": () => (
         Mock.mock({
-            "list":[
+            "list|10":[
                 {
                     "id|+1": 1000000,
                     "orderNumber":"订单号",
@@ -18,29 +18,29 @@ module.exports = {
                     "typeText":"预付费",
                     "memberId":"用户 ID",
                     "nfcId":"NFC 卡号",
-                    "subDeviceId":"子设备 ID",
-                    "port":"端口号",
+                    "subDeviceId|10000-20000": 0, //"子设备 ID",
+                    "port|0-1": 0, //"端口号",
                     "status":"状态",
-                    "amount":"金额",
+                    "amount|50-100": 50,
                     "power":"电量",
-                    "chargingTime":"充电时长，单位：分钟",
-                    "createTime":"创建时间",
-                    "beginTime":"充电开始时间",
-                    "endTime":"充电结束时间",
+                    "chargingTime|5-60": 50, //"充电时长，单位：分钟",
+                    "createTime": new Date().getTime() / 1000, //"创建时间",
+                    "beginTime": new Date().getTime() / 1000, //"充电开始时间",
+                    "endTime": new Date().getTime() / 1000, //"充电结束时间",
                     "prepaidPrice":"单价",
                     "prepaidMaxTime":"时间，单位：秒",
                     "prepaidMaxKwh":"最多KWH",
                     "postpaidPriceHour":"分/小时",
                     "postpaidPriceKwh":"分/KWH",
                     "postpaidMaxTime":"最长充电时间，单位：秒",
-                    "payAmount":"实际支付金额",
+                    "payAmount": 100,
                     "payChannel":"支付渠道",
                     "payTransferNumber":"虚拟电池购买时的，支付系统的订单号",
-                    "payTime":"支付时间"
+                    "payTime": new Date().getTime() / 1000, //"支付时间"
                 }
             ],
             "limit":15,
-            "total":11,
+            "total":30,
             "page_count":1,
             code: 0,
             mesaage: ""

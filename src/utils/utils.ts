@@ -48,15 +48,27 @@ export function input (target, e: any) {
  * 时间戳转日期字符串 
  * 
  * @param {String} time 时间戳
+ * @param {String} type 格式 
  * @param {String} spacing 间隔符
  * @return {String}
  */
-export function timeToDateStr (time: string|number, spacing: string = "\/"): string {
+export function timeToDateStr (
+    time: string|number, 
+    type: string = "date", //可选date\time\datetime
+    spacing: string = "\/"
+): string {
     const obj = new Date(Number(time));
     let str = "";
-    str += obj.getFullYear() + spacing;
-    str += (obj.getMonth() + 1 < 10 ? "0" + (obj.getMonth() + 1) : obj.getMonth() + 1) + spacing;
-    str += obj.getDate() < 10 ? "0" + obj.getDate() : obj.getDate();
+    if (type === "date" || type === "datetime") {
+      str += obj.getFullYear() + spacing;
+      str += (obj.getMonth() + 1 < 10 ? "0" + (obj.getMonth() + 1) : obj.getMonth() + 1) + spacing;
+      str += obj.getDate() < 10 ? "0" + obj.getDate() : obj.getDate();
+    }
+    if (type === "time" || type === "datetime") {
+      str += " " + (obj.getHours() < 10 ? "0" + obj.getHours(): obj.getHours());
+      str += ":" + (obj.getMinutes() < 10 ? "0" + obj.getMinutes() : obj.getMinutes());
+      str += ":" + (obj.getSeconds() < 10 ? "0" + obj.getSeconds() : obj.getSeconds());
+    }
     return str;
 }
 
