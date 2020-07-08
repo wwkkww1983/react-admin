@@ -9,7 +9,7 @@ export function getPileOrders (data: {
     limit: number, //	每页返回数量，默认15		[int]
 }) {
     return request({
-        url: "/chargingStation/business/queryOrder",
+        url: "/chargingStation/admin/order/query",
         method: "GET",
         params: data
     });
