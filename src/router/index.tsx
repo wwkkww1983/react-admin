@@ -28,6 +28,7 @@ import WalletSetting from "../pages/walletSetting";
 import PlatformSetting from "../pages/platformSetting";
 import Nfc from "../pages/nfc";
 import batteryManageJT808 from "../pages/batteryManageJT808";
+import OrderManage from "../pages/orderMamage";
 
 export const inRoutes = [
     {
@@ -112,6 +113,12 @@ export const inRoutes = [
         title: "NFC管理",
         path: "/nfc",
         component: Nfc,
+        keepAlive: true
+    },
+    {
+        title: "订单管理",
+        path: "/orderManage",
+        component: OrderManage,
         keepAlive: true
     },
     {

@@ -84,6 +84,11 @@ export default [
         title: "NFC管理",
         icon: "icon-nfc",
         path: "/nfc"
+    },
+    {
+        title: "订单管理",
+        icon: "icon-order",
+        path: "/orderManage"
     }
 ]
 
