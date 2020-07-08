@@ -81,7 +81,7 @@ module.exports = {
     //虚拟电池订单
     "GET /battery/admin/virtualBatteryOrder/query": () => (
         Mock.mock({
-            "list":[
+            "list|10":[
                 {
                     "id":1,
                     "status":1,// 状态值
@@ -97,7 +97,7 @@ module.exports = {
                 }
             ],
             "limit":15,
-            "total":11,
+            "total": 40,
             "page_count":1,
             code: 0,
             message: ""
