@@ -6,7 +6,7 @@ import { input, timeToDateStr } from "../../../../utils/utils";
 import { getVirtualBatteryOrders } from "../../../../api/orderManage";
 import Nprogress from "nprogress";
 
-export default class PileOrder extends React.Component {
+export default class VirtualBatteryOrder extends React.Component {
     constructor (props) {
         super(props);
     }

@@ -50,24 +50,24 @@ module.exports = {
     //租借电池订单
     "GET /battery/admin/order/query": () => (
         Mock.mock({
-            "list":[
+            "list|10":[
                 {
-                    "id":"",
-                    "orderNumber":"订单号",
-                    "memberId":"用户ID",
+                    "id|100-200": 0, //"",
+                    "orderNumber|10000-20000": 0, //"订单号",
+                    "memberId|10000-20000": 0, //"用户ID",
                     "virtualBatteryId":"虚拟电池位ID",
                     "status":"状态",
                     "statusText":"状态文本",
                     "batteryId":"租用的电池ID",
                     "price":"价格",
-                    "payAmount":"实际支付金额",
+                    "payAmount|30-200": 100, //"实际支付金额",
                     "payChannel":"支付渠道",
                     "payTransferNumber":"虚拟电池购买时的，支付系统的订单号",
-                    "createTime":"订单创建时间",
-                    "borrowTime":"租借时间",
-                    "returnTime":"归还时间",
-                    "payTime":"支付时间",
-                    "refundExpireTime":"最后退款时间"
+                    "createTime": new Date().getTime() / 1000, //"订单创建时间",
+                    "borrowTime": new Date().getTime() / 1000, //"租借时间",
+                    "returnTime": new Date().getTime() / 1000, //"归还时间",
+                    "payTime": new Date().getTime() / 1000, //"支付时间",
+                    "refundExpireTime": new Date().getTime() / 1000, //"最后退款时间"
                 }
             ],
             "limit":15,
