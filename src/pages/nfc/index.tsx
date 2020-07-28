@@ -46,7 +46,7 @@ export default class Nfc extends React.Component {
             },
             {
                 title: "创建时间",
-                render: item => timeToDateStr(item.create_time * 1000)
+                render: item => item.createTime ? timeToDateStr(item.createTime * 1000) : "-"
             },
             {
                 title: "状态码",
