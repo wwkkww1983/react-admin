@@ -222,4 +222,20 @@ module.exports = {
     //     return _[type]();
     // }
 
+    //充电站增加子设备
+    "POST /chargingStation/admin/manager/addSubDevice": () => (
+        Mock.mock({
+            "code|0-1": 0,
+            message: ""
+        })
+    ),
+
+    //删除充电站子设备
+    "POST  /chargingStation/admin/manager/delSubDevice": () => (
+        Mock.mock({
+            "code|0-1": 0,
+            message: ""
+        })
+    )
+
 }

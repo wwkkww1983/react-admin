@@ -3,7 +3,7 @@ import "./index.less";
 
 import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination, Modal, Popover } from "antd";
 import NProgress from "nprogress";
-import { getDeviceList, enableDevice, disableDevice } from "../../../../api/deviceManager";
+import { getDeviceList, enableDevice, disableDevice, addPileSubDevice, delPileSubDevice } from "../../../../api/deviceManager";
 import { input, initLife } from "../../../../utils/utils";
 import store from "../../../../store";
 import DeviceInMap from "../../../../components/deviceInMap";
@@ -77,6 +77,9 @@ export default class Home extends React.Component {
                         </Form.Item>
                         <Form.Item>
                             <Button icon="ordered-list" onClick={this.openOrOffSubDeviceListToast.bind(this, item)}>子设备</Button>
+                        </Form.Item>
+                        <Form.Item>
+                            <Button icon="plus" onClick={this.openOrOffAddSubDeviceToast.bind(this, item.id)}>添加子设备</Button>
                         </Form.Item>
                     </Form>
                 )
@@ -187,6 +190,12 @@ export default class Home extends React.Component {
             id: "",
             title: "",
             list: []
+        },
+        //增加子设备弹窗状态
+        addSubDeviceToast: {
+            show: false,
+            mainDeviceId: "",
+            deviceId: ""
         }
     }
 
@@ -220,6 +229,29 @@ export default class Home extends React.Component {
         this.state.switchLoading[index] = false;
         this.setState({});
         this.loadList();
+    }
+
+    //新增子设备提交
+    async addSubDevice () {
+        NProgress.start();
+        const { mainDeviceId, deviceId } = this.state.addSubDeviceToast;
+        if (!mainDeviceId) {
+            message.warning("主设备id不能为空");
+            return;
+        }
+        if (!deviceId) {
+            message.warning("子设备id不能为空");
+            return;
+        }
+        try {
+            await addPileSubDevice({mainDeviceId, deviceId});
+        } catch(err) {
+            NProgress.done();
+            return;
+        }
+        NProgress.done();
+        message.success("新增子设备成功");
+        this.openOrOffAddSubDeviceToast(null);
     }
 
     //加载列表
@@ -299,6 +331,20 @@ export default class Home extends React.Component {
             _.id = "";
             _.title = "";
             _.list = [];
+        }
+        this.setState({});
+    }
+
+    //打开、关闭增加子设备弹窗
+    openOrOffAddSubDeviceToast (mainDeviceId: string|number): void {
+        const _: any = this.state.addSubDeviceToast;
+        if (mainDeviceId) {
+            _.show = true;
+            _.mainDeviceId = mainDeviceId;
+            _.deviceId = "";
+        }
+        else {
+            _.show = false;
         }
         this.setState({});
     }
@@ -391,6 +437,24 @@ export default class Home extends React.Component {
 
                 {/* 单个设备位置地图显示组件 */}
                 {state.positionToast.show && <DevicePosition title="充电站位置" lng="" lat="" close={this.openOrOffPositionToast.bind(this, null, null)}/>}
+
+                {/* 新增子设备弹窗 */}
+                <Modal
+                visible={state.addSubDeviceToast.show}
+                title="添加子设备"
+                maskClosable={false}
+                onOk={this.addSubDevice.bind(this)}
+                onCancel={this.openOrOffAddSubDeviceToast.bind(this, false)}
+                >
+                    <Form>
+                        <Form.Item label="主设备id">
+                            <Input value={state.addSubDeviceToast.mainDeviceId} onChange={input.bind(this, "addSubDeviceToast.mainDeviceId")} placeholder="主设备id"></Input>
+                        </Form.Item>
+                        <Form.Item label="子设备id">
+                            <Input value={state.addSubDeviceToast.deviceId} onChange={input.bind(this, "addSubDeviceToast.deviceId")} placeholder="子设备id"></Input>
+                        </Form.Item>
+                    </Form>
+                </Modal>
 
             </div>
         );

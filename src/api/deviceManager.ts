@@ -56,3 +56,31 @@ export function importJT808Battery (data: {
         data
     });
 }
+
+
+/**
+ * 新增充电桩子设备 
+ */
+export function addPileSubDevice (data: {
+    mainDeviceId: string|number,
+    deviceId: string|number
+}) {
+    return request({
+        url: "/chargingStation/admin/manager/addSubDevice",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 删除充电桩子设备 
+ */
+export function delPileSubDevice (data: {
+    deviceId: string|number
+}) {
+    return request({
+        url: "/chargingStation/admin/manager/delSubDevice",
+        method: "POST",
+        data
+    });
+}
