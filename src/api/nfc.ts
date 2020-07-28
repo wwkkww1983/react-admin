@@ -38,3 +38,13 @@ export function disable (data: {
     });
 }
 
+//导入nfc卡片
+export function importNfcCard (data: {
+    cardIds: string[]
+}) {
+    return request({
+        url: "/wallet/admin/nfc/import",
+        method: "POST",
+        data
+    });
+}

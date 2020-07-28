@@ -12,9 +12,10 @@ import {
     Switch,
     Tag
 } from "antd";
+const { TextArea } = Input;
 import { input, initLife, timeToDateStr } from "../../utils/utils";
 import Nprogress from "nprogress";
-import { getNfcList, enable, disable } from "../../api/nfc";
+import { getNfcList, enable, disable, importNfcCard } from "../../api/nfc";
 
 export default class Nfc extends React.Component {
     constructor (props) {
@@ -101,6 +102,11 @@ export default class Nfc extends React.Component {
                 remark: ""
             }
         },
+        //批量导入nfc弹窗
+        importNfcToast: {
+            show: false,
+            cardIds: ""
+        },
         switchLoadings: [],
         list: [],
         page: 1,
@@ -152,7 +158,7 @@ export default class Nfc extends React.Component {
         this.loadList();
     }
 
-    //打开滚逼nfc启用表单弹窗
+    //打开关闭nfc启用表单弹窗
     openOrOffToast (item): void {
         const _ = this.state.toast, __ = _.data;
         if (item) {
@@ -193,6 +199,38 @@ export default class Nfc extends React.Component {
         this.loadList();
     }
 
+    //导入nfc卡
+    async importNfc () {
+        Nprogress.start();
+        if (this.state.importNfcToast.cardIds === "") {
+            message.warning("请输入NFC卡卡号");
+            return;
+        }
+        const cardIds = this.state.importNfcToast.cardIds.replace(/[^0-9a-z\n]/ig, "").split("\n");
+        try {
+            await importNfcCard({cardIds});
+        } catch(err) {
+            Nprogress.done();
+            return;
+        }
+        Nprogress.done();
+        this.openOrOffImportNfcToast(null);
+        message.success("导入成功");
+        this.loadList();
+    }
+
+    //打开关闭导入nfc弹窗
+    openOrOffImportNfcToast (is: boolean) {
+        const _: any = this.state.importNfcToast;
+        if (is) {
+            _.show = true;
+            _.cardIds = "";
+        } else {
+            _.show = false;
+        }
+        this.setState({});
+    }
+
     render () {
         const state = this.state;
         return (
@@ -203,6 +241,9 @@ export default class Nfc extends React.Component {
                     </Form.Item>
                     <Form.Item>
                         <Button icon="search" onClick={this.loadList.bind(this)}>查找</Button>
+                    </Form.Item>
+                    <Form.Item>
+                        <Button icon="plus" onClick={this.openOrOffImportNfcToast.bind(this)}>导入</Button>
                     </Form.Item>
                 </Form>
                 <Table
@@ -238,6 +279,21 @@ export default class Nfc extends React.Component {
                         </Form.Item>
                         <Form.Item label="备注">
                             <Input.TextArea placeholder="备注" value={state.toast.data.remark} onChange={input.bind(this, "toast.data.remark")}></Input.TextArea>
+                        </Form.Item>
+                    </Form>
+                </Modal>
+
+                {/* 批量导入nfc弹窗 */}
+                <Modal
+                title="导入NFC卡"
+                maskClosable={false}
+                visible={state.importNfcToast.show}
+                onCancel={this.openOrOffImportNfcToast.bind(this, null)}
+                onOk={this.importNfc.bind(this)}
+                >
+                    <Form>
+                        <Form.Item>
+                            <TextArea autosize={{ minRows: 10}} onChange={input.bind(this, "importNfcToast.cardIds")} value={state.importNfcToast.cardIds} placeholder="每行一个NFC卡号"/>
                         </Form.Item>
                     </Form>
                 </Modal>

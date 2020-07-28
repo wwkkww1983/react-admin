@@ -24,5 +24,13 @@ module.exports = {
             "message":"",
             "code":0
         })
+    ),
+
+    //导入nfc
+    "POST /wallet/admin/nfc/import": () => (
+        Mock.mock({
+            code: 0,
+            message: ""
+        })
     )
 }
