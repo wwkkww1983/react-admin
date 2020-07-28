@@ -1,9 +1,9 @@
 import React from "react";
 import "./index.less";
 
-import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination, Popover } from "antd";
+import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination, Popover, Modal } from "antd";
 import NProgress from "nprogress";
-import { getDeviceList, enableDevice, disableDevice } from "../../../../api/deviceManager";
+import { getDeviceList, enableDevice, disableDevice, delPileSubDevice } from "../../../../api/deviceManager";
 import { input, initLife } from "../../../../utils/utils";
 import store from "../../../../store";
 import DeviceInMap from "../../../../components/deviceInMap";
@@ -96,7 +96,14 @@ export default class Home extends React.Component {
             { 
                 title: "操作",
                 render: (item, rm, index) => (
-                    <Button disabled={item.longitude <= 0 || item.latitude <= 0} icon="monitor" onClick={this.openOrOffPositionToast.bind(this, item.latitude, item.longitude)}>查看主机位置</Button>
+                    <Form layout="inline">
+                        <Form.Item>
+                            <Button disabled={item.longitude <= 0 || item.latitude <= 0} icon="monitor" onClick={this.openOrOffPositionToast.bind(this, item.latitude, item.longitude)}>查看主机位置</Button>
+                        </Form.Item>
+                        <Form.Item>
+                            <Button icon="delete" type="danger" onClick={this.delSubDevice.bind(this, item.id)}>删除</Button>
+                        </Form.Item>
+                    </Form>
                 )
             },
         ],
@@ -154,6 +161,29 @@ export default class Home extends React.Component {
         this.state.switchLoading[index] = false;
         this.setState({});
         this.loadList();
+    }
+
+    //删除充电模块（子设备，充电模块属于通讯主机的子设备）
+    delSubDevice (id: number|string) {
+        Modal.confirm({
+            title: `确定删除子设备："${id}" 吗?`,
+            content: "",
+            okText: "确定",
+            okType: 'danger',
+            cancelText: '取消',
+            onOk: async () => {
+                NProgress.start();
+                try {
+                    await delPileSubDevice({deviceId: id});
+                } catch(err) {
+                    NProgress.done();
+                    return;
+                }
+                NProgress.done();
+                this.loadList();
+            },
+            onCancel() {}
+        });
     }
 
     //加载列表

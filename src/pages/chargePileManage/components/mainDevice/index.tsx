@@ -3,7 +3,7 @@ import "./index.less";
 
 import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination, Modal, Popover } from "antd";
 import NProgress from "nprogress";
-import { getDeviceList, enableDevice, disableDevice, addPileSubDevice, delPileSubDevice } from "../../../../api/deviceManager";
+import { getDeviceList, enableDevice, disableDevice, addPileSubDevice } from "../../../../api/deviceManager";
 import { input, initLife } from "../../../../utils/utils";
 import store from "../../../../store";
 import DeviceInMap from "../../../../components/deviceInMap";
