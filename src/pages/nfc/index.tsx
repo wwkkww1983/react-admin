@@ -26,13 +26,11 @@ export default class Nfc extends React.Component {
         columns: [
             {
                 title: "NFC卡号",
-                dataIndex: "nfc_id",
-                key: "nfc_id"
+                render: item => item.nfc_id ? item.nfc_id : "-"
             },
             {
                 title: "二维码",
-                dataIndex: "hash_id",
-                key: "hash_id"
+                render: item => item.hash_id ? item.hash_id : "-"
             },
             {
                 title: "金额",
