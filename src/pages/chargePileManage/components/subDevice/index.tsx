@@ -189,7 +189,7 @@ export default class Home extends React.Component {
     //加载列表
     async loadList () {
         const data = {
-            type: "5",
+            type: "7",
             page: this.state.page,
             limit: this.state.limit
         }

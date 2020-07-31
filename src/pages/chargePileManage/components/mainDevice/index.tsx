@@ -1,10 +1,10 @@
 import React from "react";
 import "./index.less";
 
-import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination, Modal, Popover } from "antd";
+import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination, Modal, Popover, Row, Col } from "antd";
 import NProgress from "nprogress";
 import { getDeviceList, enableDevice, disableDevice, addPileSubDevice } from "../../../../api/deviceManager";
-import { input, initLife } from "../../../../utils/utils";
+import { input, initLife, property as P } from "../../../../utils/utils";
 import store from "../../../../store";
 import DeviceInMap from "../../../../components/deviceInMap";
 import DevicePosition from "../../../../components/devicePosition";
@@ -138,24 +138,28 @@ export default class Home extends React.Component {
             {
                 title: "设备工况",
                 render: (item, record, index) => {
-                    const _ = item.charger.latestStatus;
+                    const _ = P(item, "charger.latestStatus",{});
                     const content = (
-                        <div>
-                            <p>端口种类：{_.portType == 1 ? "交流" : "直流"}</p>
-                            <p>交流端口状态：{_.acPortStatus == 1 ? "充电" : "空闲"}</p>
-                            <p>充电器状态：{_.chargerInBoxStatus == 1 ? "就位" : "空闲" }</p>
-                            <p>充电器插入端口状态：{_.chargerPlugPortStatus == 1 ? "插入" : "空闲"}</p>
-                            <p>NFC读卡器状态：{_.nfcReaderStatus == 1 ? "有" : "无"}</p>
-                            <p>直流分路箱状态：{_.dcBranchBoxStatus == 1 ? "打开" : "关闭"}</p>
-                            <p>直流充电模块状态：{_.dcChargingModuleStatus == 1 ? "充电" : "空闲"}</p>
-                            <p>插口电压：{_.portVoltageError == 1 ? "异常" : "正常"}</p>
-                            <p>插口电流：{_.portCurrentError == 1 ? "异常" : "正常"}</p>
-                            <p>插口温度：{_.portTemperatureError == 1 ? "异常" : "正常"}</p>
-                            <p>插口充电器/电池：{_.portChargerError == 1 ? "异常" : "正常"}</p>
-                            <p>插口继电器：{_.portRelayError == 1 ? "异常" : "正产"}</p>
-                            <p>插口插座：{_.portSocketError == 1 ? "异常" : "正常"}</p>
-                            <p>插口放置盒：{_.portBoxError == 1 ? "异常" : "正常"}</p>
-                        </div>
+                        <Row style={{width: "400px"}}>
+                            <Col span={12}>
+                                <p>端口种类：{_.portType == 1 ? "交流" : "直流"}</p>
+                                <p>交流端口状态：{_.acPortStatus == 1 ? "充电" : "空闲"}</p>
+                                <p>充电器状态：{_.chargerInBoxStatus == 1 ? "就位" : "空闲" }</p>
+                                <p>充电器插入端口状态：{_.chargerPlugPortStatus == 1 ? "插入" : "空闲"}</p>
+                                <p>NFC读卡器状态：{_.nfcReaderStatus == 1 ? "有" : "无"}</p>
+                                <p>直流分路箱状态：{_.dcBranchBoxStatus == 1 ? "打开" : "关闭"}</p>
+                                <p>直流充电模块状态：{_.dcChargingModuleStatus == 1 ? "充电" : "空闲"}</p>
+                                <p>插口电压：{_.portVoltageError == 1 ? "异常" : "正常"}</p>
+                            </Col>
+                            <Col span={10} offset={2}>
+                                <p>插口电流：{_.portCurrentError == 1 ? "异常" : "正常"}</p>
+                                <p>插口温度：{_.portTemperatureError == 1 ? "异常" : "正常"}</p>
+                                <p>插口充电器/电池：{_.portChargerError == 1 ? "异常" : "正常"}</p>
+                                <p>插口继电器：{_.portRelayError == 1 ? "异常" : "正产"}</p>
+                                <p>插口插座：{_.portSocketError == 1 ? "异常" : "正常"}</p>
+                                <p>插口放置盒：{_.portBoxError == 1 ? "异常" : "正常"}</p>
+                            </Col>
+                        </Row>
                     );
                     return <Popover content={content} title="设备工况">
                         <Button type="link">详情></Button>
@@ -288,7 +292,7 @@ export default class Home extends React.Component {
     async loadingSubDeviceListByDeviceId (deviceId: string|number) {
         NProgress.start();
         const data = {
-            type: "5",
+            type: "7",
             mainDeviceId: deviceId,
             page: 1,
             limit: 10
@@ -320,12 +324,14 @@ export default class Home extends React.Component {
 
     //打开关闭子设备弹窗
     openOrOffSubDeviceListToast (item) {
+        console.log(">>>>>");
+        console.log(item);
         const _ = this.state.subDeviceListToast;
         if (item) {
             _.show = true;
             _.id = item.deviceId,
             _.title = "\"" + item.name + "\" 子设备列表";
-            this.loadingSubDeviceListByDeviceId(item.deviceId);
+            this.loadingSubDeviceListByDeviceId(item.id);
         } else {
             _.show = false;
             _.id = "";
@@ -429,6 +435,7 @@ export default class Home extends React.Component {
                 onCancel={this.openOrOffSubDeviceListToast.bind(this, null)}
                 >
                     <Table
+                    rowKey="id"
                     scroll={{y: 500}}
                     columns={state.subDeviceListColumns}
                     dataSource={state.subDeviceListToast.list}
@@ -448,7 +455,7 @@ export default class Home extends React.Component {
                 >
                     <Form>
                         <Form.Item label="主设备id">
-                            <Input value={state.addSubDeviceToast.mainDeviceId} onChange={input.bind(this, "addSubDeviceToast.mainDeviceId")} placeholder="主设备id"></Input>
+                            <Input disabled={true} value={state.addSubDeviceToast.mainDeviceId} onChange={input.bind(this, "addSubDeviceToast.mainDeviceId")} placeholder="主设备id"></Input>
                         </Form.Item>
                         <Form.Item label="子设备id">
                             <Input value={state.addSubDeviceToast.deviceId} onChange={input.bind(this, "addSubDeviceToast.deviceId")} placeholder="子设备id"></Input>
