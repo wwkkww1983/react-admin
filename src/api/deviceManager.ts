@@ -76,7 +76,7 @@ export function addPileSubDevice (data: {
  * 删除充电桩子设备 
  */
 export function delPileSubDevice (data: {
-    deviceId: string|number
+    id: string|number
 }) {
     return request({
         url: "/chargingStation/admin/manager/delSubDevice",

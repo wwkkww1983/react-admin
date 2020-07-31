@@ -174,7 +174,7 @@ export default class Home extends React.Component {
             onOk: async () => {
                 NProgress.start();
                 try {
-                    await delPileSubDevice({deviceId: id});
+                    await delPileSubDevice({id: id});
                 } catch(err) {
                     NProgress.done();
                     return;
@@ -189,7 +189,7 @@ export default class Home extends React.Component {
     //加载列表
     async loadList () {
         const data = {
-            type: "7",
+            type: "5",
             page: this.state.page,
             limit: this.state.limit
         }
@@ -265,6 +265,9 @@ export default class Home extends React.Component {
                                 this.setState({});
                                 this.loadList();
                             }}>查找</Button>
+                        </Form.Item>
+                        <Form.Item>
+                            <Button icon="plus">新增</Button>
                         </Form.Item>
                     </Form>
                 </div>

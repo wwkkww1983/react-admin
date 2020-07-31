@@ -3,7 +3,7 @@ import "./index.less";
 
 import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination, Modal, Popover, Row, Col } from "antd";
 import NProgress from "nprogress";
-import { getDeviceList, enableDevice, disableDevice, addPileSubDevice } from "../../../../api/deviceManager";
+import { getDeviceList, enableDevice, disableDevice, addPileSubDevice, delPileSubDevice } from "../../../../api/deviceManager";
 import { input, initLife, property as P } from "../../../../utils/utils";
 import store from "../../../../store";
 import DeviceInMap from "../../../../components/deviceInMap";
@@ -79,7 +79,7 @@ export default class Home extends React.Component {
                             <Button icon="ordered-list" onClick={this.openOrOffSubDeviceListToast.bind(this, item)}>子设备</Button>
                         </Form.Item>
                         <Form.Item>
-                            <Button icon="plus" onClick={this.openOrOffAddSubDeviceToast.bind(this, item.id)}>添加子设备</Button>
+                            <Button icon="plus" onClick={this.openOrOffAddSubDeviceToast.bind(this, item.id)}>绑定子设备</Button>
                         </Form.Item>
                     </Form>
                 )
@@ -165,6 +165,16 @@ export default class Home extends React.Component {
                         <Button type="link">详情></Button>
                     </Popover>
                 }
+            },
+            {
+                title: "操作",
+                render: item => (
+                    <Form layout="inline">
+                        <Form.Item>
+                            <Button icon="delete" type="danger" onClick={this.delSubDevice.bind(this, item.id)}>解绑</Button>
+                        </Form.Item>
+                    </Form>
+                )
             }
         ],
         //视图类型0表格，1地图
@@ -285,7 +295,6 @@ export default class Home extends React.Component {
             latlngs.push({lat: item.latitude, lng: item.longitude});
         });
         this.setState({list: res.list || [], total: res.total, latlngs});
-        console.log(this.state.list);
     }
 
     //加载指定设备id的子设备列表
@@ -324,12 +333,10 @@ export default class Home extends React.Component {
 
     //打开关闭子设备弹窗
     openOrOffSubDeviceListToast (item) {
-        console.log(">>>>>");
-        console.log(item);
         const _ = this.state.subDeviceListToast;
         if (item) {
             _.show = true;
-            _.id = item.deviceId,
+            _.id = item.id,
             _.title = "\"" + item.name + "\" 子设备列表";
             this.loadingSubDeviceListByDeviceId(item.id);
         } else {
@@ -353,6 +360,29 @@ export default class Home extends React.Component {
             _.show = false;
         }
         this.setState({});
+    }
+
+    //删除充电模块（子设备，充电模块属于通讯主机的子设备）
+    delSubDevice (id: number|string) {
+        Modal.confirm({
+            title: `确定解绑子设备："${id}" 吗?`,
+            content: "",
+            okText: "确定",
+            okType: 'danger',
+            cancelText: '取消',
+            onOk: async () => {
+                NProgress.start();
+                try {
+                    await delPileSubDevice({id: id});
+                } catch(err) {
+                    NProgress.done();
+                    return;
+                }
+                NProgress.done();
+                this.loadingSubDeviceListByDeviceId(this.state.subDeviceListToast.id);
+            },
+            onCancel() {}
+        });
     }
 
     render (): any {
@@ -448,7 +478,7 @@ export default class Home extends React.Component {
                 {/* 新增子设备弹窗 */}
                 <Modal
                 visible={state.addSubDeviceToast.show}
-                title="添加子设备"
+                title="绑定子设备"
                 maskClosable={false}
                 onOk={this.addSubDevice.bind(this)}
                 onCancel={this.openOrOffAddSubDeviceToast.bind(this, false)}
