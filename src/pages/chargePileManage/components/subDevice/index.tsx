@@ -1,10 +1,10 @@
 import React from "react";
 import "./index.less";
 
-import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination, Popover, Modal } from "antd";
+import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination, Popover, Modal, Row, Col } from "antd";
 import NProgress from "nprogress";
-import { getDeviceList, enableDevice, disableDevice, delPileSubDevice } from "../../../../api/deviceManager";
-import { input, initLife } from "../../../../utils/utils";
+import { getDeviceList, enableDevice, disableDevice, addPileSubDevice, delPileSubDevice } from "../../../../api/deviceManager";
+import { input, property as P } from "../../../../utils/utils";
 import store from "../../../../store";
 import DeviceInMap from "../../../../components/deviceInMap";
 import DevicePosition from "../../../../components/devicePosition";
@@ -69,24 +69,28 @@ export default class Home extends React.Component {
             {
                 title: "设备工况",
                 render: (item, record, index) => {
-                    const _ = item.charger.latestStatus;
+                    const _ = P(item, "charger.latestStatus",{});
                     const content = (
-                        <div>
-                            <p>端口种类：{_.portType == 1 ? "交流" : "直流"}</p>
-                            <p>交流端口状态：{_.acPortStatus == 1 ? "充电" : "空闲"}</p>
-                            <p>充电器状态：{_.chargerInBoxStatus == 1 ? "就位" : "空闲" }</p>
-                            <p>充电器插入端口状态：{_.chargerPlugPortStatus == 1 ? "插入" : "空闲"}</p>
-                            <p>NFC读卡器状态：{_.nfcReaderStatus == 1 ? "有" : "无"}</p>
-                            <p>直流分路箱状态：{_.dcBranchBoxStatus == 1 ? "打开" : "关闭"}</p>
-                            <p>直流充电模块状态：{_.dcChargingModuleStatus == 1 ? "充电" : "空闲"}</p>
-                            <p>插口电压：{_.portVoltageError == 1 ? "异常" : "正常"}</p>
-                            <p>插口电流：{_.portCurrentError == 1 ? "异常" : "正常"}</p>
-                            <p>插口温度：{_.portTemperatureError == 1 ? "异常" : "正常"}</p>
-                            <p>插口充电器/电池：{_.portChargerError == 1 ? "异常" : "正常"}</p>
-                            <p>插口继电器：{_.portRelayError == 1 ? "异常" : "正产"}</p>
-                            <p>插口插座：{_.portSocketError == 1 ? "异常" : "正常"}</p>
-                            <p>插口放置盒：{_.portBoxError == 1 ? "异常" : "正常"}</p>
-                        </div>
+                        <Row style={{width: "400px"}}>
+                            <Col span={12}>
+                                <p>端口种类：{_.portType == 1 ? "交流" : "直流"}</p>
+                                <p>交流端口状态：{_.acPortStatus == 1 ? "充电" : "空闲"}</p>
+                                <p>充电器状态：{_.chargerInBoxStatus == 1 ? "就位" : "空闲" }</p>
+                                <p>充电器插入端口状态：{_.chargerPlugPortStatus == 1 ? "插入" : "空闲"}</p>
+                                <p>NFC读卡器状态：{_.nfcReaderStatus == 1 ? "有" : "无"}</p>
+                                <p>直流分路箱状态：{_.dcBranchBoxStatus == 1 ? "打开" : "关闭"}</p>
+                                <p>直流充电模块状态：{_.dcChargingModuleStatus == 1 ? "充电" : "空闲"}</p>
+                                <p>插口电压：{_.portVoltageError == 1 ? "异常" : "正常"}</p>
+                            </Col>
+                            <Col span={10} offset={2}>
+                                <p>插口电流：{_.portCurrentError == 1 ? "异常" : "正常"}</p>
+                                <p>插口温度：{_.portTemperatureError == 1 ? "异常" : "正常"}</p>
+                                <p>插口充电器/电池：{_.portChargerError == 1 ? "异常" : "正常"}</p>
+                                <p>插口继电器：{_.portRelayError == 1 ? "异常" : "正产"}</p>
+                                <p>插口插座：{_.portSocketError == 1 ? "异常" : "正常"}</p>
+                                <p>插口放置盒：{_.portBoxError == 1 ? "异常" : "正常"}</p>
+                            </Col>
+                        </Row>
                     );
                     return <Popover content={content} title="设备工况">
                         <Button type="link">详情></Button>
@@ -98,10 +102,10 @@ export default class Home extends React.Component {
                 render: (item, rm, index) => (
                     <Form layout="inline">
                         <Form.Item>
-                            <Button disabled={item.longitude <= 0 || item.latitude <= 0} icon="monitor" onClick={this.openOrOffPositionToast.bind(this, item.latitude, item.longitude)}>查看主机位置</Button>
+                            <Button disabled={item.longitude <= 0 || item.latitude <= 0} icon="monitor" onClick={this.openOrOffPositionToast.bind(this, item.latitude, item.longitude)}>查看GPS位置</Button>
                         </Form.Item>
                         <Form.Item>
-                            <Button icon="delete" type="danger" onClick={this.delSubDevice.bind(this, item.id)}>删除</Button>
+                            <Button icon="delete" type="danger" onClick={this.delCharger.bind(this, item.id)}>删除</Button>
                         </Form.Item>
                     </Form>
                 )
@@ -128,6 +132,10 @@ export default class Home extends React.Component {
             show: false,
             lat: "",
             lng: ""
+        },
+        addChargerToast: {
+            show: false,
+            deviceId: ""
         }
     }
 
@@ -163,29 +171,6 @@ export default class Home extends React.Component {
         this.loadList();
     }
 
-    //删除充电模块（子设备，充电模块属于通讯主机的子设备）
-    delSubDevice (id: number|string) {
-        Modal.confirm({
-            title: `确定删除子设备："${id}" 吗?`,
-            content: "",
-            okText: "确定",
-            okType: 'danger',
-            cancelText: '取消',
-            onOk: async () => {
-                NProgress.start();
-                try {
-                    await delPileSubDevice({id: id});
-                } catch(err) {
-                    NProgress.done();
-                    return;
-                }
-                NProgress.done();
-                this.loadList();
-            },
-            onCancel() {}
-        });
-    }
-
     //加载列表
     async loadList () {
         const data = {
@@ -210,7 +195,9 @@ export default class Home extends React.Component {
             //初始化switch加载状态
             this.state.switchLoading.push(false);
             //生成latlngs数据给地图视图使用
-            latlngs.push({lat: item.latitude, lng: item.longitude});
+            if (item.latitude != 0 && item.longitude != 0) {
+                latlngs.push({lat: item.latitude, lng: item.longitude});
+            }
         });
         this.setState({list: res.list || [], total: res.total, latlngs});
     }
@@ -226,6 +213,59 @@ export default class Home extends React.Component {
             _.lat = "", _.lng = "";
         }
         this.setState({});
+    }
+
+    openOrOffAddChargerToast (is: boolean) {
+        const _ = this.state.addChargerToast;
+        if (is) {
+            _.show = true;
+            _.deviceId = "";
+        } else {
+            _.show = false;
+        }
+        this.setState({});
+    }
+
+    async addCharger () {
+        const deviceId = this.state.addChargerToast.deviceId;
+        if (!deviceId) {
+            message.warning("充电头模块id没填");
+            return;
+        }
+        NProgress.start();
+        try {
+            await addPileSubDevice({deviceId});
+        } catch(err) {
+            NProgress.done();
+            return;
+        }
+        NProgress.done();
+        message.success("已新增");
+        this.openOrOffAddChargerToast(false);
+        this.loadList();
+    }
+
+    delCharger (id) {
+        Modal.confirm({
+            title: `确定删除充电头："${id}" 吗?`,
+            content: "",
+            okText: "确定",
+            okType: 'danger',
+            cancelText: '取消',
+            onOk: async () => {
+                NProgress.start();
+                try {
+                    await delPileSubDevice({id});
+                } catch(err) {
+                    NProgress.done();
+                    return;
+                }
+                NProgress.done();
+                message.success(`已删除充电头: "${id}"`);
+                this.loadList();
+            },
+            onCancel() {}
+        });
     }
 
     render (): any {
@@ -267,7 +307,7 @@ export default class Home extends React.Component {
                             }}>查找</Button>
                         </Form.Item>
                         <Form.Item>
-                            <Button icon="plus">新增</Button>
+                            <Button icon="plus" onClick={this.openOrOffAddChargerToast.bind(this, true)}>新增</Button>
                         </Form.Item>
                     </Form>
                 </div>
@@ -303,6 +343,21 @@ export default class Home extends React.Component {
 
                 {/* 单个设备位置地图显示组件 */}
                 {state.positionToast.show && <DevicePosition title="主机位置" lng="" lat="" close={this.openOrOffPositionToast.bind(this, null, null)}/>}
+
+                {/* 添加充电头弹窗 */}
+                <Modal
+                maskClosable={false}
+                title="新增充电头模块"
+                visible={state.addChargerToast.show}
+                onCancel={this.openOrOffAddChargerToast.bind(this, false)}
+                onOk={this.addCharger.bind(this)}
+                >
+                    <Form>
+                        <Form.Item label="充电头id">
+                            <Input placeholder="充电头id" value={state.addChargerToast.deviceId} onChange={input.bind(this, "addChargerToast.deviceId")}></Input>
+                        </Form.Item>
+                    </Form>
+                </Modal>
 
             </div>
         );

@@ -3,7 +3,7 @@ import "./index.less";
 
 import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination, Modal, Popover, Row, Col } from "antd";
 import NProgress from "nprogress";
-import { getDeviceList, enableDevice, disableDevice, addPileSubDevice, delPileSubDevice } from "../../../../api/deviceManager";
+import { getDeviceList, enableDevice, disableDevice, bindPileSubDevice, unbindPileSubDevice } from "../../../../api/deviceManager";
 import { input, initLife, property as P } from "../../../../utils/utils";
 import store from "../../../../store";
 import DeviceInMap from "../../../../components/deviceInMap";
@@ -258,7 +258,7 @@ export default class Home extends React.Component {
             return;
         }
         try {
-            await addPileSubDevice({mainDeviceId, deviceId});
+            await bindPileSubDevice({mainDeviceId, deviceId});
         } catch(err) {
             NProgress.done();
             return;
@@ -292,8 +292,12 @@ export default class Home extends React.Component {
             //初始化switch加载状态
             this.state.switchLoading.push(false);
             //生成latlngs数据给地图视图使用
-            latlngs.push({lat: item.latitude, lng: item.longitude});
+            if (item.latitude != 0 && item.longitude != 0) {
+                latlngs.push({lat: item.latitude, lng: item.longitude});
+            }
         });
+        console.log(">>>");
+        console.log(latlngs);
         this.setState({list: res.list || [], total: res.total, latlngs});
     }
 
@@ -301,7 +305,7 @@ export default class Home extends React.Component {
     async loadingSubDeviceListByDeviceId (deviceId: string|number) {
         NProgress.start();
         const data = {
-            type: "7",
+            type: "5",
             mainDeviceId: deviceId,
             page: 1,
             limit: 10
@@ -337,7 +341,7 @@ export default class Home extends React.Component {
         if (item) {
             _.show = true;
             _.id = item.id,
-            _.title = "\"" + item.name + "\" 子设备列表";
+            _.title = `id: "${item.id}" 子设备列表`;
             this.loadingSubDeviceListByDeviceId(item.id);
         } else {
             _.show = false;
@@ -373,7 +377,7 @@ export default class Home extends React.Component {
             onOk: async () => {
                 NProgress.start();
                 try {
-                    await delPileSubDevice({id: id});
+                    await unbindPileSubDevice({id: id});
                 } catch(err) {
                     NProgress.done();
                     return;

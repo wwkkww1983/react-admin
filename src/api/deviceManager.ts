@@ -57,29 +57,54 @@ export function importJT808Battery (data: {
     });
 }
 
-
 /**
- * 新增充电桩子设备 
+ * 添加充电头
  */
 export function addPileSubDevice (data: {
-    mainDeviceId: string|number,
     deviceId: string|number
 }) {
     return request({
-        url: "/chargingStation/admin/manager/addSubDevice",
+        url: "/chargingStation/admin/manager/addCharger",
         method: "POST",
         data
     });
 }
 
 /**
- * 删除充电桩子设备 
+ * 删除充电头
  */
 export function delPileSubDevice (data: {
     id: string|number
 }) {
     return request({
-        url: "/chargingStation/admin/manager/delSubDevice",
+        url: "/chargingStation/admin/manager/delCharger",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 绑定充电桩子设备 
+ */
+export function bindPileSubDevice (data: {
+    mainDeviceId: string|number,
+    deviceId: string|number
+}) {
+    return request({
+        url: "/chargingStation/admin/manager/bindCharger",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 解绑充电桩子设备 
+ */
+export function unbindPileSubDevice (data: {
+    id: string|number
+}) {
+    return request({
+        url: "/chargingStation/admin/manager/unbindCharger",
         method: "POST",
         data
     });
