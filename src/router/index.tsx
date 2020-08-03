@@ -49,12 +49,12 @@ export const inRoutes = [
         component: OPSManage,
         keepAlive: true
     },
-    {
-        title: "电池管理",
-        path: "/batteryManage",
-        component: batteryManage,
-        keepAlive: true
-    },
+    // {
+    //     title: "电池管理",
+    //     path: "/batteryManage",
+    //     component: batteryManage,
+    //     keepAlive: true
+    // },
     {
         title: "电池管理JT808",
         path: "/batteryManage-jt808",

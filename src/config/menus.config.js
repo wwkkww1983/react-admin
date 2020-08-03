@@ -22,11 +22,11 @@ export default [
         icon: "icon-Group-",
         title: "设备管理",
         children: [
-            {
-                icon: "icon-dianchi",
-                title: "电池管理",
-                path: "/batteryManage"
-            },
+            // {
+            //     icon: "icon-dianchi",
+            //     title: "电池管理",
+            //     path: "/batteryManage"
+            // },
             {
                 icon: "icon-dianchi",
                 title: "电池管理JT808",
