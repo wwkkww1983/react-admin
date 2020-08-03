@@ -179,3 +179,30 @@ export function aduit (data: {id: string|number, pass: boolean}) {
         data
     });
 }
+
+/**
+ * 设备绑定项目 
+ */
+export function bindDeviceToProject (data: {
+    id: string|number,
+    projectId: string|number
+}) {
+    return request({
+        url: "/device/admin/manager/bindProject",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 设备解绑项目 
+ */
+export function unbindDeviceFromProject (data: {
+    id: string|number
+}) {
+    return request({
+        url: "/device/admin/manager/unbindProject",
+        method: "POST",
+        data
+    });
+}

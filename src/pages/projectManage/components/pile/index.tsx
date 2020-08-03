@@ -14,7 +14,7 @@ import {
     Dropdown
 } from "antd";
 const { Option } = Select;
-import { input, timeToDateStr } from "../../../../utils/utils";
+import { input, timeToDateStr, property as P } from "../../../../utils/utils";
 import NProgress from "nprogress";
 import { 
     getProjectList,
@@ -29,6 +29,7 @@ import CitySelect from "../../components/citySelect";
 import LatLngSelect from "../latlngSelect";
 import OPSOfProject from "../OPSOfProject";
 import SaleSetting from "../pileSaleSetting";
+import ProjectDevices from "../pileProjectDevices";
 
 const types = [
     {name: "换电柜", value: 1},
@@ -141,6 +142,9 @@ export default class Home extends React.Component {
                                 <span onClick={this.openToast.bind(this, item)}>编辑</span>
                             </Menu.Item>
                             <Menu.Item>
+                                <span onClick={this.openOrOffBindDeviceToast.bind(this, item)}>设备管理</span>
+                            </Menu.Item>
+                            <Menu.Item>
                                 <span onClick={this.openOPSOfProject.bind(this, item)}>运维人员设置</span>
                             </Menu.Item>
                             <Menu.Item>
@@ -181,7 +185,13 @@ export default class Home extends React.Component {
         list: [],
         limit: 10,
         page: 1,
-        total: 0
+        total: 0,
+        //项目设备绑定天窗状态
+        bindDeviceToast: {
+            show: false,
+            projectId: "",
+            title: "某某项目设备列表"
+        }
     }
 
     componentDidMount () {
@@ -419,8 +429,22 @@ export default class Home extends React.Component {
         this.setState({});
     }
 
+    //打开、关闭项目设备管理弹窗
+    openOrOffBindDeviceToast (item): void {
+        const { title, projectId } = item || {};
+        const $ = this.state.bindDeviceToast;
+        if (projectId) {
+            $.show = true;
+            $.projectId = projectId;
+            $.title = title;
+        } else {
+            $.show = false;
+        }
+        this.setState({});
+    }
+
     render (): any {
-        const state: any = this.state;
+        const state = this.state;
         return (
             <div className="pile-component-wrap">
 
@@ -565,6 +589,14 @@ export default class Home extends React.Component {
                 cancel={this.offSaleSetting.bind(this)}
                 />
                 }
+
+                {/* 项目设备管理弹窗 */}
+                <ProjectDevices 
+                projectId={state.bindDeviceToast.projectId}
+                title={state.bindDeviceToast.title} 
+                visable={true}
+                onCancel={this.openOrOffBindDeviceToast.bind(this, null)}
+                />
 
             </div>
         );
