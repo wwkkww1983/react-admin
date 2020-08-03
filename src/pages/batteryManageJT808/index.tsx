@@ -28,11 +28,6 @@ export default class BatteryManagerJT808 extends React.Component {
                 dataIndex: "projectId",
                 key: "projectId"
             },
-            // {
-            //     title: "主设备id",
-            //     dataIndex: "mainDeviceId",
-            //     key: "mainDeviceId"
-            // },
             {
                 title: "设备id",
                 render: item => {
@@ -44,6 +39,10 @@ export default class BatteryManagerJT808 extends React.Component {
                 render: item => {
                     return P(item, "batteryJT808.latestStatus.batteryId");
                 }
+            },
+            {
+                title: "剩余电量",
+                render: item => P(item, "batteryJT808.latestStatus.currentCapacity", 0) + "%"
             },
             {
                 title: "电池基本信息",
