@@ -31,7 +31,7 @@ export default class BatteryManagerJT808 extends React.Component {
             {
                 title: "设备id",
                 render: item => {
-                    return P(item, "batteryJT808.latestStatus.deviceId");
+                    return P(item, "batteryJT808.clientId");
                 }
             },
             {
