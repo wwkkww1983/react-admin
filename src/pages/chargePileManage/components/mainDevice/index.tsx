@@ -168,11 +168,12 @@ export default class Home extends React.Component {
                 }
             },
             {
+                width: 230,
                 title: "操作",
                 render: item => (
                     <Form layout="inline">
                         <Form.Item>
-                            <Button onClick={this.openOrOffTestToast.bind(this, item)}>测试</Button>
+                            <Button onClick={this.openOrOffTestToast.bind(this, item)} icon="experiment">测试</Button>
                         </Form.Item>
                         <Form.Item>
                             <Button icon="delete" type="danger" onClick={this.delSubDevice.bind(this, item.id)}>解绑</Button>
