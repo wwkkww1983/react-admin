@@ -14,7 +14,7 @@ import {
     Dropdown
 } from "antd";
 const { Option } = Select;
-import { input, timeToDateStr, property as P } from "../../../../utils/utils";
+import { input, timeToDateStr, property as P, property } from "../../../../utils/utils";
 import NProgress from "nprogress";
 import { 
     getProjectList,
@@ -431,11 +431,11 @@ export default class Home extends React.Component {
 
     //打开、关闭项目设备管理弹窗
     openOrOffBindDeviceToast (item): void {
-        const { title, projectId } = item || {};
+        const { title, id } = item || {};
         const $ = this.state.bindDeviceToast;
-        if (projectId) {
+        if (id) {
             $.show = true;
-            $.projectId = projectId;
+            $.projectId = id;
             $.title = title;
         } else {
             $.show = false;
@@ -590,13 +590,13 @@ export default class Home extends React.Component {
                 />
                 }
 
-                {/* 项目设备管理弹窗 */}
-                <ProjectDevices 
+                {/* 项目绑定设备管理弹窗 */}
+                {state.bindDeviceToast.show && <ProjectDevices 
                 projectId={state.bindDeviceToast.projectId}
-                title={state.bindDeviceToast.title} 
+                title={state.bindDeviceToast.title + "设备"} 
                 visable={true}
                 onCancel={this.openOrOffBindDeviceToast.bind(this, null)}
-                />
+                />}
 
             </div>
         );

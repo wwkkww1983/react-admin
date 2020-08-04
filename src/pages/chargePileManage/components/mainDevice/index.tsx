@@ -296,8 +296,6 @@ export default class Home extends React.Component {
                 latlngs.push({lat: item.latitude, lng: item.longitude});
             }
         });
-        console.log(">>>");
-        console.log(latlngs);
         this.setState({list: res.list || [], total: res.total, latlngs});
     }
 
