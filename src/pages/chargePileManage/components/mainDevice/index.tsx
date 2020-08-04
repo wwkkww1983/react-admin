@@ -8,6 +8,7 @@ import { input, initLife, property as P } from "../../../../utils/utils";
 import store from "../../../../store";
 import DeviceInMap from "../../../../components/deviceInMap";
 import DevicePosition from "../../../../components/devicePosition";
+import TestToast from "../subDeviceTest";
 
 export default class Home extends React.Component {
 
@@ -171,6 +172,9 @@ export default class Home extends React.Component {
                 render: item => (
                     <Form layout="inline">
                         <Form.Item>
+                            <Button onClick={this.openOrOffTestToast.bind(this, item)}>测试</Button>
+                        </Form.Item>
+                        <Form.Item>
                             <Button icon="delete" type="danger" onClick={this.delSubDevice.bind(this, item.id)}>解绑</Button>
                         </Form.Item>
                     </Form>
@@ -210,6 +214,12 @@ export default class Home extends React.Component {
             show: false,
             mainDeviceId: "",
             deviceId: ""
+        },
+        //测试弹窗
+        testToast: {
+            show: false,
+            deviceId: "",
+            subDeviceId: ""
         }
     }
 
@@ -226,6 +236,19 @@ export default class Home extends React.Component {
         }
         store.subscribe(get);
         get();
+    }
+
+    //打开关闭测试弹窗
+    openOrOffTestToast (item) {
+        const $ = this.state.testToast;
+        if (item) {
+            $.show = true;
+            $.deviceId = this.state.subDeviceListToast.id;
+            $.subDeviceId = item.id;
+        } else {
+            $.show = false;
+        }
+        this.setState({});
     }
 
     //启用、禁用
@@ -471,6 +494,7 @@ export default class Home extends React.Component {
                     scroll={{y: 500}}
                     columns={state.subDeviceListColumns}
                     dataSource={state.subDeviceListToast.list}
+                    pagination={false}
                     />
                 </Modal>
 
@@ -494,6 +518,12 @@ export default class Home extends React.Component {
                         </Form.Item>
                     </Form>
                 </Modal>
+
+                {/* 子设备测试弹窗 */}
+                {state.testToast.show && <TestToast 
+                deviceId={state.testToast.deviceId} 
+                subDeviceId={state.testToast.subDeviceId} 
+                onCancel={this.openOrOffTestToast.bind(this, null)}/>}
 
             </div>
         );
