@@ -34,8 +34,8 @@ export default class Home extends React.Component {
             },
             { 
                 title: "项目名",
-                dataIndex: "name",
-                key: "name",
+                dataIndex: "projectName",
+                key: "projectName",
                 render: item => item ? item : "-"
             },
             { 

@@ -4,7 +4,7 @@ import "./index.less";
 import { Table, Form, Button, Input, Select, Tag, Switch, message, Radio, Pagination, Modal, Popover, Row, Col } from "antd";
 import NProgress from "nprogress";
 import { getDeviceList, enableDevice, disableDevice, bindPileSubDevice, unbindPileSubDevice } from "../../../../api/deviceManager";
-import { input, initLife, property as P } from "../../../../utils/utils";
+import { input, property as P } from "../../../../utils/utils";
 import store from "../../../../store";
 import DeviceInMap from "../../../../components/deviceInMap";
 import DevicePosition from "../../../../components/devicePosition";
@@ -36,8 +36,8 @@ export default class Home extends React.Component {
             },
             { 
                 title: "项目名",
-                dataIndex: "name",
-                key: "name",
+                dataIndex: "projectName",
+                key: "projectName",
                 render: item => item ? item : "-"
             },
             { 
