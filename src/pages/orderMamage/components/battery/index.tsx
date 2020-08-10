@@ -2,7 +2,7 @@ import React from "react";
 import "./index.less";
 import { Form, Table, Button, DatePicker, Input, Popover, Select } from "antd";
 const { RangePicker } = DatePicker, { Option } = Select;
-import { input, timeToDateStr } from "../../../../utils/utils";
+import { input, timeToDateStr, property as P } from "../../../../utils/utils";
 import { getBatteryOrders } from "../../../../api/orderManage";
 import Nprogress from "nprogress";
 
@@ -29,8 +29,8 @@ export default class BatteryOrder extends React.Component {
                 key: "statusText"
             },
             {
-                title: "电池id",
-                render: item => item.batteryId || "-"
+                title: "虚拟电池id",
+                render: item => P(item, "virtualBatteryId")
             },
             {
                 title: "支付金额",
@@ -139,19 +139,20 @@ export default class BatteryOrder extends React.Component {
                 </Form.Item>
             </Form>
             <Table
-                style={{marginTop: "16px"}}
-                columns={state.columns}
-                dataSource={state.list}
-                pagination={{
-                    total: state.total,
-                    pageSize: state.limit,
-                    current: state.page,
-                    onChange: page => {
-                        this.state.page = page;
-                        this.setState({});
-                        this.loadList();
-                    }
-                }}
+            rowKey="id"
+            style={{marginTop: "16px"}}
+            columns={state.columns}
+            dataSource={state.list}
+            pagination={{
+                total: state.total,
+                pageSize: state.limit,
+                current: state.page,
+                onChange: page => {
+                    this.state.page = page;
+                    this.setState({});
+                    this.loadList();
+                }
+            }}
             ></Table>
         </div>
     }
