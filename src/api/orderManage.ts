@@ -17,6 +17,8 @@ export function getPileOrders (data: {
 
 //租借电池订单
 export function getBatteryOrders (data: {
+    batteryId: string|number,
+    status: number|string,
     orderNumber: string, //	订单号精准查询		[string]		
     endTime: number, //;	结束时间戳，不限制则为0		[int]		
     beginTime: number, //	开始时间戳，不限制则为0		[int]		

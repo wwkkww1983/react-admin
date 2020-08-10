@@ -1,7 +1,7 @@
 import React from "react";
 import "./index.less";
-import { Form, Table, Button, DatePicker, Input, Popover } from "antd";
-const { RangePicker } = DatePicker;
+import { Form, Table, Button, DatePicker, Input, Popover, Select } from "antd";
+const { RangePicker } = DatePicker, { Option } = Select;
 import { input, timeToDateStr } from "../../../../utils/utils";
 import { getBatteryOrders } from "../../../../api/orderManage";
 import Nprogress from "nprogress";
@@ -65,10 +65,21 @@ export default class BatteryOrder extends React.Component {
         page: 1,
         list: [],
         headForm: {
+            batteryId: "",
+            status: 0,
             orderNumber: "",
             beginTime: null,
             endTime: null
-        }
+        },
+        //租借电池状态
+        batteryOrderStatus: [
+            {name: "全部", value: 0},
+            {name: "已租借，未归还", value: 1},
+            {name: "已归还，待支付", value: 2},
+            {name: "已完成", value: 3},
+            {name: "正在出库", value: 4},
+            {name: "已取消", value: 5}
+        ]
     }
 
     componentDidMount () {
@@ -77,16 +88,18 @@ export default class BatteryOrder extends React.Component {
 
     async loadList () {
         const _: any = this.state.headForm;
+        const data: any = {
+            status: _.status,
+            beginTime: _.beginTime ? Math.floor(_.beginTime.toDate().getTime() / 1000) : 0,
+            endTime: _.endTime ? Math.floor(_.endTime.toDate().getTime() / 1000) : 0,
+            page: this.state.page,
+            limit: this.state.limit
+        }
+        _.batteryId && (data.batteryId = _.batteryId);
         Nprogress.start();
         let res = null;
         try {
-            res = await getBatteryOrders({
-                orderNumber: _.orderNumber,
-                beginTime: _.beginTime ? Math.floor(_.beginTime.toDate().getTime() / 1000) : 0,
-                endTime: _.endTime ? Math.floor(_.endTime.toDate().getTime() / 1000) : 0,
-                page: this.state.page,
-                limit: this.state.limit
-            });
+            res = await getBatteryOrders(data);
         } catch(err) {
             Nprogress.done();
             return;
@@ -106,11 +119,20 @@ export default class BatteryOrder extends React.Component {
                     <Input type="text" placeholder="订单号" value={state.headForm.orderNumber} onChange={input.bind(this, "headForm.orderNumber")}/>
                 </Form.Item>
                 <Form.Item label="日期">
-                    <RangePicker onChange={([beginTime, endTime]) => {
+                    <RangePicker 
+                    onChange={([beginTime, endTime]) => {
                         this.state.headForm.beginTime = beginTime;
                         this.state.headForm.endTime = endTime;
                         this.setState({});
                     }}/>
+                </Form.Item>
+                <Form.Item label="状态">
+                    <Select style={{width: "150px"}} placeholder="状态"  value={state.headForm.status} onChange={input.bind(this, "headForm.status")}>
+                        {state.batteryOrderStatus.map(item => <Option value={item.value}>{item.name}</Option>)}
+                    </Select>
+                </Form.Item>
+                <Form.Item label="电池id">
+                    <Input placeholder="电池id" value={state.headForm.batteryId} onChange={input.bind(this, "headForm.batteryId")}></Input>
                 </Form.Item>
                 <Form.Item>
                     <Button icon="search" onClick={this.loadList.bind(this)}>查找</Button>
