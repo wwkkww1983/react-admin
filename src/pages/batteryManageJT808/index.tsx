@@ -42,7 +42,12 @@ export default class BatteryManagerJT808 extends React.Component {
             },
             {
                 title: "剩余电量",
-                render: item => P(item, "batteryJT808.latestStatus.currentCapacity", 0) + "%"
+                render: item => {
+                    const current = P(item, "batteryJT808.latestStatus.residualCapacity", 0);
+                    const total = P(item, "batteryJT808.latestStatus.currentCapacity", 0);
+                    return (current / total * 100).toFixed(2) + "%";
+                }
+                // render: item => P(item, "batteryJT808.latestStatus.currentCapacity", 0) + "%"
             },
             {
                 title: "电池基本信息",
