@@ -43,8 +43,8 @@ export default class PileOrder extends React.Component {
                         <p>创建时间：{timeToDateStr(item.createTime * 1000, "datetime")}</p>
                         <p>充电开始时间：{timeToDateStr(item.beginTime * 1000, "datetime")}</p>
                         <p>充电结束时间：{timeToDateStr(item.endTime * 1000, "datetime")}</p>
-                        <p>金额：{item.amount}</p>
-                        <p>实际支付金额：{item.payAmount}</p>
+                        <p>金额：{item.amount / 100}元</p>
+                        <p>实际支付金额：{item.payAmount / 100}元</p>
                         <p>支付渠道：{item.payChannel}</p>
                         <p>支付时间：{timeToDateStr(item.payTime * 1000, "datetime")}</p>
                     </div>
@@ -115,19 +115,20 @@ export default class PileOrder extends React.Component {
                 </Form.Item>
             </Form>
             <Table
-                style={{marginTop: "16px"}}
-                columns={state.columns}
-                dataSource={state.list}
-                pagination={{
-                    total: state.total,
-                    pageSize: state.limit,
-                    current: state.page,
-                    onChange: page => {
-                        this.state.page = page;
-                        this.setState({});
-                        this.loadList();
-                    }
-                }}
+            rowKey="id"
+            style={{marginTop: "16px"}}
+            columns={state.columns}
+            dataSource={state.list}
+            pagination={{
+                total: state.total,
+                pageSize: state.limit,
+                current: state.page,
+                onChange: page => {
+                    this.state.page = page;
+                    this.setState({});
+                    this.loadList();
+                }
+            }}
             ></Table>
         </div>
     }

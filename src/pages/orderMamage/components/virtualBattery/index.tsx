@@ -2,7 +2,7 @@ import React from "react";
 import "./index.less";
 import { Form, Table, Button, DatePicker, Input, Popover } from "antd";
 const { RangePicker } = DatePicker;
-import { input, timeToDateStr } from "../../../../utils/utils";
+import { input, timeToDateStr, property as P } from "../../../../utils/utils";
 import { getVirtualBatteryOrders } from "../../../../api/orderManage";
 import Nprogress from "nprogress";
 
@@ -25,15 +25,15 @@ export default class VirtualBatteryOrder extends React.Component {
             },
             {
                 title: "当前租借电池id",
-                render: item => item.batteryId || "-"
+                render: item => P(item, "batteryId")
             },
             {
                 title: "购买电池时价格",
-                render: item => Math.ceil((item.price / 1000 * 100)) / 100 + "元"
+                render: item => item.price / 100 + "元"
             },
             {
                 title: "购买实际支付",
-                render: item => Math.ceil((item.payAmount / 1000 * 100)) / 100 + "元"
+                render: item => item.payAmount / 100 + "元"
             },
             {
                 title: "支付渠道",
@@ -112,19 +112,20 @@ export default class VirtualBatteryOrder extends React.Component {
                 </Form.Item>
             </Form>
             <Table
-                style={{marginTop: "16px"}}
-                columns={state.columns}
-                dataSource={state.list}
-                pagination={{
-                    total: state.total,
-                    pageSize: state.limit,
-                    current: state.page,
-                    onChange: page => {
-                        this.state.page = page;
-                        this.setState({});
-                        this.loadList();
-                    }
-                }}
+            rowKey="id"
+            style={{marginTop: "16px"}}
+            columns={state.columns}
+            dataSource={state.list}
+            pagination={{
+                total: state.total,
+                pageSize: state.limit,
+                current: state.page,
+                onChange: page => {
+                    this.state.page = page;
+                    this.setState({});
+                    this.loadList();
+                }
+            }}
             ></Table>
         </div>
     }
