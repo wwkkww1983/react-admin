@@ -76,9 +76,12 @@ export default class Home extends React.Component {
         _.postpaidMaxTime = this.transTime(_.postpaidMaxTime);
         __.forEach(item => {
             let a = this.transTime(item["maxTime"]);
-            console.log(a);
             item["maxTime"] = a;
         });
+        //金额元转为分
+        _.postpaidPriceHour = _.postpaidPriceHour * 100;
+        _.postpaidPriceKwh = _.postpaidPriceKwh * 100;
+        __.forEach(item => item.price = item.price * 100);
         return _;
     }
 
@@ -96,7 +99,6 @@ export default class Home extends React.Component {
             item["maxTime"] = this.transTime(item["maxTime"]);
         });
         this.setState({});
-        console.log(this.state.form);
     }
 
     //增加一行价格设置
@@ -149,6 +151,10 @@ export default class Home extends React.Component {
             return;
         }
         NProgress.done();
+        //分转元
+        res.data.postpaidPriceHour = res.data.postpaidPriceHour / 100; 
+        res.data.postpaidPriceKwh = res.data.postpaidPriceKwh / 100;
+        res.data.prepaidRules.forEach(item => item.price = item.price / 100);
         if (Number(res.code) === 12002) return;
         if (Number(res.code) === 0) {
             this.setFormData(res.data);
@@ -157,7 +163,6 @@ export default class Home extends React.Component {
 
     async saveSetting () {
         const data: any = this.getFormData();
-        console.log(data);
         if (data) {
             NProgress.start();
             try {
