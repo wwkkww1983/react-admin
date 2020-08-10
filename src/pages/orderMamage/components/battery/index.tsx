@@ -34,7 +34,7 @@ export default class BatteryOrder extends React.Component {
             },
             {
                 title: "支付金额",
-                render: item => Math.ceil((item.payAmount / 1000 * 100)) / 100 + "元"
+                render: item => (item.payAmount / 100) + "元"
             },
             {
                 title: "支付渠道",
