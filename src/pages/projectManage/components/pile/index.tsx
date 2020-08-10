@@ -29,7 +29,7 @@ import CitySelect from "../../components/citySelect";
 import LatLngSelect from "../latlngSelect";
 import OPSOfProject from "../OPSOfProject";
 import SaleSetting from "../pileSaleSetting";
-import ProjectDevices from "../pileProjectDevices";
+import ProjectDevices from "../projectDevices";
 
 const types = [
     {name: "换电柜", value: 1},

@@ -220,6 +220,7 @@ export default class ProjectDevices extends React.Component {
             >
                 <div>
                     <Table
+                    scroll={{y: 500}}
                     columns={state.columns}
                     dataSource={state.list}
                     pagination={{
@@ -265,6 +266,7 @@ export default class ProjectDevices extends React.Component {
                                 </Form.Item>
                             </Form>
                             <Table
+                            scroll={{y: 500}}
                             columns={state.columns.slice(0, -1).concat([{
                                 title: "操作",
                                 render: item => (
