@@ -73,7 +73,7 @@ export default class ProjectDevices extends React.Component {
                 render: item => (
                     <Form layout="inline">
                         <Form.Item>
-                            <Button type="danger" icon="delete" onClick={this.unbindDevice.bind(this, item.id)}>删除</Button>
+                            <Button type="danger" icon="delete" onClick={this.unbindDevice.bind(this, item.id)}>解绑</Button>
                         </Form.Item>
                     </Form>
                 )
