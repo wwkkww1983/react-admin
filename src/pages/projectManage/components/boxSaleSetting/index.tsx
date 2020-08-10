@@ -4,7 +4,6 @@ import { Alert, message, Form, Select, Modal, Input, Button, Table, Switch, List
 import NProgress from "nprogress";
 import { input } from "../../../../utils/utils";
 import { getSaleSetting, saveBoxSaleSetting } from "../../../../api/projectManage";
-import { inRoutes } from "../../../../router";
 
 interface Props {
     title: string,
@@ -63,6 +62,17 @@ export default class Home extends React.Component {
             return;
         }
         NProgress.done();
+        const transformPriceKeys = [
+            "everyTimePrice",// 按次计费价格
+            "hourlyPrice",// 按时计费每小时费用
+            "hourlyPriceMaxDaily",// 按时计费每小时费用，每天封顶价格
+            "monthlyPrice",// 包月计费，每月费用
+        ];
+        Object.keys(res.data).forEach(key => {
+            if (transformPriceKeys.includes(key)) {
+                res.data[key] = res.data[key] / 100;
+            }
+        });
         if (Number(res.code) === 12002) return;
         if (Number(res.code) === 0) this.setState({form: res.data});
     }
@@ -81,6 +91,12 @@ export default class Home extends React.Component {
             (this as any).props.confirm.call(null);
         }
         function buildParams (): any {
+            const transformPriceKeys = [
+                "everyTimePrice",// 按次计费价格
+                "hourlyPrice",// 按时计费每小时费用
+                "hourlyPriceMaxDaily",// 按时计费每小时费用，每天封顶价格
+                "monthlyPrice",// 包月计费，每月费用
+            ];
             const form: any = (this as any).state.form;
             const data: any = {};
             Object.keys(form).forEach(key => {
@@ -88,6 +104,10 @@ export default class Home extends React.Component {
                     data[key] = Number(form[key]);
                 } else {
                     data[key] = form[key];
+                }
+                //金额转为分
+                if (transformPriceKeys.includes(key)) {
+                    data[key] = form[key] * 100;
                 }
             });
             if (!data.projectId) data["projectId"] = (this as any).props.id;
