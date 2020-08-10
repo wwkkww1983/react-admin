@@ -5,11 +5,17 @@ import { Modal, Form, Button, Table, Switch, Tag, Input, Select, message } from 
 import { bindDeviceToProject, unbindDeviceFromProject } from "../../../../api/projectManage";
 import { getDeviceList } from "../../../../api/deviceManager";
 import NProgress from "nprogress";
-import { input } from "../../../../utils/utils";
+import { input, property as P } from "../../../../utils/utils";
 
-export default class PileProjectDevices extends React.Component {
+export default class ProjectDevices extends React.Component {
+    static useType = {
+        PILE: "4",
+        BOX: "1"
+    }
+    
     static defaultProps = {
         visable: false,
+        useType: "BOX",
         title: "",
         projectId: "",
         onCancel: () => {}
@@ -38,32 +44,23 @@ export default class PileProjectDevices extends React.Component {
             },
             { 
                 title: "项目名",
-                dataIndex: "name",
-                key: "name",
-                render: item => item ? item : "-"
+                render: item => P(item, "projectName")
             },
             { 
                 title: "型号",
-                dataIndex: "model",
-                key: "model",
-                render: item => item ? item : "-"
+                render: item => P(item, "model")
             },
             { 
                 title: "IMSI",
-                dataIndex: "imsi",
-                key: "imsi",
-                render: item => item ? item : "-"
+                render: item => P(item, "item.imsi")
             },
             { 
                 title: "是否在线",
-                dataIndex: "online",
-                key: "online",
-                render: (item, rm, index) => <Tag color={item == "1" ? "green" : "red"}>{item == "1" ? "在线" : "离线"}</Tag>
+                render: item => <Tag color={item == "1" ? "green" : "red"}>{item == "1" ? "在线" : "离线"}</Tag>
             },
             { 
                 title: "状态",
-                key: "enable",
-                render: (item, rm, index) => (
+                render: item => (
                     <Form layout="inline">
                         <Form.Item>
                             <Switch disabled={true} checkedChildren="启用" unCheckedChildren="禁用" checked={item.enable}/>
@@ -82,6 +79,8 @@ export default class PileProjectDevices extends React.Component {
                 )
             }
         ],
+        //类型id，参见static useType
+        type: "",
         list: [],
         page: 1,
         limit: 10,
@@ -99,6 +98,7 @@ export default class PileProjectDevices extends React.Component {
     }
 
     componentDidMount () {
+        this.state.type = ProjectDevices.useType[(this as any).props.useType];
         this.loadList();
     }
 
@@ -106,7 +106,7 @@ export default class PileProjectDevices extends React.Component {
     async loadList () {
         const data = {
             projectId: (this as any).props.projectId,
-            type: "4",
+            type: this.state.type,
             page: this.state.page,
             limit: this.state.limit
         }
@@ -168,7 +168,7 @@ export default class PileProjectDevices extends React.Component {
     async loadSelectList () {
         const $ = this.state.select;
         const data = {
-            type: "4",
+            type: this.state.type,
             page: $.page,
             limit: $.limit
         }

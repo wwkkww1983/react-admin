@@ -29,6 +29,7 @@ import CitySelect from "../../components/citySelect";
 import LatLngSelect from "../latlngSelect";
 import OPSOfProject from "../OPSOfProject";
 import SaleSetting from "../boxSaleSetting";
+import ProjectDevices from "../pileProjectDevices";
 
 const types = [
     {name: "换电柜", value: 1},
@@ -141,6 +142,9 @@ export default class Home extends React.Component {
                                 <span onClick={this.openToast.bind(this, item)}>编辑</span>
                             </Menu.Item>
                             <Menu.Item>
+                                <span onClick={this.openOrOffBindDeviceToast.bind(this, item)}>设备管理</span>
+                            </Menu.Item>
+                            <Menu.Item>
                                 <span onClick={this.openOPSOfProject.bind(this, item)}>运维人员设置</span>
                             </Menu.Item>
                             <Menu.Item>
@@ -180,7 +184,13 @@ export default class Home extends React.Component {
         list: [],
         limit: 10,
         page: 1,
-        total: 0
+        total: 0,
+        //项目设备绑定天窗状态
+        bindDeviceToast: {
+            show: false,
+            projectId: "",
+            title: "某某项目设备列表"
+        }
     }
 
     componentDidMount () {
@@ -418,6 +428,20 @@ export default class Home extends React.Component {
         this.setState({});
     }
 
+    //打开、关闭项目设备管理弹窗
+    openOrOffBindDeviceToast (item): void {
+        const { title, id } = item || {};
+        const $ = this.state.bindDeviceToast;
+        if (id) {
+            $.show = true;
+            $.projectId = id;
+            $.title = title;
+        } else {
+            $.show = false;
+        }
+        this.setState({});
+    }
+
     render (): any {
         const state: any = this.state;
         return (
@@ -564,6 +588,15 @@ export default class Home extends React.Component {
                 cancel={this.offSaleSetting.bind(this)}
                 />
                 }
+
+                {/* 项目绑定设备管理弹窗 */}
+                {state.bindDeviceToast.show && <ProjectDevices 
+                useType="BOX"
+                projectId={state.bindDeviceToast.projectId}
+                title={state.bindDeviceToast.title + "设备"} 
+                visable={true}
+                onCancel={this.openOrOffBindDeviceToast.bind(this, null)}
+                />}
 
             </div>
         );

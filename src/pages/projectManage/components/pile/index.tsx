@@ -592,6 +592,7 @@ export default class Home extends React.Component {
 
                 {/* 项目绑定设备管理弹窗 */}
                 {state.bindDeviceToast.show && <ProjectDevices 
+                useType="PILE"
                 projectId={state.bindDeviceToast.projectId}
                 title={state.bindDeviceToast.title + "设备"} 
                 visable={true}
