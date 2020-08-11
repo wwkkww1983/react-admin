@@ -53,7 +53,7 @@ export default class Home extends React.Component {
                 title: "是否在线",
                 dataIndex: "online",
                 key: "online",
-                render: (item, rm, index) => <Tag color={item == "1" ? "green" : "red"}>{item == "1" ? "在线" : "离线"}</Tag>
+                render: item => <Tag color={item == "1" ? "green" : "red"}>{item == "1" ? "在线" : "离线"}</Tag>
             },
             { 
                 title: "状态",
@@ -86,7 +86,7 @@ export default class Home extends React.Component {
                                 <p>插口电流：{_.portCurrentError == 1 ? "异常" : "正常"}</p>
                                 <p>插口温度：{_.portTemperatureError == 1 ? "异常" : "正常"}</p>
                                 <p>插口充电器/电池：{_.portChargerError == 1 ? "异常" : "正常"}</p>
-                                <p>插口继电器：{_.portRelayError == 1 ? "异常" : "正产"}</p>
+                                <p>插口继电器：{_.portRelayError == 1 ? "异常" : "正常"}</p>
                                 <p>插口插座：{_.portSocketError == 1 ? "异常" : "正常"}</p>
                                 <p>插口放置盒：{_.portBoxError == 1 ? "异常" : "正常"}</p>
                             </Col>
@@ -195,9 +195,10 @@ export default class Home extends React.Component {
             //初始化switch加载状态
             this.state.switchLoading.push(false);
             //生成latlngs数据给地图视图使用
-            if (item.latitude != 0 && item.longitude != 0) {
-                latlngs.push({lat: item.latitude, lng: item.longitude});
-            }
+            latlngs.push({
+                lat: Number(P(item, "latitude", 0)),
+                lng: Number(P(item, "longitude", 0))
+            });
         });
         this.setState({list: res.list || [], total: res.total, latlngs});
     }
@@ -342,7 +343,7 @@ export default class Home extends React.Component {
                 </div>
 
                 {/* 单个设备位置地图显示组件 */}
-                {state.positionToast.show && <DevicePosition title="主机位置" lng="" lat="" close={this.openOrOffPositionToast.bind(this, null, null)}/>}
+                {state.positionToast.show && <DevicePosition title="充电头位置" lng={state.positionToast.lng} lat={state.positionToast.lat} close={this.openOrOffPositionToast.bind(this, null, null)}/>}
 
                 {/* 添加充电头弹窗 */}
                 <Modal

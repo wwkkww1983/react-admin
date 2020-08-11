@@ -257,7 +257,7 @@ export default class BatteryManagerJT808 extends React.Component {
         this.loadList();
     }
 
-    //记载列表
+    //加载列表
     async loadList () {
         const data = {
             type: "6", //JT808电池传6
@@ -284,13 +284,9 @@ export default class BatteryManagerJT808 extends React.Component {
             //初始化switch加载状态
             this.state.switchLoading.push(false);
             //生成地图显示需要的经纬度数据
-            item.batteryGoodTaxisys && 
-            item.batteryGoodTaxisys.latestStatus &&
-            item.batteryGoodTaxisys.latestStatus.gdLat && 
-            item.batteryGoodTaxisys.latestStatus.gdLng &&
-            latlngs.push({
-                lat: item.batteryGoodTaxisys.latestStatus.gdLat,
-                lng: item.batteryGoodTaxisys.latestStatus.gdLng,
+            latlngs.push({  
+                lat: Number(P(item, "latitude", 0)),
+                lng: Number(P(item, "longitude", 0))
             });
         });
         this.setState({list: res.list || [], total: res.total, latlngs});

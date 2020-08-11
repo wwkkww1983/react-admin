@@ -316,9 +316,10 @@ export default class Home extends React.Component {
             //初始化switch加载状态
             this.state.switchLoading.push(false);
             //生成latlngs数据给地图视图使用
-            if (item.latitude != 0 && item.longitude != 0) {
-                latlngs.push({lat: item.latitude, lng: item.longitude});
-            }
+            latlngs.push({
+                lat: Number(P(item, "latitude", 0)),
+                lng: Number(P(item, "longitude", 0))
+            });
         });
         this.setState({list: res.list || [], total: res.total, latlngs});
     }
@@ -500,7 +501,7 @@ export default class Home extends React.Component {
                 </Modal>
 
                 {/* 单个设备位置地图显示组件 */}
-                {state.positionToast.show && <DevicePosition title="充电站位置" lng="" lat="" close={this.openOrOffPositionToast.bind(this, null, null)}/>}
+                {state.positionToast.show && <DevicePosition title="通讯主机位置" lng={state.positionToast.lng} lat={state.positionToast.lat} close={this.openOrOffPositionToast.bind(this, null, null)}/>}
 
                 {/* 新增子设备弹窗 */}
                 <Modal
