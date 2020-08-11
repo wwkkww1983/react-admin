@@ -4,9 +4,14 @@
   <meta charset="utf-8">
   <link rel="Shortcut Icon" href="./public/favicon.ico" type="image/x-icon" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no"/>
-  <!-- 这两个采用cdn引入，webpack已经配置了打包的时候不打包这两个依赖 -->
+  <!-- react -->
   <script crossorigin src="./public/js/react.production.min.js"></script>
   <script crossorigin src="./public/js/react-dom.production.min.js"></script>
+  <!-- antd引入，官方的懒加载并没啥用，icons还是全量引入，造成打包巨大 -->
+  <script src="./public/js/moment.min.js"></script>
+  <script src="./public/js/moment-locale-zh-cn.js"></script>
+  <link rel="stylesheet" href="./public/css/antd.min.css">
+  <script src="./public/js/antd.min.js"></script>
 </head>
 <body>
   <div id="root"></div>

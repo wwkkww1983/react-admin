@@ -10,6 +10,7 @@ const ocawp = require("optimize-css-assets-webpack-plugin");//压缩css文件插
 const cleanPlugin = require("my-webpack-clearDir-plugin");//打包前删除ouput目录之前的打包文件的插件
 const CopyWebpackPlugin = require("copy-webpack-plugin");//拷贝插件
 const CopyPlugin = require("my-webpack-copy-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const build_config = merge(base, {
   // webpack4新增属性，默认返回production,提供一些默认配置，例如cache:true
@@ -57,7 +58,8 @@ const build_config = merge(base, {
           // ignore: ['.*']
       }
     ]),
-    new CopyPlugin({from: "./dist/font", to: "./dist/css/font"})
+    new CopyPlugin({from: "./dist/font", to: "./dist/css/font"}),
+    new BundleAnalyzerPlugin()
   ]
 });
 
