@@ -1,12 +1,13 @@
-import React from "react";
+import React, { ReactText } from "react";
 import "./less/index.less";
 
 import { Table, Form, Button, Input, Select, Tag, Switch, message, Pagination, Radio } from "antd";
 import NProgress from "nprogress";
 import { getDeviceList, enableDevice, disableDevice } from "../../api/deviceManager";
-import { input, initLife } from "../../utils/utils";
+import { input, initLife, property as P } from "../../utils/utils";
 import DeviceInMap from "../../components/deviceInMap";
 import store from "../../store";
+import BoxPosition from "../../components/devicePosition";
 
 export default class Home extends React.Component {
 
@@ -53,7 +54,7 @@ export default class Home extends React.Component {
             { 
                 title: "是否在线",
                 key: "online",
-                render: (item, rm, index) => <Tag color={item.online == "1" ? "green" : "red"}>{item.online == "1" ? "在线" : "离线"}</Tag>
+                render: item => <Tag color={item.online == "1" ? "green" : "red"}>{item.online == "1" ? "在线" : "离线"}</Tag>
             },
             { 
                 title: "状态",
@@ -68,9 +69,10 @@ export default class Home extends React.Component {
             },
             { 
                 title: "操作",
-                render: (item, rm, index) => (
-                    <Button icon="monitor" onClick={() => message.warning("实现中")}>查看位置</Button>
-                )
+                render: item => {
+                    const lat = Number(P(item, "longitude", 0)), lng = Number(P(item, "latitude", 0));
+                    return <Button icon="monitor" disabled={lat == 0 && lng === 0} onClick={this.openOrOffPosition.bind(this, item)}>查看位置</Button>
+                }
             },
         ],
         //视图类型0表格，1地图
@@ -89,6 +91,13 @@ export default class Home extends React.Component {
         page: 1,
         limit: 10,
         total: 0,
+        //电柜查看位置弹窗
+        boxPosition: {
+            show: false,
+            lng: "",
+            lat: "",
+            title: "换电柜位置"
+        }
     }
 
     componentDidMount () {
@@ -172,6 +181,20 @@ export default class Home extends React.Component {
         this.setState({list: res.list || [], total: res.total, latlngs});
     }
 
+    //打开、关闭查看位置弹窗
+    openOrOffPosition (item): void {
+        const $ = this.state.boxPosition;
+        if (item) {
+            $.show = true;
+            $.title = `id:${item.id} 换电柜位置`;
+            $.lng = Number(item.longitude) === 0 ? "" : item.longitude;
+            $.lat = Number(item.latitude) === 0 ? "" : item.latitude;
+        } else {
+            $.show = false;
+        }   
+        this.setState({});
+    }
+
     render (): any {
         const state = this.state;
         return (
@@ -238,6 +261,15 @@ export default class Home extends React.Component {
                         this.loadList();
                     }}/>
                 </div>
+
+                {/* 查看位置弹窗 */}
+                {state.boxPosition.show &&
+                <BoxPosition 
+                title={state.boxPosition.title} 
+                lng={state.boxPosition.lng} 
+                lat={state.boxPosition.lat}
+                close={this.openOrOffPosition.bind(this, null)}
+                />}
 
             </div>
         );
