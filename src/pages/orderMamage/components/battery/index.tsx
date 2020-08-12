@@ -19,6 +19,14 @@ export default class BatteryOrder extends React.Component {
                 key: "id"
             },
             {
+                title: "用户id",
+                render: item => P(item, "memberId")
+            },
+            {
+                title: "用户手机号",
+                render: item => P(item, "member.phone")
+            },
+            {
                 title: "订单号",
                 dataIndex: "orderNumber",
                 key: "orderNumber"
