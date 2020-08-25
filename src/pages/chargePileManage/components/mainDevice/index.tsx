@@ -156,7 +156,7 @@ export default class Home extends React.Component {
                                 <p>插口电流：{_.portCurrentError == 1 ? "异常" : "正常"}</p>
                                 <p>插口温度：{_.portTemperatureError == 1 ? "异常" : "正常"}</p>
                                 <p>插口充电器/电池：{_.portChargerError == 1 ? "异常" : "正常"}</p>
-                                <p>插口继电器：{_.portRelayError == 1 ? "异常" : "正产"}</p>
+                                <p>插口继电器：{_.portRelayError == 1 ? "异常" : "正常"}</p>
                                 <p>插口插座：{_.portSocketError == 1 ? "异常" : "正常"}</p>
                                 <p>插口放置盒：{_.portBoxError == 1 ? "异常" : "正常"}</p>
                             </Col>
