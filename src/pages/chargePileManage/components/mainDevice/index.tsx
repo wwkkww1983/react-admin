@@ -119,12 +119,12 @@ export default class Home extends React.Component {
                     </Popover>
                 }
             },
-            { 
-                title: "是否在线",
-                dataIndex: "online",
-                key: "online",
-                render: (item, rm, index) => <Tag color={item == "1" ? "green" : "red"}>{item == "1" ? "在线" : "离线"}</Tag>
-            },
+            // { 
+            //     title: "是否在线",
+            //     dataIndex: "online",
+            //     key: "online",
+            //     render: (item, rm, index) => <Tag color={item == "1" ? "green" : "red"}>{item == "1" ? "在线" : "离线"}</Tag>
+            // },
             { 
                 title: "状态",
                 key: "enable",
@@ -245,7 +245,7 @@ export default class Home extends React.Component {
         if (item) {
             $.show = true;
             $.deviceId = this.state.subDeviceListToast.id;
-            $.subDeviceId = item.id;
+            $.subDeviceId = item.deviceId;
         } else {
             $.show = false;
         }
@@ -363,7 +363,7 @@ export default class Home extends React.Component {
         const _ = this.state.subDeviceListToast;
         if (item) {
             _.show = true;
-            _.id = item.id,
+            _.id = item.deviceId,
             _.title = `id: "${item.id}" 子设备列表`;
             this.loadingSubDeviceListByDeviceId(item.id);
         } else {
