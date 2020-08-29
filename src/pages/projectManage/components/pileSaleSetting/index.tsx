@@ -2,7 +2,7 @@ import React from "react";
 import "./index.less";
 import { Alert, message, Form, Select, Modal, Input, Button, Table, Switch, TimePicker } from "antd";
 import NProgress from "nprogress";
-import { input } from "../../../../utils/utils";
+import { input, property as P } from "../../../../utils/utils";
 import { getSaleSetting, savePileSaleSetting } from "../../../../api/projectManage";
 import moment from "moment";
 
@@ -73,11 +73,12 @@ export default class Home extends React.Component {
         if (!this.checkBeforePriceItem()) {
             return false;
         }
-        _.postpaidMaxTime = this.transTime(_.postpaidMaxTime);
-        __.forEach(item => {
-            let a = this.transTime(item["maxTime"]);
-            item["maxTime"] = a;
-        });
+        // _.postpaidMaxTime = this.transTime(_.postpaidMaxTime); 最长充电时间这个也不用转换
+
+        // __.forEach(item => { 饼王要求用户直接用分钟，多少分钟用户自己算。暂时不用按小时输入然后这里来转换为分钟
+        //     let a = this.transTime(item["maxTime"]);
+        //     item["maxTime"] = a;
+        // });
         //金额元转为分
         _.postpaidPriceHour = _.postpaidPriceHour * 100;
         _.postpaidPriceKwh = _.postpaidPriceKwh * 100;
@@ -90,14 +91,15 @@ export default class Home extends React.Component {
         const _: any = this.state.form;
         Object.keys(_).forEach(key => {
             if (key === "postpaidMaxTime") {
-                _[key] = this.transTime(data[key]);
+                // _[key] = this.transTime(data[key]); 最长充电时间这个也不用转换
+                _[key] = data[key];
             } else {
                 _[key] = data[key];
             }
         });
-        _["prepaidRules"] && _["prepaidRules"].forEach(item => {
-            item["maxTime"] = this.transTime(item["maxTime"]);
-        });
+        // _["prepaidRules"] && _["prepaidRules"].forEach(item => { 饼王要求用户直接用分钟，多少分钟用户自己算。这里就不用转换分钟为小时来方便显示了
+        //     item["maxTime"] = this.transTime(item["maxTime"]);
+        // });
         this.setState({});
     }
 
@@ -220,18 +222,24 @@ export default class Home extends React.Component {
                 >
                     <div>
                         <Form className="salesetting-component-wrap-form">
+                            <Form.Item label="后付费设置"></Form.Item>
                             <Form.Item label="元/小时">
-                                <Input value={state.form.postpaidPriceHour} onInput={input.bind(this, "form.postpaidPriceHour")}/>
+                                <Input value={state.form.postpaidPriceHour} onInput={input.bind(this, "form.postpaidPriceHour")} addonAfter="元"/>
                             </Form.Item>
                             <Form.Item label="元/KWH">
-                                <Input value={state.form.postpaidPriceKwh} onInput={input.bind(this, "form.postpaidPriceKwh")}/>
+                                <Input value={state.form.postpaidPriceKwh} onInput={input.bind(this, "form.postpaidPriceKwh")} addonAfter="元"/>
                             </Form.Item>
                             <Form.Item label="最长充电时间">
-                                <TimePicker onChange={(time, timeStr) => {
+                                <Input
+                                addonAfter="分钟"
+                                value={state.form.postpaidMaxTime}
+                                onChange={input.bind(this, "form.postpaidMaxTime")}
+                                />
+                                {/* <TimePicker onChange={(time, timeStr) => {
                                     input.call(this, "form.postpaidMaxTime", timeStr);
                                 }} 
                                 value={moment(state.form.postpaidMaxTime, 'HH:mm:ss')}
-                                />
+                                /> */}
                             </Form.Item>
                             <Form.Item label="预付费规则">
                                 <Table 
@@ -243,20 +251,27 @@ export default class Home extends React.Component {
                                         <Input 
                                         placeholder="单价"
                                         value={state.form.prepaidRules[index].price} 
+                                        addonAfter="元"
                                         onChange={input.bind(this, `form.prepaidRules[${index}].price`)}
                                         />
                                     )},
                                     {title: "时间", render: (item, record, index) => (
-                                        <TimePicker 
-                                        placeholder="最长时间"
-                                        onChange={(time, timeStr) => input.call(this, `form.prepaidRules[${index}].maxTime`, timeStr)} 
-                                        value={state.form.prepaidRules[index].maxTime ? moment(state.form.prepaidRules[index].maxTime, 'HH:mm:ss'): null} 
+                                        <Input
+                                        value={P(state, `form.prepaidRules[${index}].maxTime`, 0)}
+                                        onChange={input.bind(this, `form.prepaidRules[${index}].maxTime`)} 
+                                        addonAfter="分钟"
                                         />
+                                        // <TimePicker 
+                                        // placeholder="最长时间"
+                                        // onChange={(time, timeStr) => input.call(this, `form.prepaidRules[${index}].maxTime`, timeStr)} 
+                                        // value={state.form.prepaidRules[index].maxTime ? moment(state.form.prepaidRules[index].maxTime, 'HH:mm:ss'): null} 
+                                        // />
                                     )},
                                     {title: "最大KWH", render: (item, record, index) => (
                                         <Input
                                         placeholder="最大kwh"
                                         value={state.form.prepaidRules[index].maxKwh} 
+                                        addonAfter="KWH"
                                         onChange={input.bind(this, `form.prepaidRules[${index}].maxKwh`)}/>
                                     )},
                                     {title: "操作", render: (item, record, index) => (
