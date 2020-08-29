@@ -147,7 +147,7 @@ export default class Nfc extends React.Component {
         }
         loading();
         try {
-            await disable({id: item.id});
+            await disable({id: item.nfcId});
         } catch(err) {
             loading();
             return;
@@ -161,7 +161,7 @@ export default class Nfc extends React.Component {
         const _ = this.state.toast, __ = _.data;
         if (item) {
             _.show = true;
-            __["id"] = item.nfc_id;
+            __["id"] = item.nfcId;
         } else {
             _.show = false;
             Object.keys(__).forEach(key => __[key] = "");
