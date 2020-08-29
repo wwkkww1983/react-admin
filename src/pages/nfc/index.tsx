@@ -13,7 +13,7 @@ import {
     Tag
 } from "antd";
 const { TextArea } = Input;
-import { input, initLife, timeToDateStr } from "../../utils/utils";
+import { input, initLife, timeToDateStr, property as P } from "../../utils/utils";
 import Nprogress from "nprogress";
 import { getNfcList, enable, disable, importNfcCard } from "../../api/nfc";
 
@@ -26,11 +26,11 @@ export default class Nfc extends React.Component {
         columns: [
             {
                 title: "NFC卡号",
-                render: item => item.nfc_id ? item.nfc_id : "-"
+                render: item => P(item, "nfcId")
             },
             {
                 title: "二维码",
-                render: item => item.hash_id ? item.hash_id : "-"
+                render: item => P(item, "hashId")
             },
             {
                 title: "金额",
