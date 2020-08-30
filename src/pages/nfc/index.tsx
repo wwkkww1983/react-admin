@@ -29,18 +29,20 @@ export default class Nfc extends React.Component {
                 render: item => P(item, "nfcId")
             },
             {
+                title: "ID_HEX",
+                render: item => P(item, "idHex")
+            },
+            {
                 title: "二维码",
                 render: item => P(item, "hashId")
             },
             {
                 title: "金额",
-                dataIndex: "amount",
-                key: "amount"
+                render: item => P(item, "amount", 0) + `元`
             },
             {
                 title: "赠送余额",
-                dataIndex: "bonuses",
-                key: "bonuses"
+                render: item => P(item, "bonuses", 0) + `元`
             },
             {
                 title: "创建时间",
