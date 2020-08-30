@@ -174,16 +174,17 @@ export default class Nfc extends React.Component {
     //nfc启用, 由启用弹窗确定按钮来调用
     async enableNfc () {
         const checkMap = {
-            id: {msg: "id缺失", type: Number},
-            name: {msg: "请填写用户名", type: String},
-            phone: {msg: "请填写电话", type: String},
-            remark: {msg: "请填写备注", type: String}
+            id: {msg: "id缺失", type: Number, required: true},
+            name: {msg: "请填写用户名", type: String, required: true},
+            phone: {msg: "请填写电话", type: String, required: true},
+            remark: {msg: "请填写备注", type: String, required: false}
         }
-        for (let key of Object.keys(checkMap)) {
-            if (!this.state.toast.data[key]) {
-                message.warning(checkMap[key].msg);
-                return;
-            } else {
+        for (let key of Object.keys(checkMap)) { 
+            if (checkMap[key].required) {
+                if (!this.state.toast.data[key]) {
+                    message.warning(checkMap[key].msg);
+                    return;
+                }
                 this.state.toast.data[key] = checkMap[key].type(this.state.toast.data[key]);
             }
         }
