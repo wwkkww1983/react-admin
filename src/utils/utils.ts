@@ -57,6 +57,7 @@ export function timeToDateStr (
     type: string = "date", //可选date\time\datetime
     spacing: string = "\/"
 ): string {
+    if (!time || time === 0) return "-";
     const obj = new Date(Number(time));
     let str = "";
     if (type === "date" || type === "datetime") {
