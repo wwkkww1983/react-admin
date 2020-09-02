@@ -363,7 +363,7 @@ export default class Home extends React.Component {
         const _ = this.state.subDeviceListToast;
         if (item) {
             _.show = true;
-            _.id = item.deviceId,
+            _.id = item.id,
             _.title = `id: "${item.id}" 子设备列表`;
             this.loadingSubDeviceListByDeviceId(item.id);
         } else {
