@@ -207,6 +207,7 @@ export default class Home extends React.Component {
         subDeviceListToast: {
             show: false,
             id: "",
+            deviceId: "",
             title: "",
             list: []
         },
@@ -244,7 +245,7 @@ export default class Home extends React.Component {
         const $ = this.state.testToast;
         if (item) {
             $.show = true;
-            $.deviceId = this.state.subDeviceListToast.id;
+            $.deviceId = this.state.subDeviceListToast.deviceId;
             $.subDeviceId = item.deviceId;
         } else {
             $.show = false;
@@ -364,11 +365,13 @@ export default class Home extends React.Component {
         if (item) {
             _.show = true;
             _.id = item.id,
+            _.deviceId = item.deviceId,
             _.title = `id: "${item.id}" 子设备列表`;
             this.loadingSubDeviceListByDeviceId(item.id);
         } else {
             _.show = false;
             _.id = "";
+            _.deviceId = "",
             _.title = "";
             _.list = [];
         }
