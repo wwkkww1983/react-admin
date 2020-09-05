@@ -176,7 +176,7 @@ export default class Home extends React.Component {
                             <Button onClick={this.openOrOffTestToast.bind(this, item)} icon="experiment">测试</Button>
                         </Form.Item>
                         <Form.Item>
-                            <Button icon="delete" type="danger" onClick={this.delSubDevice.bind(this, item.id)}>解绑</Button>
+                            <Button icon="delete" type="danger" onClick={this.delSubDevice.bind(this, item)}>解绑</Button>
                         </Form.Item>
                     </Form>
                 )
@@ -366,7 +366,7 @@ export default class Home extends React.Component {
             _.show = true;
             _.id = item.id,
             _.deviceId = item.deviceId,
-            _.title = `id: "${item.id}" 子设备列表`;
+            _.title = `"${item.deviceId}" 子设备列表`;
             this.loadingSubDeviceListByDeviceId(item.id);
         } else {
             _.show = false;
@@ -393,9 +393,9 @@ export default class Home extends React.Component {
     }
 
     //删除充电模块（子设备，充电模块属于通讯主机的子设备）
-    delSubDevice (id: number|string) {
+    delSubDevice ({ id, deviceId }) {
         Modal.confirm({
-            title: `确定解绑子设备："${id}" 吗?`,
+            title: `确定解绑子设备："${deviceId}" 吗?`,
             content: "",
             okText: "确定",
             okType: 'danger',

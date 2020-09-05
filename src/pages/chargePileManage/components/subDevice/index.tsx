@@ -105,7 +105,7 @@ export default class Home extends React.Component {
                             <Button disabled={item.longitude <= 0 || item.latitude <= 0} icon="monitor" onClick={this.openOrOffPositionToast.bind(this, item.latitude, item.longitude)}>查看GPS位置</Button>
                         </Form.Item>
                         <Form.Item>
-                            <Button icon="delete" type="danger" onClick={this.delCharger.bind(this, item.id)}>删除</Button>
+                            <Button icon="delete" type="danger" onClick={this.delCharger.bind(this, item)}>删除</Button>
                         </Form.Item>
                     </Form>
                 )
@@ -246,9 +246,9 @@ export default class Home extends React.Component {
         this.loadList();
     }
 
-    delCharger (id) {
+    delCharger ({ id, deviceId }) {
         Modal.confirm({
-            title: `确定删除充电头："${id}" 吗?`,
+            title: `确定删除充电头："${deviceId}" 吗?`,
             content: "",
             okText: "确定",
             okType: 'danger',
@@ -262,7 +262,7 @@ export default class Home extends React.Component {
                     return;
                 }
                 NProgress.done();
-                message.success(`已删除充电头: "${id}"`);
+                message.success(`已删除充电头: "${deviceId}"`);
                 this.loadList();
             },
             onCancel() {}
