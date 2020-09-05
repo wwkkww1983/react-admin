@@ -6,6 +6,7 @@ import { input, timeToDateStr } from "../../../../utils/utils";
 import { getPileOrders, endPileOrder } from "../../../../api/orderManage";
 import Nprogress from "nprogress";
 import moment from "moment";
+import Item from "antd/lib/list/Item";
 
 export default class PileOrder extends React.Component {
     constructor (props) {
@@ -20,6 +21,10 @@ export default class PileOrder extends React.Component {
                 key: "id"
             },
             {
+                title: "子设备id",
+                render: item => item.subDeviceId
+            },
+            {
                 title: "用户id",
                 dataIndex: "memberId",
                 key: "memberId"
@@ -30,6 +35,15 @@ export default class PileOrder extends React.Component {
                 key: "orderNumber"
             },
             {
+                title: "订单时间",
+                render: item => {
+                    return <div>
+                        <p>开始时间：{timeToDateStr(item.beginTime * 1000, "datetime")}</p>
+                        <p>结束时间：{item.endTime && item.endTime > 0 ? timeToDateStr(item.endTime, "datetime") : "-"}</p>
+                    </div>
+                }
+            },
+            {
                 title: "付费类型",
                 dataIndex: "typeText",
                 key: "typeText"
@@ -38,11 +52,8 @@ export default class PileOrder extends React.Component {
                 title: "支付金额",
                 render: item => {
                     const content = <div>
-                        <p>子设备id：{item.subDeviceId}</p>
                         <p>端口号：{item.port}</p>
                         <p>创建时间：{timeToDateStr(item.createTime * 1000, "datetime")}</p>
-                        <p>充电开始时间：{timeToDateStr(item.beginTime * 1000, "datetime")}</p>
-                        <p>充电结束时间：{timeToDateStr(item.endTime * 1000, "datetime")}</p>
                         <p>金额：{item.amount / 100}元</p>
                         <p>实际支付金额：{item.payAmount / 100}元</p>
                         <p>支付渠道：{item.payChannel}</p>
