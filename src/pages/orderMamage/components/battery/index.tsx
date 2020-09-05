@@ -19,6 +19,19 @@ export default class BatteryOrder extends React.Component {
                 key: "id"
             },
             {
+                title: "电池id/序列号",
+                render: item => {
+                    return <div>
+                        <p>id： {item.batteryImsi}</p>
+                        <p>序列号：{item.batteryIdStr}</p>
+                    </div>
+                }
+            },
+            {
+                title: "虚拟电池id",
+                render: item => P(item, "virtualBatteryId")
+            },
+            {
                 title: "用户id",
                 render: item => P(item, "memberId")
             },
@@ -37,10 +50,6 @@ export default class BatteryOrder extends React.Component {
                 key: "statusText"
             },
             {
-                title: "虚拟电池id",
-                render: item => P(item, "virtualBatteryId")
-            },
-            {
                 title: "支付金额",
                 render: item => (item.payAmount / 100) + "元"
             },
@@ -50,8 +59,13 @@ export default class BatteryOrder extends React.Component {
                 key: "payChannel"
             },
             {
-                title: "支付时间",
-                render: item => item.payTime ? timeToDateStr(item.payTime, "datetime") : "-"
+                title: "订单时间",
+                render: item => {
+                    return <div>
+                        <p>开始：{timeToDateStr(item.borrowTime * 1000, "datetime")}</p>
+                        <p>结束：{item.returnTime && item.returnTime > 0 ? timeToDateStr(item.returnTime, "datetime") : "-"}</p>
+                    </div>
+                }
             },
             {
                 title: "创建/租借时间",
@@ -60,6 +74,7 @@ export default class BatteryOrder extends React.Component {
                         <p>订单创建时间：{item.createTime ? timeToDateStr(item.createTime * 1000, "datetime") : "-"}</p>
                         <p>租借时间：{item.borrowTime ? timeToDateStr(item.borrowTime * 1000, "datetime") : "-"}</p>
                         <p>归还时间：{item.returnTime ? timeToDateStr(item.returnTime * 1000, "datetime") : "-"}</p>
+                        <p>支付时间：{item.payTime ? timeToDateStr(item.payTime, "datetime") : "-"}</p>
                         <p>最后退款时间：{item.refundExpireTime ? timeToDateStr(item.refundExpireTime * 1000, "datetime") : "-"}</p>
                     </div>
                     return <Popover content={content} title="创建/租借时间" trigger="hover">

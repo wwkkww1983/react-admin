@@ -38,8 +38,8 @@ export default class PileOrder extends React.Component {
                 title: "订单时间",
                 render: item => {
                     return <div>
-                        <p>开始时间：{timeToDateStr(item.beginTime * 1000, "datetime")}</p>
-                        <p>结束时间：{item.endTime && item.endTime > 0 ? timeToDateStr(item.endTime, "datetime") : "-"}</p>
+                        <p>开始：{timeToDateStr(item.beginTime * 1000, "datetime")}</p>
+                        <p>结束：{item.endTime && item.endTime > 0 ? timeToDateStr(item.endTime, "datetime") : "-"}</p>
                     </div>
                 }
             },
