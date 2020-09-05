@@ -63,7 +63,7 @@ export default class BatteryOrder extends React.Component {
                 render: item => {
                     return <div>
                         <p>开始：{timeToDateStr(item.borrowTime * 1000, "datetime")}</p>
-                        <p>结束：{item.returnTime && item.returnTime > 0 ? timeToDateStr(item.returnTime, "datetime") : "-"}</p>
+                        <p>结束：{item.returnTime && item.returnTime > 0 ? timeToDateStr(item.returnTime * 1000, "datetime") : "-"}</p>
                     </div>
                 }
             },

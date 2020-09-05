@@ -39,7 +39,7 @@ export default class PileOrder extends React.Component {
                 render: item => {
                     return <div>
                         <p>开始：{timeToDateStr(item.beginTime * 1000, "datetime")}</p>
-                        <p>结束：{item.endTime && item.endTime > 0 ? timeToDateStr(item.endTime, "datetime") : "-"}</p>
+                        <p>结束：{item.endTime && item.endTime > 0 ? timeToDateStr(item.endTime * 1000, "datetime") : "-"}</p>
                     </div>
                 }
             },
@@ -78,7 +78,7 @@ export default class PileOrder extends React.Component {
                     //这些状态码参见充电桩订单状态文档
                     return <Form layout="inline">
                         <Form.Item>
-                            <Button  disabled={Number(item.status) === 1 && Number(item.type) === 2} onClick={this.endOrder.bind(this, item)} icon="check">手动完成订单</Button>
+                            <Button  disabled={Number(item.status) !== 1 && Number(item.type) !== 2} onClick={this.endOrder.bind(this, item)} icon="check">手动完成订单</Button>
                         </Form.Item>
                     </Form>
                 }
