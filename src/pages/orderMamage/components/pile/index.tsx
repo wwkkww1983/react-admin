@@ -7,17 +7,6 @@ import { getPileOrders, endPileOrder } from "../../../../api/orderManage";
 import Nprogress from "nprogress";
 import moment from "moment";
 
-//充电桩订单状态文本映射
-const pileOrderStatusMap: string[] = [
-    "充电中",
-    "待付款",
-    "已完成",
-    "已取消",
-    "处理中",
-    "退款审核中",
-    "已退款"
-]
-
 export default class PileOrder extends React.Component {
     constructor (props) {
         super(props);
@@ -70,7 +59,7 @@ export default class PileOrder extends React.Component {
             },
             {
                 title: "订单状态",
-                render: item => pileOrderStatusMap[Number(item.status) -1] || "-"
+                render: item => item["statusText"] || "-"
             },
             {
                 title: "操作",
