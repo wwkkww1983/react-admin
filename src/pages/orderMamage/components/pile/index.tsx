@@ -1,11 +1,22 @@
 import React from "react";
 import "./index.less";
-import { Form, Table, Button, DatePicker, Input, Popover } from "antd";
+import { Form, Table, Button, DatePicker, Input, Popover, Modal, message } from "antd";
 const { RangePicker } = DatePicker;
 import { input, timeToDateStr } from "../../../../utils/utils";
-import { getPileOrders } from "../../../../api/orderManage";
+import { getPileOrders, endPileOrder } from "../../../../api/orderManage";
 import Nprogress from "nprogress";
 import moment from "moment";
+
+//充电桩订单状态文本映射
+const pileOrderStatusMap: string[] = [
+    "充电中",
+    "待付款",
+    "已完成",
+    "已取消",
+    "处理中",
+    "退款审核中",
+    "已退款"
+]
 
 export default class PileOrder extends React.Component {
     constructor (props) {
@@ -56,6 +67,22 @@ export default class PileOrder extends React.Component {
             {
                 title: "充电时长",
                 render: item => item.chargingTime + "分钟"
+            },
+            {
+                title: "订单状态",
+                render: item => pileOrderStatusMap[Number(item.status) -1] || "-"
+            },
+            {
+                title: "操作",
+                render: item => {
+                    //这些状态码参见充电桩订单状态文档
+                    const ignoreStatus = [3, 4, 5, 6, 7];
+                    return <Form layout="inline">
+                        <Form.Item>
+                            <Button  disabled={ignoreStatus.includes(Number(item.status))} onClick={this.endOrder.bind(this, item)} icon="check">手动完成订单</Button>
+                        </Form.Item>
+                    </Form>
+                }
             }
         ],
         limit: 10,
@@ -93,6 +120,27 @@ export default class PileOrder extends React.Component {
         this.setState({
             list: res.list || [],
             total: res.total,
+        });
+    }
+
+    //手动完成订单
+    endOrder ({ orderNumber, id }): void {
+        Modal.confirm({
+            title: `确定要结束 "${orderNumber}" 订单吗？`,
+            // content: 'Some descriptions',
+            onOk: async () => {
+                Nprogress.start();
+                try {
+                    await endPileOrder({id});
+                } catch(err) {
+                    Nprogress.done();
+                    return;
+                }
+                Nprogress.done();
+                message.success(`已结束 "${orderNumber}" 订单`);
+                this.loadList();
+            },
+            onCancel() {},
         });
     }
 

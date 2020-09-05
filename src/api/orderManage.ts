@@ -14,6 +14,16 @@ export function getPileOrders (data: {
         params: data
     });
 }
+//手动结束充电桩订单
+export function endPileOrder (data: {
+    id: string|number
+}): Promise<any> {
+    return request({
+        url: "/chargingStation/admin/order/completeOrder",
+        method: "POST",
+        data
+    });
+}
 
 //租借电池订单
 export function getBatteryOrders (data: {
