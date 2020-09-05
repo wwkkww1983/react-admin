@@ -75,12 +75,11 @@ export default class Home extends React.Component {
         if (!this.checkBeforePriceItem()) {
             return false;
         }
-        // _.postpaidMaxTime = this.transTime(_.postpaidMaxTime); 最长充电时间这个也不用转换
-
-        // __.forEach(item => { 饼王要求用户直接用分钟，多少分钟用户自己算。暂时不用按小时输入然后这里来转换为分钟
-        //     let a = this.transTime(item["maxTime"]);
-        //     item["maxTime"] = a;
-        // });
+        //分钟转为秒
+        _.postpaidMaxTime = _.postpaidMaxTime * 60;
+        __.forEach(item => {
+            item["maxTime"] = item["maxTime"] * 60;
+        });
         //金额元转为分
         _.postpaidPriceHour = _.postpaidPriceHour * 100;
         _.postpaidPriceKwh = _.postpaidPriceKwh * 100;
@@ -93,15 +92,14 @@ export default class Home extends React.Component {
         const _: any = this.state.form;
         Object.keys(_).forEach(key => {
             if (key === "postpaidMaxTime") {
-                // _[key] = this.transTime(data[key]); 最长充电时间这个也不用转换
-                _[key] = data[key];
+                _[key] = data[key] / 60;
             } else {
                 _[key] = data[key];
             }
         });
-        // _["prepaidRules"] && _["prepaidRules"].forEach(item => { 饼王要求用户直接用分钟，多少分钟用户自己算。这里就不用转换分钟为小时来方便显示了
-        //     item["maxTime"] = this.transTime(item["maxTime"]);
-        // });
+        _["prepaidRules"] && _["prepaidRules"].forEach(item => {
+            item["maxTime"] = item["maxTime"] / 60;
+        });
         this.setState({});
     }
 
@@ -246,11 +244,6 @@ export default class Home extends React.Component {
                                             value={state.form.postpaidMaxTime}
                                             onChange={input.bind(this, "form.postpaidMaxTime")}
                                             />
-                                            {/* <TimePicker onChange={(time, timeStr) => {
-                                                input.call(this, "form.postpaidMaxTime", timeStr);
-                                            }} 
-                                            value={moment(state.form.postpaidMaxTime, 'HH:mm:ss')}
-                                            /> */}
                                         </Form.Item>
                                     </Col>
                                     <Col span={11} offset={2}>
@@ -281,11 +274,6 @@ export default class Home extends React.Component {
                                     onChange={input.bind(this, `form.prepaidRules[${index}].maxTime`)} 
                                     addonAfter="分钟"
                                     />
-                                    // <TimePicker 
-                                    // placeholder="最长时间"
-                                    // onChange={(time, timeStr) => input.call(this, `form.prepaidRules[${index}].maxTime`, timeStr)} 
-                                    // value={state.form.prepaidRules[index].maxTime ? moment(state.form.prepaidRules[index].maxTime, 'HH:mm:ss'): null} 
-                                    // />
                                 )},
                                 {title: "最大KWH", render: (item, record, index) => (
                                     <Input
