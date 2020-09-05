@@ -22,12 +22,12 @@ export default class PileOrder extends React.Component {
             },
             {
                 title: "子设备id",
-                render: item => item.subDeviceId
+                render: item => item.subDeviceIdText
             },
             {
                 title: "用户id",
-                dataIndex: "memberId",
-                key: "memberId"
+                //刷卡用户显示nfc卡号，否则显示memberId
+                render: item => item.member ? item.memberId : item.nfcIdHex
             },
             {
                 title: "订单号",
