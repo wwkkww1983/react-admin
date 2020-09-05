@@ -65,10 +65,9 @@ export default class PileOrder extends React.Component {
                 title: "操作",
                 render: item => {
                     //这些状态码参见充电桩订单状态文档
-                    const ignoreStatus = [3, 4, 5, 6, 7];
                     return <Form layout="inline">
                         <Form.Item>
-                            <Button  disabled={ignoreStatus.includes(Number(item.status))} onClick={this.endOrder.bind(this, item)} icon="check">手动完成订单</Button>
+                            <Button  disabled={Number(item.status) === 1 && Number(item.type) === 2} onClick={this.endOrder.bind(this, item)} icon="check">手动完成订单</Button>
                         </Form.Item>
                     </Form>
                 }
