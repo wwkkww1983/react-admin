@@ -3,8 +3,8 @@ import "./less/index.less";
 
 import { Table, Form, Button, Input, Select, Switch, Popover, Radio, Pagination, Row, Col, Modal, message } from "antd";
 import NProgress from "nprogress";
-import { getDeviceList, enableDevice, disableDevice, importJT808Battery } from "../../api/deviceManager";
-import { input, initLife, property as P } from "../../utils/utils";
+import { getDeviceList, enableDevice, disableDevice, importJT808Battery, deleteDevice } from "../../api/deviceManager";
+import { input, initLife, property as P, timeToDateStr } from "../../utils/utils";
 import store from "../../store";
 import DeviceInMap from "../../components/deviceInMap";
 import BatteryPosition from "../../components/devicePosition";
@@ -164,26 +164,31 @@ export default class BatteryManagerJT808 extends React.Component {
                 }
             },
             { 
-                title: "状态",
-                key: "enable",
-                render: (item, rm, index) => (
-                    <Form layout="inline">
-                        <Form.Item>
-                            <Switch loading={this.state.switchLoading[index]} checkedChildren="启用" unCheckedChildren="禁用" checked={item.enable} onChange={this.enableOrDisable.bind(this, item, index)}/>
-                        </Form.Item>
-                    </Form>
-                )
+                title: "上报时间",
+                render: item => timeToDateStr(P(item, "batteryJT808.latestStatus.time", 0) * 1000, "datetime") || "-"
             },
             {
                 title: "位置",
                 width: 200,
-                render: item => Number(P(item, "longitude", 0)) && Number(P(item, "latitude", 0)) ? P(item, "address") : "暂无位置信息"
+                render: item => {
+                    const lat = Number(P(item, "latitude", 0)), lng = Number(P(item, "longitude", 0));
+                    return <div>
+                        <Button icon="compass" type="link" onClick={this.openBatteryPositionToast.bind(this, lat, lng)} disabled={!lng || !lat}></Button>{Number(P(item, "longitude", 0)) && Number(P(item, "latitude", 0)) ? P(item, "address") : "暂无位置信息"}
+                    </div>
+                    
+                }
             },
             { 
                 title: "操作",
                 render: (item, rm, index) => {
-                    const lat = Number(P(item, "latitude", 0)), lng = Number(P(item, "longitude", 0));
-                    return <Button icon="compass" onClick={this.openBatteryPositionToast.bind(this, lat, lng)} disabled={!lng || !lat}>查看位置</Button>
+                    return <Form layout="inline">
+                        <Form.Item>
+                            <Switch loading={this.state.switchLoading[index]} checkedChildren="启用" unCheckedChildren="禁用" checked={item.enable} onChange={this.enableOrDisable.bind(this, item, index)}/>
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="danger" icon="delete" onClick={this.deleteBattery.bind(this, item)}>删除</Button>
+                        </Form.Item>
+                    </Form>
                 }
             },
         ],
@@ -362,6 +367,26 @@ export default class BatteryManagerJT808 extends React.Component {
         this.loadList();
     }
 
+    //删除电池
+    deleteBattery (item): void {
+        Modal.confirm({
+            title: `是否删除编号为"${item.id}"的电池?`,
+            okType: "danger",
+            onOk: async () => {
+                NProgress.start();
+                try {
+                    await deleteDevice({id: item.id});
+                } catch(err) {
+                    NProgress.done();
+                    return;
+                }
+                NProgress.done();
+                this.loadList();
+            },
+            onCancel: () => {}
+        })
+    }
+
     render (): any {
         const state = this.state;
         return (
@@ -457,8 +482,8 @@ export default class BatteryManagerJT808 extends React.Component {
 
                 {/* 单个电池位置弹窗 */}
                 {state.batteryPositionToastState.show && <BatteryPosition title="电池位置" close={this.offBatteryPositionToast.bind(this)} lat={state.batteryPositionToastState.lat} lng={state.batteryPositionToastState.lng}/>}
-                
             </div>
         );
     }
-}
+}        
+      

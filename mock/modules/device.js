@@ -236,6 +236,14 @@ module.exports = {
             "code|0-1": 0,
             message: ""
         })
+    ),
+
+    //删除设备
+    "POST /device/admin/manager/delete": () => (
+        Mock.mock({
+            "code": 0,
+            message: ""
+        })
     )
 
 }

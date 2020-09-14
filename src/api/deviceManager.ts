@@ -109,3 +109,17 @@ export function unbindPileSubDevice (data: {
         data
     });
 }
+
+/**
+ * 删除设备
+ * 后端说所有设备如果没有单独创建删除接口，则都用这个api来执行删除
+ */
+export function deleteDevice (data: {
+    id: string|number
+}): Promise<any> {
+    return request({
+        url: "device/admin/manager/delete",
+        method: "POST",
+        data
+    });
+}
