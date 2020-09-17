@@ -29,6 +29,9 @@ import PlatformSetting from "../pages/platformSetting";
 import Nfc from "../pages/nfc";
 import batteryManageJT808 from "../pages/batteryManageJT808";
 import OrderManage from "../pages/orderMamage";
+import Agent from "../pages/agent";
+import Staff from "../pages/staff";
+import Store from "../pages/store";
 
 export const inRoutes = [
     {
@@ -119,6 +122,24 @@ export const inRoutes = [
         title: "订单管理",
         path: "/orderManage",
         component: OrderManage,
+        keepAlive: true
+    },
+    {
+        title: "代理商",
+        path: "/agent",
+        component: Agent,
+        keepAlive: true
+    },
+    {
+        title: "门店",
+        path: "/store",
+        component: Store,
+        keepAlive: true
+    },
+    {
+        title: "员工",
+        path: "/staff",
+        component: Staff,
         keepAlive: true
     },
     {

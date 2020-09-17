@@ -89,6 +89,27 @@ export default [
         title: "订单管理",
         icon: "icon-order",
         path: "/orderManage"
+    },
+    {
+        title: "代理商管理",
+        icon: "icon-dailishang",
+        children: [
+            {
+                icon: "icon-dailishang1",
+                title: "代理商",
+                path: "/agent"
+            },
+            {
+                icon: "icon-mendianguanli",
+                title: "门店",
+                path: "/store"
+            },
+            {
+                icon: "icon-yuangong",
+                title: "员工",
+                path: "/staff"
+            }
+        ]
     }
 ]
 
