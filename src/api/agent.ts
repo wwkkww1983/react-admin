@@ -153,3 +153,62 @@ export function delStore (data: {
         data
     });
 }
+
+/**
+ * 获取员工列表 
+ */
+export function getStaffList (data: {
+    q: string, //	搜索：姓名模糊搜索/手机号精确搜索		[string]		
+    agentId: string|number, //	代理商ID，传了该字段就查询该代理商下的员工		[int]		
+    storeId: number|string, //	门店ID，传了该字段就查询该门店下的员工		[int]		
+    page: number, //	页码		[int]	1	查看
+    limit: number, //	每页数量		[int]	15
+}) {
+    return request({
+        url: "/storeStaff/admin/manager/query",
+        method: "GET",
+        params: data
+    });
+}
+
+/**
+ * 新增员工 
+ */
+export function addStaff (data: {
+    name: string,// 姓名
+    phone: string// 手机号
+}) {    
+    return request({
+        url: "/storeStaff/admin/manager/create",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 编辑员工 
+ */
+export function editStaff (data: {
+    id: string|number,
+    name: string,// 姓名
+    phone: string// 手机号
+}) {    
+    return request({
+        url: "/storeStaff/admin/manager/update",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 删除员工 
+ */
+export function delStaff (data: {
+    id: string|number
+}) {
+    return request({
+        url: "/storeStaff/admin/manager/delete",
+        method: "POST",
+        data
+    });
+}
