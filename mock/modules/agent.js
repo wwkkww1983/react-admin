@@ -1,3 +1,4 @@
+const { mock } = require("mockjs");
 const Mock = require("mockjs");
 
 module.exports = {
@@ -33,5 +34,42 @@ module.exports = {
         "page_count":1,
         "message":"",
         "code":0
+    }),
+
+    //获取员工列表
+    "GET /storeStaff/admin/manager/query": () => Mock.mock({
+        "list|10":[
+            {
+                "id":1,// 员工ID
+                "phone":"12345678901",// 手机号
+                "name":"@name",// 姓名
+                "createTime":1599887776,// 创建时间
+                "lastLoginTime":0,// 最后登录时间
+                "updateTime":1599887776,// 更新时间
+                "deleteTime":0// 删除时间
+            }
+        ],
+        "limit":15,
+        "total":25,
+        "page_count":1,
+        "message":"",
+        "code":0
+    }),
+
+    //新增员工
+    "POST /storeStaff/admin/manager/create": () => Mock.mock({
+        code: 0,
+        message: ""
+    }),
+
+    //编辑员工
+    "POST /storeStaff/admin/manager/update": () => Mock.mock({
+        code: 0,
+        message: ""
+    }),
+
+    "POST /storeStaff/admin/manager/delete": () => Mock.mock({
+        code: 0,
+        message: ""
     })
 }

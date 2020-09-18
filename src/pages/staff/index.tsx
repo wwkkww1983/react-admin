@@ -38,7 +38,7 @@ export default class Staff extends React.Component {
                 render: item => {
                     const content: React.ReactNode = <p>{P(item, "leshua.config.key")}</p>;
                     return <div>
-                        
+                        -
                     </div>
                 }
             },
@@ -47,7 +47,7 @@ export default class Staff extends React.Component {
                 render: item => {
                     const content: React.ReactNode = <p>{P(item, "leshua.config.key")}</p>;
                     return <div>
-                        
+                        -
                     </div>
                 }
             },
@@ -98,7 +98,10 @@ export default class Staff extends React.Component {
             if (data === true) {
                 _.data = JSON.parse(JSON.stringify(staffStruct));
             } else {
-                _.data = JSON.parse(JSON.stringify(data));
+                _.data = {};
+                data = JSON.parse(JSON.stringify(data));
+                Object.keys(staffStruct).forEach(k => _.data[k] = data[k]);
+                _.data.id = data["id"];
             }
         } else {
             _.show = false;
@@ -134,7 +137,11 @@ export default class Staff extends React.Component {
         if (!data) return;
         NProgress.start();
         try {
-            // await this.
+            if (data.id) {
+                await editStaff(data);
+            } else {
+                await addStaff(data);
+            }
         } catch(err) {
             NProgress.done();
             return;
@@ -146,8 +153,24 @@ export default class Staff extends React.Component {
     }
 
     //删除员工
-    deleteStaff () {
-        
+    deleteStaff (item) {
+        Modal.confirm({
+            title: `确定删除员工 "${item.name}" 吗？`,
+            okType: "danger",
+            onOk: async () => {
+                NProgress.start();
+                try {
+                    await delStaff({id: item.id});
+                } catch(err) {
+                    NProgress.done();
+                    return;
+                }
+                NProgress.done();
+                message.success(`已删除员工 "${item.name}"`);
+                this.loadList();
+            },
+            onCancel: () => {}
+        });
     }
     
     //检测新增、编辑员工字段填写
@@ -220,10 +243,18 @@ export default class Staff extends React.Component {
             >
                 <Form>
                     <Form.Item label="姓名">
-                        <Input placeholder="请输入员工姓名"></Input>
+                        <Input 
+                        placeholder="请输入员工姓名" 
+                        value={state.staffForm.data.name} 
+                        onChange={input.bind(this, "staffForm.data.name")}
+                        ></Input>
                     </Form.Item>
                     <Form.Item label="电话">
-                        <Input placeholder="请输入员工电话"></Input>
+                        <Input 
+                        value={state.staffForm.data.phone}
+                        onChange={input.bind(this, "staffForm.data.phone")}
+                        placeholder="请输入员工电话"
+                        ></Input>
                     </Form.Item>
                 </Form>
             </Modal>
