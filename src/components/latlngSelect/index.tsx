@@ -1,7 +1,8 @@
 import React from "react";
 import "./index.less";
 import { Alert, Modal, message } from "antd";
-import store from "../../../../store";
+import store from "../../store";
+import NProgress from "nprogress";
 
 interface Props {
     lat?: string|number,
@@ -75,9 +76,11 @@ export default class Home extends React.Component {
             // 设置查询行政区级别为 区 
             level: 'district'
         });
+        NProgress.start();
         district.search(
             areaName, 
             (status, result) => {
+                NProgress.done();
                 // 获取朝阳区的边界信息
                 var bounds = result.districtList[0].boundaries;
                 var polygons = [];

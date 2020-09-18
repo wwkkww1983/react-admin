@@ -26,7 +26,7 @@ import {
     aduit
 } from "../../../../api/projectManage";
 import CitySelect from "../../components/citySelect";
-import LatLngSelect from "../latlngSelect";
+import LatLngSelect from "../../../../components/latlngSelect";
 import OPSOfProject from "../OPSOfProject";
 import SaleSetting from "../pileSaleSetting";
 import ProjectDevices from "../projectDevices";

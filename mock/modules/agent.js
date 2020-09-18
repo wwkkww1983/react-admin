@@ -1,6 +1,8 @@
 const Mock = require("mockjs");
 
 module.exports = {
+
+    //获取供应商列表
     "GET /agent/admin/manager/query": () => Mock.mock({
         "list|10":[
             {// 乐刷信息

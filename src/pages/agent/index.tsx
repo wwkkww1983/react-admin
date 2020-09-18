@@ -49,7 +49,11 @@ export default class Agent extends React.Component {
                 dataIndex: "phone"
             },
             {
-                title: "地区/地址",
+                title: "地区",
+                render: item => `${this.getCityNameById(item.province)}/${this.getCityNameById(item.city)}/${this.getCityNameById(item.district)}`
+            },
+            {
+                title: "地址",
                 dataIndex: "address"
             },
             {
@@ -72,6 +76,9 @@ export default class Agent extends React.Component {
                 title: "操作",
                 render: item => (
                     <Form layout="inline">
+                        <Form.Item>
+                            <Button icon="setting" onClick={this.opendOrOffAgentToast.bind(this, item)}>编辑</Button>
+                        </Form.Item>
                         <Form.Item>
                             <Button type="danger" icon="delete" onClick={this.deleteAgent.bind(this, item)}>删除</Button>
                         </Form.Item>
@@ -99,9 +106,24 @@ export default class Agent extends React.Component {
 
     async init () {
         NProgress.start();
-        await this.loadList(false);
         await this.loadCityData();
+        await this.loadList(false);
         NProgress.done();
+    }
+
+    //城市id换取城市名
+    getCityNameById (id) {
+        const _ = f(this.state.province, id);
+        return _;
+        function f (arr, id) {
+            for (let item of arr) {
+                if (item.id == id) return item.name;
+                if (item.children) {
+                    let name = f(item.children, id);
+                    if (name) return name;
+                }
+            }
+        }
     }
 
     //加载城市数据
@@ -134,6 +156,11 @@ export default class Agent extends React.Component {
             return;
         }
         loading && NProgress.done();
+        res.list.forEach(item => {
+            item.province && (item.province = Number(item.province));
+            item.city && (item.city = Number(item.city));
+            item.district &&  (item.district = Number(item.district));
+        });
         this.setState({
             list: res.list,
             total: res.total
@@ -148,7 +175,10 @@ export default class Agent extends React.Component {
             if (data === true) {
                 _.data = JSON.parse(JSON.stringify(agentStruct));
             } else {
-                _.data = data;
+                _.data = JSON.parse(JSON.stringify(data));
+                //处理省市区显示
+                this.state.city = this.state.province.find(item => item.id == _.data.province).children;
+                this.state.area = this.state.city.find(item => item.id == _.data.city).children;
             }
         } else {
             _.show = false;
@@ -166,15 +196,16 @@ export default class Agent extends React.Component {
         NProgress.start();
         try {
             if (data.id !== undefined) {
-                await addAgent(data);
-            } else {
                 await editAgent(data);
+            } else {
+                await addAgent(data);
             }
         } catch(err) {
             NProgress.done();
             return;
         }
         NProgress.done();
+        this.opendOrOffAgentToast(null);
         message.success(data.id !== undefined ? "编辑已保存" : "已新增");
         this.loadList();
     }
@@ -211,7 +242,6 @@ export default class Agent extends React.Component {
                 fromData.province = id;
                 fromData.city = fromData.district = undefined;
                 this.state.city = _.children;
-                console.log(_);
             },
             city () {
                 const _ = this.state.city.find(i => i.id === id);
@@ -249,9 +279,7 @@ export default class Agent extends React.Component {
             address:  "地址没有填写"
         }
         function check (data: object, target: string[]): void {
-            console.log(Object.keys(data));
             Object.keys(data).forEach(k => {
-                console.log(target);
                 if (typeof data[k] === "object") {
                     check(data[k], [...target, k]);
                 } else {
@@ -306,9 +334,9 @@ export default class Agent extends React.Component {
             onCancel={this.opendOrOffAgentToast.bind(this, false)}
             onOk={this.saveAgent.bind(this)}
             >
-                <Row>
-                    <Col span={11}>
-                        <Form>
+                <Form>
+                    <Row>
+                        <Col span={11}>
                             <Form.Item label="姓名">
                                 <Input 
                                 placeholder="填写供应商姓名" 
@@ -332,10 +360,8 @@ export default class Agent extends React.Component {
                                     {state.province.map(item => <Option value={item.id}>{item.name}</Option>)}
                                 </Select>
                             </Form.Item>
-                        </Form>
-                    </Col>
-                    <Col span={11} offset="2">
-                        <Form>
+                        </Col>
+                        <Col span={11} offset="2">
                             <Form.Item label="手机号">
                                 <Input placeholder="填写供应商手机号"
                                 value={state.agentForm.data.phone}
@@ -358,10 +384,8 @@ export default class Agent extends React.Component {
                                     {state.city.map(item => <Option value={item.id}>{item.name}</Option>)}
                                 </Select>
                             </Form.Item>
-                        </Form>
-                    </Col>
-                </Row>
-                <Form>
+                        </Col>
+                    </Row>
                     <Form.Item label="区">
                         <Select
                         onChange={this.citySelect.bind(this, "area")} 
