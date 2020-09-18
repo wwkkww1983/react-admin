@@ -21,7 +21,7 @@ export default function (state, {type, playload}) {
          */
         default:
             state = storage.get("CITY_DATA");
-            return state || {};
+            return state || [];
     }
 
 }

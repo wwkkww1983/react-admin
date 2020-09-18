@@ -127,7 +127,7 @@ export default class Store extends React.Component {
     //加载城市数据
     async loadCityData () {
         let city = store.getState().city;
-        if (city) {
+        if (city.length > 0) {
             this.state.province = city;
         } else {
             try {
