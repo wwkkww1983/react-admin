@@ -119,6 +119,7 @@ export default class AgentSelect extends React.Component {
         maskClosable={false}
         onCancel={props.onCancel}
         footer={null}
+        zIndex={2000}
         >
             <Form layout="inline">
                 <Form.Item>

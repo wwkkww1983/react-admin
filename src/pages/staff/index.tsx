@@ -1,10 +1,12 @@
 import React from "react";
 import "./index.less";
-import { Form, Input, Button, Table, Popover, message, Modal, Row, Col, Select } from "antd";
+import { Form, Input, Button, Table, Popover, message, Modal, Row, Col, Select, notification, Divider } from "antd";
 const { Option } = Select;
-import { getStaffList, addStaff, editStaff, delStaff } from "../../api/agent";
+import { getStaffList, addStaff, editStaff, delStaff, bindAgent, bindStore, unbindAgent, unbindStore } from "../../api/agent";
 import NProgress from "nprogress";
 import { input, property as P, initLife } from "../../utils/utils";
+import AgentSelect from "../../components/agentSelect";
+import StoreSelect from "./components/storeSelect";
 
 /**
  * 新增代理商所需数据结构 
@@ -36,19 +38,37 @@ export default class Staff extends React.Component {
             {
                 title: "代理商id",
                 render: item => {
-                    const content: React.ReactNode = <p>{P(item, "leshua.config.key")}</p>;
-                    return <div>
-                        -
+                    const content = <div style={{width: "300px"}}>
+                        {item.agents.map(item1 => <Row style={{marginBottom: "8px"}}>
+                            <Col span={18}>{item1.name}</Col>
+                            <Col span={6}><Button type="danger" size="small" icon="delete" onClick={this.unbindAgent.bind(this, item, item1)}>移除</Button></Col>
+                        </Row>)}
+                        <Row>
+                            <Col span={18}></Col>
+                            <Col span={6}><Button type="link" size="small" icon="plus" onClick={this.openOrOffAgentToast.bind(this, item)}>绑定</Button></Col>
+                        </Row>
                     </div>
+                    return <Popover title="代理商id" content={content}>
+                         <Button type="link">查看>></Button>
+                    </Popover>
                 }
             },
             {
                 title: "门店id",
                 render: item => {
-                    const content: React.ReactNode = <p>{P(item, "leshua.config.key")}</p>;
-                    return <div>
-                        -
+                    const content = <div style={{width: "300px"}}>
+                        {item.stores.map(item1 => <Row style={{marginBottom: "8px"}}>
+                            <Col span={18}>{item1.name}</Col>
+                            <Col span={6}><Button type="danger" size="small" icon="delete" onClick={this.unbindStore.bind(this, item, item1)}>移除</Button></Col>
+                        </Row>)}
+                        <Row>
+                            <Col span={18}></Col>
+                            <Col span={6}><Button type="link" size="small" icon="plus" onClick={this.openOrOffStoreToast.bind(this, item)}>绑定</Button></Col>
+                        </Row>
                     </div>
+                    return <Popover title="门店id" content={content}>
+                         <Button type="link">查看>></Button>
+                    </Popover>
                 }
             },
             {
@@ -73,6 +93,20 @@ export default class Staff extends React.Component {
         staffForm: {
             show: false,
             data: JSON.parse(JSON.stringify(staffStruct))
+        },
+        agentToast: {
+            show: false,
+            data: {
+                title: "",
+                id: "",
+            }
+        },
+        storeToast: {
+            show: false,
+            data: {
+                title: "",
+                id: ""
+            }
         },
         list: [],
         page: 1,
@@ -113,10 +147,14 @@ export default class Staff extends React.Component {
     //加载员工列表
     async loadList (loading = true) {
         loading && NProgress.start();
+        const data = {
+            ...this.state.headForm
+        }
+        Object.keys(data).forEach(k => !data[k] && delete data[k]);
         let res = null;
         try {
             res = await getStaffList({
-                ...this.state.headForm,
+                ...data,
                 limit: this.state.limit,
                 page: this.state.page
             });
@@ -198,6 +236,105 @@ export default class Staff extends React.Component {
         return _;
     }
 
+    //绑定代理商
+    async bindAgent (item) {
+        const agentId = item.id, staffId = this.state.agentToast.data.id;
+        NProgress.start();
+        try {
+            await bindAgent({
+                agentId, staffId
+            });
+        } catch(err) {
+            NProgress.done();
+            return;
+        }
+        NProgress.done();
+        message.success(`绑定代理商成功`);
+        this.openOrOffAgentToast(null);
+        this.loadList();
+    }
+
+    //解绑代理商
+    async unbindAgent (staff, agent) {
+        const staffId = staff.id, agentId = agent.id;
+        NProgress.start();
+        try {
+            await unbindAgent({
+                staffId, agentId
+            });
+        } catch(err) {
+            NProgress.done();
+            return;
+        }
+        NProgress.done();
+        message.success("已解除代理商绑定");
+        this.loadList();
+    }
+
+    //绑定门店
+    async bindStore (store) {
+        const storeId = store.id, staffId = this.state.storeToast.data.id;
+        try {
+            await bindStore({
+                storeId, staffId
+            });
+        } catch(err) {
+            NProgress.done();
+            return;
+        }
+        NProgress.done();
+        this.openOrOffStoreToast(null);
+        message.success("绑定门店成功");
+        this.loadList();
+    }
+
+    //解绑门店
+    async unbindStore (staff, store) {
+        const staffId = staff.id, storeId = store.id;
+        NProgress.start();
+        try {
+            await unbindStore({
+                staffId, storeId
+            });
+        } catch(err) {
+            NProgress.done();
+            return;
+        }
+        NProgress.done();
+        message.success("已解除门店绑定");
+        this.loadList();
+    }
+
+    //打开关闭代理商绑定选择弹窗
+    openOrOffAgentToast (item) {
+        const _ = this.state.agentToast;
+        if (item) {
+            _.show = true;
+            _.data.title = `选择员工"${item.name}" 需要绑定的代理商`;
+            _.data.id = item.id;
+        } else {
+            _.show = false;
+            _.data.title = ``;
+            _.data.id = "";
+        }
+        this.setState({});
+    }
+
+    //打开关闭门店绑定选择弹窗
+    openOrOffStoreToast (item) {
+        const _ = this.state.storeToast;
+        if (item) {
+            _.show = true;
+            _.data.title = `选择员工"${item.name}" 需要绑定的门店`;
+            _.data.id = item.id;
+        } else {
+            _.show = false;
+            _.data.title = ``;
+            _.data.id = "";
+        }
+        this.setState({});
+    }
+
     render (): React.ReactNode {
         const state = this.state;
         return <div className="agent-page">
@@ -258,6 +395,13 @@ export default class Staff extends React.Component {
                     </Form.Item>
                 </Form>
             </Modal>
+
+            {/* 代理商绑定选择弹窗 */}
+            {state.agentToast.show && <AgentSelect title={state.agentToast.data.title} onCancel={this.openOrOffAgentToast.bind(this, null)} onOk={this.bindAgent.bind(this)}/>}
+
+            {/* 门店绑定选择弹窗 */}
+            {state.storeToast.show && <StoreSelect title={state.storeToast.data.title} onCancel={this.openOrOffStoreToast.bind(this, null)} onOk={this.bindStore.bind(this)}/>}
+
         </div>
     }
 }

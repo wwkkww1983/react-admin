@@ -158,9 +158,9 @@ export function delStore (data: {
  * 获取员工列表 
  */
 export function getStaffList (data: {
-    q: string, //	搜索：姓名模糊搜索/手机号精确搜索		[string]		
-    agentId: string|number, //	代理商ID，传了该字段就查询该代理商下的员工		[int]		
-    storeId: number|string, //	门店ID，传了该字段就查询该门店下的员工		[int]		
+    q?: string, //	搜索：姓名模糊搜索/手机号精确搜索		[string]		
+    agentId?: string|number, //	代理商ID，传了该字段就查询该代理商下的员工		[int]		
+    storeId?: number|string, //	门店ID，传了该字段就查询该门店下的员工		[int]		
     page: number, //	页码		[int]	1	查看
     limit: number, //	每页数量		[int]	15
 }) {
@@ -208,6 +208,62 @@ export function delStaff (data: {
 }) {
     return request({
         url: "/storeStaff/admin/manager/delete",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 绑员工到代理商 
+ */
+export function bindAgent (data: {
+    "staffId": number|string,// 员工ID
+    "agentId": number|string// 代理商ID
+}) {
+    return request({
+        url: "/storeStaff/admin/manager/bindAgent",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 解绑员工从代理商 
+ */
+export function unbindAgent (data: {
+    "staffId": number|string,// 员工ID
+    "agentId": number|string// 代理商ID
+}) {
+    return request({
+        url: "/storeStaff/admin/manager/unbindAgent",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 绑员工到门店
+ */
+export function bindStore (data: {
+    "staffId": number|string,// 员工ID
+    "storeId": number|string// 代理商ID
+}) {
+    return request({
+        url: "/storeStaff/admin/manager/bindStore",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 绑员工到门店
+ */
+export function unbindStore (data: {
+    "staffId": number|string,// 员工ID
+    "storeId": number|string// 代理商ID
+}) {
+    return request({
+        url: "/storeStaff/admin/manager/unbindStore",
         method: "POST",
         data
     });
