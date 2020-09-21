@@ -82,7 +82,6 @@ export default class Home extends React.Component {
         });
         //金额元转为分
         _.postpaidPriceHour = _.postpaidPriceHour * 100;
-        _.postpaidPriceKwh = _.postpaidPriceKwh * 100;
         __.forEach(item => item.price = item.price * 100);
         return _;
     }
