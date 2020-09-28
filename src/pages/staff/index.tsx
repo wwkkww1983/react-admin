@@ -37,15 +37,11 @@ export default class Staff extends React.Component {
                 dataIndex: "phone"
             },
             {
-                title: "代理商id",
-                render: item => {
-                    const content = <div style={{width: "300px"}}>
-                        {item.agents.map(item1 => <p>{item1.name}</p>)}
-                    </div>
-                    return <Popover title="代理商id" content={content}>
-                         <Button type="link">查看>></Button>
-                    </Popover>
-                }
+                title: "所属代理商",
+                render: item => <div>
+                    <span>名称：{item.agents[0].name}</span><br/>
+                    <span>id: {item.agents[0].id}</span>
+                </div>
             },
             {
                 title: "门店id",
