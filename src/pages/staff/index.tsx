@@ -120,6 +120,8 @@ export default class Staff extends React.Component {
                 data = JSON.parse(JSON.stringify(data));
                 Object.keys(staffStruct).forEach(k => _.data[k] = data[k]);
                 _.data.id = data["id"];
+                //agentId是个特例,因为返回的agentId格式还是改接口之前的格式
+                _.data.agentId = data.agents[0].id;
             }
         } else {
             _.show = false;
