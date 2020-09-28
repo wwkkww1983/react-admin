@@ -7,27 +7,7 @@ import { getCityDeepList } from "../../api/city";
 import store from "../../store";
 import NProgress from "nprogress";
 import { input, property as P, initLife } from "../../utils/utils";
-import Item from "antd/lib/list/Item";
-
-/**
- * 新增代理商所需数据结构 
- */
-const agentStruct = {
-    leshua: {
-        config: {
-            merchantId: "",
-            key: ""
-        }
-    },                              
-    name:     "",
-    phone:    "",
-    cityCode: "",
-    adCode:   "",
-    province: undefined,
-    city:     undefined,
-    district: undefined,
-    address:  ""
-}
+import { AgentData, AreaDict, AreaRow } from "./class";
 
 export default class Agent extends React.Component {
     constructor (props) {
@@ -87,17 +67,17 @@ export default class Agent extends React.Component {
             },
         ],
         province: [],
-        city: [],
-        area: [],
         searchText: "",
         agentForm: {
             show: false,
-            data: JSON.parse(JSON.stringify(agentStruct))
+            data: new AgentData()
         },
         list: [],
         page: 1,
         limit: 10,
         total: 0,
+        //供给创建、编辑多个地址行选择的省市区数据结构（仅仅提供选择，不存储数据）,里边的元素都是AreaDict的实例
+        areas: []
     }
     
     componentDidMount () {
@@ -170,21 +150,30 @@ export default class Agent extends React.Component {
     //打开、关闭新增、编辑供应商弹窗
     opendOrOffAgentToast (data: boolean|object) {
         const _ = this.state.agentForm;
-        if (data && data !== undefined) {
+        if (data) {
             _.show = true;
             if (data === true) {
-                _.data = JSON.parse(JSON.stringify(agentStruct));
+                _.data = new AgentData();
             } else {
                 _.data = JSON.parse(JSON.stringify(data));
-                //处理省市区显示
-                this.state.city = this.state.province.find(item => item.id == _.data.province).children;
-                this.state.area = this.state.city.find(item => item.id == _.data.city).children;
+                //处理省市区显示，以及对应的地区选择字典
+                const regions = [];
+                (_ as any).data.regions.forEach(item => {
+                    regions.push(new AreaRow(item));
+                    const areaDict = new AreaDict({ provinces: this.state.province });
+                    areaDict.setCitys(item.province);
+                    areaDict.setDistricts(item.city);
+                    this.state.areas.push(areaDict);
+                });
+                (_ as any).data.regions = regions;
             }
         } else {
             _.show = false;
-            _.data = JSON.parse(JSON.stringify(agentStruct));
-            this.state.city = [];
-            this.state.area = [];
+            console.log(new AgentData());
+            _.data = null;
+            this.state.areas = [];
+            console.error(">>>")
+            console.log(_);
         }
         this.setState({});
     }
@@ -192,7 +181,9 @@ export default class Agent extends React.Component {
     //新增、编辑供应商
     async saveAgent () {
         const data = this.checkAgentData();
-        if (data === false) return;
+        // if (data === false) return;
+        console.log(data);
+        return;
         NProgress.start();
         try {
             if (data.id !== undefined) {
@@ -232,30 +223,68 @@ export default class Agent extends React.Component {
     }
 
     //省市区选择
-    citySelect (type, id) {
-        const fromData = this.state.agentForm.data;
-        fromData.adCode = "";
-        fromData.cityCode = "";
+    citySelect (type, index, name) {
+        const row = (this as any).state.agentForm.data.regions[index], rowDict = this.state.areas[index];
+        row.adCode = row.cityCode = "";
         ({
             province () {
-                const _ = this.state.province.find(i => i.id === id);
-                fromData.province = id;
-                fromData.city = fromData.district = undefined;
-                this.state.city = _.children;
+                rowDict.clearDistricts();
+                rowDict.clearCitys();
+                rowDict.setCitys(name);
+                row.city = row.district = undefined;
+                row.province = name;
             },
             city () {
-                const _ = this.state.city.find(i => i.id === id);
-                fromData.city = id;
-                fromData.district = undefined;
-                this.state.area = _.children;
+                rowDict.clearDistricts();
+                rowDict.setDistricts(name);
+                row.district = undefined;
+                row.city = name;
             },
             area () {   
-                const _ = this.state.area.find(i => i.id === id);
-                fromData.district = id;
-                fromData.adCode = _.ad_code;
-                fromData.cityCode = _.city_code;
+                const _ = rowDict.getDistrict(name);
+                row.district = name;
+                row.adCode = _.ad_code;
+                row.cityCode = _.city_code;
             }
         })[type].call(this);
+        this.setState({});
+    }
+
+    //新增、编辑之地址填写
+    addressInput (index, { target: { value } }) {
+        (this as any).state.agentForm.data.regions[index].address = value;
+        this.setState({});
+    }
+
+    //检查新增创建的地址行是否全部填写
+    checkRows () {
+        const rows = (this as any).state.agentForm.data.regions;
+        for (let i  = 0; i < rows.length; i++) {
+            const msg = rows[i].check();
+            if (msg) {
+                message.warning(`第${i + 1}行${msg}`);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //新增编辑地址新增一行
+    addRow () { 
+        if (this.checkRows()) return;   
+        (this as any).state.agentForm.data.regions.push(new AreaRow(null));
+        console.log((this as any).state.agentForm.data.regions);
+        //增加对应行选择字段，也就是AreaDict的实例
+        this.state.areas.push(new AreaDict({
+            provinces: this.state.province
+        }));
+        this.setState({});
+    }
+
+    //新增、编辑地址删除行
+    delRow (index) {
+        (this as any).state.areas.splice(index, 1);
+        (this as any).state.agentForm.data.regions.splice(index, 1);
         this.setState({});
     }
 
@@ -270,13 +299,7 @@ export default class Agent extends React.Component {
                     merchantId: "乐刷id没有填写",
                     key: "乐刷key没有填写"
                 }
-            },
-            // cityCode: "城市编码没有选择",
-            // adCode:   "区域编码没有选择",
-            province: "省没有选择",
-            city:     "市没有选择",
-            district: "区没有选择",
-            address:  "地址没有填写"
+            }
         }
         function check (data: object, target: string[]): void {
             Object.keys(data).forEach(k => {
@@ -293,11 +316,16 @@ export default class Agent extends React.Component {
             message.warning(text);
             return false;
         }
+        if ((this as any).state.agentForm.data.regions.length === 0) {
+            message.warning("地区/地址没有");
+            return false;
+        }
+        if (this.checkRows()) return false;
         return _;
     }
 
     render (): React.ReactNode {
-        const state = this.state;
+        const state = (this as any).state;
         return <div className="agent-page">
             <Form layout="inline">
                 <Form.Item>
@@ -327,6 +355,7 @@ export default class Agent extends React.Component {
 
             {/* 新增、编辑供应商弹窗 */}
             <Modal
+            width="80%"
             closable={false}
             maskClosable={false}
             title={P(state, "agentForm.data.id", null) ? `编辑供应商 "${P(state, "agentForm.data.name")}"` : `新增供应商`}
@@ -340,66 +369,103 @@ export default class Agent extends React.Component {
                             <Form.Item label="姓名">
                                 <Input 
                                 placeholder="填写供应商姓名" 
-                                value={state.agentForm.data.name}
+                                // value={state.agentForm.data.name}
                                 onChange={input.bind(this, "agentForm.data.name")}
                                 />
                             </Form.Item>
-                            <Form.Item label="乐刷商户号">
-                                <Input 
-                                placeholder="请输入乐刷商户号"
-                                value={state.agentForm.data.leshua.config.merchantId}
-                                onChange={input.bind(this, "agentForm.data.leshua.config.merchantId")}
-                                />
-                            </Form.Item>
-                            <Form.Item label="省份">
-                                <Select 
-                                placeholder="请选择省份" 
-                                onChange={this.citySelect.bind(this, "province")} 
-                                value={state.agentForm.data.province}
-                                >
-                                    {state.province.map(item => <Option value={item.id}>{item.name}</Option>)}
-                                </Select>
-                            </Form.Item>
                         </Col>
-                        <Col span={11} offset="2">
+                        <Col span={11} offset={2}>
                             <Form.Item label="手机号">
                                 <Input placeholder="填写供应商手机号"
-                                value={state.agentForm.data.phone}
+                                // value={state.agentForm.data.phone}
                                 onChange={input.bind(this, "agentForm.data.phone")}
                                 />
                             </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col span={11}>
+                            <Form.Item label="乐刷商户号">
+                                <Input 
+                                placeholder="请输入乐刷商户号"
+                                // value={state.agentForm.data.leshua.config.merchantId}
+                                onChange={input.bind(this, "agentForm.data.leshua.config.merchantId")}
+                                />
+                            </Form.Item>
+                        </Col>
+                        <Col span={11} offset={2}>
                             <Form.Item label="乐刷key">
                                 <Input 
                                 placeholder="请输入乐刷key"
-                                value={state.agentForm.data.leshua.config.key}
+                                // value={state.agentForm.data.leshua.config.key}
                                 onChange={input.bind(this, "agentForm.data.leshua.config.key")}
                                 />
                             </Form.Item>
-                            <Form.Item label="城市">
-                                <Select 
-                                onChange={this.citySelect.bind(this, "city")} 
-                                value={state.agentForm.data.city}
-                                placeholder="请选择城市"
-                                >
-                                    {state.city.map(item => <Option value={item.id}>{item.name}</Option>)}
-                                </Select>
-                            </Form.Item>
                         </Col>
                     </Row>
-                    <Form.Item label="区">
-                        <Select
-                        onChange={this.citySelect.bind(this, "area")} 
-                        value={state.agentForm.data.district}
-                        placeholder="请选择区"
-                        >
-                            {state.area.map(item => <Option value={item.id}>{item.name}</Option>)}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item label="详细地址">
-                        <Input.TextArea placeholder="请填写详细地址"
-                        value={state.agentForm.data.address}
-                        onChange={input.bind(this, "agentForm.data.address")}
+                    <Form.Item label="地区/地址">
+                        <Table
+                        scroll={{y: 200}}
+                        columns={[
+                            {
+                                title: "省份",
+                                render: (item, record, index) => {
+                                    return <Select 
+                                    placeholder="请选择省份" 
+                                    onChange={this.citySelect.bind(this, "province", index)} 
+                                    value={item.province}
+                                    >
+                                        {P(state, `areas[${index}].provinces`, []).map(item => <Option value={item.name}>{item.name}</Option>)}
+                                    </Select>
+                                }
+                            },
+                            {
+                                title: "城市",
+                                render: (item, record, index) => {
+                                    return <Select 
+                                    onChange={this.citySelect.bind(this, "city", index)} 
+                                    value={item.city}
+                                    placeholder="请选择城市"
+                                    >
+                                        {P(state, `areas[${index}].citys`, []).map(item => <Option value={item.name}>{item.name}</Option>)}
+                                    </Select>
+                                }
+                            },
+                            {
+                                title: "区/县",
+                                render: (item, record, index) => {
+                                    return <Select
+                                    onChange={this.citySelect.bind(this, "area", index)} 
+                                    value={item.district}
+                                    placeholder="请选择区"
+                                    >
+                                        {P(state, `areas[${index}].districts`, []).map(item => <Option value={item.name}>{item.name}</Option>)}
+                                    </Select>
+                                }
+                            },
+                            {
+                                title: "详细地址",
+                                render: (item, record, index) => {
+                                    return <Input.TextArea 
+                                    rows={1}
+                                    placeholder="请填写详细地址"
+                                    value={item.address}
+                                    onChange={this.addressInput.bind(this, index)}
+                                    />
+                                }
+                            },
+                            {
+                                width: "100px",
+                                title: "操作",
+                                render: (item, record, index) => <Button type="danger" icon="delete" onClick={this.delRow.bind(this, index)}>删除</Button>
+                            }
+                        ]}
+                        dataSource={state.agentForm.data.regions}
+                        pagination={false}
                         />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button icon="plus" type="link" onClick={this.addRow.bind(this)}>增加一行</Button>
                     </Form.Item>
                 </Form>
             </Modal>

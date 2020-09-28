@@ -13,7 +13,8 @@ import StoreSelect from "./components/storeSelect";
  */
 const staffStruct = {
     "name":"",// 姓名
-    "phone":""// 手机号
+    "phone":"",// 手机号
+    "agentId": "", //代理商id
 }
 
 export default class Staff extends React.Component {
@@ -39,14 +40,7 @@ export default class Staff extends React.Component {
                 title: "代理商id",
                 render: item => {
                     const content = <div style={{width: "300px"}}>
-                        {item.agents.map(item1 => <Row style={{marginBottom: "8px"}}>
-                            <Col span={18}>{item1.name}</Col>
-                            <Col span={6}><Button type="danger" size="small" icon="delete" onClick={this.unbindAgent.bind(this, item, item1)}>移除</Button></Col>
-                        </Row>)}
-                        <Row>
-                            <Col span={18}></Col>
-                            <Col span={6}><Button type="link" size="small" icon="plus" onClick={this.openOrOffAgentToast.bind(this, item)}>绑定</Button></Col>
-                        </Row>
+                        {item.agents.map(item1 => <p>{item1.name}</p>)}
                     </div>
                     return <Popover title="代理商id" content={content}>
                          <Button type="link">查看>></Button>
@@ -94,13 +88,7 @@ export default class Staff extends React.Component {
             show: false,
             data: JSON.parse(JSON.stringify(staffStruct))
         },
-        agentToast: {
-            show: false,
-            data: {
-                title: "",
-                id: "",
-            }
-        },
+        agentToastShow: false,
         storeToast: {
             show: false,
             data: {
@@ -216,7 +204,8 @@ export default class Staff extends React.Component {
         const _ = this.state.staffForm.data;
         const checkMap = {
             "name":"请输入姓名",// 姓名
-            "phone":"请输入手机号"// 手机号
+            "phone":"请输入手机号", // 手机号
+            "agentId": "请选择代理商" //代理商id
         }
         function check (data: object, target: string[]): void {
             Object.keys(data).forEach(k => {
@@ -234,41 +223,6 @@ export default class Staff extends React.Component {
             return false;
         }
         return _;
-    }
-
-    //绑定代理商
-    async bindAgent (item) {
-        const agentId = item.id, staffId = this.state.agentToast.data.id;
-        NProgress.start();
-        try {
-            await bindAgent({
-                agentId, staffId
-            });
-        } catch(err) {
-            NProgress.done();
-            return;
-        }
-        NProgress.done();
-        message.success(`绑定代理商成功`);
-        this.openOrOffAgentToast(null);
-        this.loadList();
-    }
-
-    //解绑代理商
-    async unbindAgent (staff, agent) {
-        const staffId = staff.id, agentId = agent.id;
-        NProgress.start();
-        try {
-            await unbindAgent({
-                staffId, agentId
-            });
-        } catch(err) {
-            NProgress.done();
-            return;
-        }
-        NProgress.done();
-        message.success("已解除代理商绑定");
-        this.loadList();
     }
 
     //绑定门店
@@ -305,19 +259,16 @@ export default class Staff extends React.Component {
         this.loadList();
     }
 
-    //打开关闭代理商绑定选择弹窗
-    openOrOffAgentToast (item) {
-        const _ = this.state.agentToast;
-        if (item) {
-            _.show = true;
-            _.data.title = `选择员工"${item.name}" 需要绑定的代理商`;
-            _.data.id = item.id;
-        } else {
-            _.show = false;
-            _.data.title = ``;
-            _.data.id = "";
-        }
+    //打开关闭代理商选择弹窗
+    openOrOffAgentToast (is) {
+        this.setState({ agentToastShow: is });
+    }
+
+    //创建员工选择代理商回调
+    selectAgent (item) {
+        this.state.staffForm.data.agentId = item.id;
         this.setState({});
+        this.openOrOffAgentToast(null);
     }
 
     //打开关闭门店绑定选择弹窗
@@ -342,8 +293,8 @@ export default class Staff extends React.Component {
                 <Form.Item label="员工名">
                     <Input placeholder="员工名字" value={state.headForm.q} onChange={input.bind(this, "headForm.q")}></Input>
                 </Form.Item>
-                <Form.Item label="供应商id">
-                    <Input placeholder="供应商id" value={state.headForm.agentId} onChange={input.bind(this, "headForm.agentId")}></Input>
+                <Form.Item label="代理商id">
+                    <Input placeholder="代理商id" value={state.headForm.agentId} onChange={input.bind(this, "headForm.agentId")}></Input>
                 </Form.Item>
                 <Form.Item label="门店id">
                     <Input placeholder="门店id" value={state.headForm.storeId} onChange={input.bind(this, "headForm.storeId")}></Input>
@@ -393,11 +344,18 @@ export default class Staff extends React.Component {
                         placeholder="请输入员工电话"
                         ></Input>
                     </Form.Item>
+                    <Form.Item label="代理商">
+                        <Input 
+                        value={state.staffForm.data.agentId}
+                        onFocus={this.openOrOffAgentToast.bind(this, true)}
+                        placeholder="请选择代理商"
+                        ></Input>
+                    </Form.Item>
                 </Form>
             </Modal>
 
             {/* 代理商绑定选择弹窗 */}
-            {state.agentToast.show && <AgentSelect title={state.agentToast.data.title} onCancel={this.openOrOffAgentToast.bind(this, null)} onOk={this.bindAgent.bind(this)}/>}
+            {state.agentToastShow && <AgentSelect title="选择代理商" onCancel={this.openOrOffAgentToast.bind(this, null)} onOk={this.selectAgent.bind(this)}/>}
 
             {/* 门店绑定选择弹窗 */}
             {state.storeToast.show && <StoreSelect title={state.storeToast.data.title} onCancel={this.openOrOffStoreToast.bind(this, null)} onOk={this.bindStore.bind(this)}/>}

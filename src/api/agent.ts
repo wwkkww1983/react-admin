@@ -27,12 +27,14 @@ export function addAgent (data: {
     },
     name:     string,
     phone:    string,
-    cityCode: number|string,
-    adCode:   number|string,
-    province: number|string,
-    city:     number|string,
-    district: number|string,
-    address:  string
+    regions: {
+        cityCode: number|string,
+        adCode:   number|string,
+        province: number|string,
+        city:     number|string,
+        district: number|string,
+        address:  string
+    }[]
 }) {
     return request({
         url: "/agent/admin/manager/create",
@@ -54,12 +56,14 @@ export function editAgent (data: {
     },
     name:     string,
     phone:    string,
-    cityCode: number|string,
-    adCode:   number|string,
-    province: number|string,
-    city:     number|string,
-    district: number|string,
-    address:  string
+    regions: {
+        cityCode: number|string,
+        adCode:   number|string,
+        province: number|string,
+        city:     number|string,
+        district: number|string,
+        address:  string
+    }[]
 }) {
     return request({
         url: "/agent/admin/manager/update",
@@ -177,6 +181,7 @@ export function getStaffList (data: {
 export function addStaff (data: {
     name: string,// 姓名
     phone: string// 手机号
+    agentId: string|number //代理商id
 }) {    
     return request({
         url: "/storeStaff/admin/manager/create",
