@@ -29,12 +29,28 @@ export default class Agent extends React.Component {
                 dataIndex: "phone"
             },
             {
-                title: "地区",
-                render: item => `${this.getCityNameById(item.province)}/${this.getCityNameById(item.city)}/${this.getCityNameById(item.district)}`
-            },
-            {
-                title: "地址",
-                dataIndex: "address"
+                title: "地区/地址",
+                render: item => {
+                    const content = <Table
+                    style={{width: "500px"}}
+                    scroll={{y: 200}}
+                    pagination={false}
+                    dataSource={item.regions}
+                    columns={[
+                        {
+                            title: "地区",
+                            render: item => item.province + "/" + item.city + "/" + item.district
+                        },
+                        {
+                            title: "地址",
+                            dataIndex: "address"
+                        }
+                    ]}
+                    />
+                    return <Popover content={content} title="地区/地址">
+                        <Button type="link">详情>></Button>
+                    </Popover>
+                }
             },
             {
                 title: "乐刷信息",
@@ -70,7 +86,7 @@ export default class Agent extends React.Component {
         searchText: "",
         agentForm: {
             show: false,
-            data: new AgentData()
+            data: new AgentData(null)
         },
         list: [],
         page: 1,
@@ -89,21 +105,6 @@ export default class Agent extends React.Component {
         await this.loadCityData();
         await this.loadList(false);
         NProgress.done();
-    }
-
-    //城市id换取城市名
-    getCityNameById (id) {
-        const _ = f(this.state.province, id);
-        return _;
-        function f (arr, id) {
-            for (let item of arr) {
-                if (item.id == id) return item.name;
-                if (item.children) {
-                    let name = f(item.children, id);
-                    if (name) return name;
-                }
-            }
-        }
     }
 
     //加载城市数据
@@ -153,9 +154,9 @@ export default class Agent extends React.Component {
         if (data) {
             _.show = true;
             if (data === true) {
-                _.data = new AgentData();
+                _.data = new AgentData(null);
             } else {
-                _.data = JSON.parse(JSON.stringify(data));
+                _.data = new AgentData(data);
                 //处理省市区显示，以及对应的地区选择字典
                 const regions = [];
                 (_ as any).data.regions.forEach(item => {
@@ -169,11 +170,8 @@ export default class Agent extends React.Component {
             }
         } else {
             _.show = false;
-            console.log(new AgentData());
-            _.data = null;
+            _.data = new AgentData(null);
             this.state.areas = [];
-            console.error(">>>")
-            console.log(_);
         }
         this.setState({});
     }
@@ -181,9 +179,7 @@ export default class Agent extends React.Component {
     //新增、编辑供应商
     async saveAgent () {
         const data = this.checkAgentData();
-        // if (data === false) return;
-        console.log(data);
-        return;
+        if (data === false) return;
         NProgress.start();
         try {
             if (data.id !== undefined) {
@@ -321,6 +317,7 @@ export default class Agent extends React.Component {
             return false;
         }
         if (this.checkRows()) return false;
+        !(_ as any).id && delete (_ as any).id;
         return _;
     }
 
@@ -369,7 +366,7 @@ export default class Agent extends React.Component {
                             <Form.Item label="姓名">
                                 <Input 
                                 placeholder="填写供应商姓名" 
-                                // value={state.agentForm.data.name}
+                                value={state.agentForm.data.name}
                                 onChange={input.bind(this, "agentForm.data.name")}
                                 />
                             </Form.Item>
@@ -377,7 +374,7 @@ export default class Agent extends React.Component {
                         <Col span={11} offset={2}>
                             <Form.Item label="手机号">
                                 <Input placeholder="填写供应商手机号"
-                                // value={state.agentForm.data.phone}
+                                value={state.agentForm.data.phone}
                                 onChange={input.bind(this, "agentForm.data.phone")}
                                 />
                             </Form.Item>
@@ -388,7 +385,7 @@ export default class Agent extends React.Component {
                             <Form.Item label="乐刷商户号">
                                 <Input 
                                 placeholder="请输入乐刷商户号"
-                                // value={state.agentForm.data.leshua.config.merchantId}
+                                value={state.agentForm.data.leshua.config.merchantId}
                                 onChange={input.bind(this, "agentForm.data.leshua.config.merchantId")}
                                 />
                             </Form.Item>
@@ -397,7 +394,7 @@ export default class Agent extends React.Component {
                             <Form.Item label="乐刷key">
                                 <Input 
                                 placeholder="请输入乐刷key"
-                                // value={state.agentForm.data.leshua.config.key}
+                                value={state.agentForm.data.leshua.config.key}
                                 onChange={input.bind(this, "agentForm.data.leshua.config.key")}
                                 />
                             </Form.Item>

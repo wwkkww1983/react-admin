@@ -3,6 +3,7 @@
  */
 export class AgentData {
     static defaultOptions = {
+        id: "",
         leshua: {
             config: {
                 merchantId: "",
@@ -13,8 +14,11 @@ export class AgentData {
         phone:    "",
         regions: [] //内部元素为AreaRow类的实例
     }
-    constructor () {
-        Object.keys(AgentData.defaultOptions).forEach(k => this[k] = AgentData.defaultOptions[k]);
+    constructor (options) {
+        Object.keys(AgentData.defaultOptions).forEach(k => this[k] = options && options[k] ? options[k] : 
+        typeof AgentData.defaultOptions[k] === "object" ? 
+        JSON.parse(JSON.stringify(AgentData.defaultOptions[k])) : 
+        AgentData.defaultOptions[k]);
     }
 }
 
