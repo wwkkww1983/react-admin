@@ -60,7 +60,7 @@ export default class PileOrder extends React.Component {
                         <p>支付时间：{timeToDateStr(item.payTime * 1000, "datetime")}</p>
                     </div>
                     return <Popover content={content} title="详情" trigger="hover">
-                            {item.payAmount || "0.00"}<Button type="link">详情>></Button>
+                            {item.payAmount / 100 || "0.00"}<Button type="link">详情>></Button>
                     </Popover>
                 }
             },
