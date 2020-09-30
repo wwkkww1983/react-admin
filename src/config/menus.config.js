@@ -59,14 +59,14 @@ export default [
                 path: "/baseSetting"
             },
             {
+                icon: "icon-wulianwang",
+                title: "物联网平台设置",
+                path: "/platformSetting"
+            },
+            {
                 icon: "icon-shengban-shengji",
                 title: "升级设置",
                 path: "/updateSetting"
-            },
-            {
-                icon: "icon-dianchi",
-                title: "虚拟电池设置",
-                path: "/batterySetting"
             },
             {
                 icon: "icon-qianbao",
@@ -74,9 +74,19 @@ export default [
                 path: "/walletSetting"
             },
             {
-                icon: "icon-wulianwang",
-                title: "物联网平台设置",
-                path: "/platformSetting"
+                icon: "icon-dianchi",
+                title: "虚拟电池设置",
+                path: "/batterySetting"
+            },
+            {
+                icon: "icon-chongdianzhuang",
+                title: "充电桩设置",
+                path: "/pileSetting"
+            },
+            {
+                icon: "icon-nfc",
+                title: "NFC设置",
+                path: "/nfcSetting"
             }
         ]
     },

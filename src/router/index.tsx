@@ -32,6 +32,8 @@ import OrderManage from "../pages/orderMamage";
 import Agent from "../pages/agent";
 import Staff from "../pages/staff";
 import Store from "../pages/store";
+import pileSetting from "../pages/pileSetting";
+import nfcSetting from "../pages/nfcSetting";
 
 export const inRoutes = [
     {
@@ -110,6 +112,18 @@ export const inRoutes = [
         title: "物联网平台设置",
         path: "/platformSetting",
         component: PlatformSetting,
+        keepAlive: true
+    },
+    {
+        title: "充电桩设置",
+        path: "/pileSetting",
+        component: pileSetting,
+        keepAlive: true
+    },
+    {
+        title: "NFC设置",
+        path: "/nfcSetting",
+        component: nfcSetting,
         keepAlive: true
     },
     {
