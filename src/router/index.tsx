@@ -34,6 +34,8 @@ import Staff from "../pages/staff";
 import Store from "../pages/store";
 import pileSetting from "../pages/pileSetting";
 import nfcSetting from "../pages/nfcSetting";
+import ShopProduct from "../pages/shopProduct";
+import ShopOrder from "../pages/shopOrder";
 
 export const inRoutes = [
     {
@@ -154,6 +156,18 @@ export const inRoutes = [
         title: "员工",
         path: "/staff",
         component: Staff,
+        keepAlive: true
+    },
+    {
+        title: "商城产品",
+        path: "/shopProduct",
+        component: ShopProduct,
+        keepAlive: true
+    },
+    {
+        title: "订单管理",
+        path: "/shopOrder",
+        component: ShopOrder,
         keepAlive: true
     },
     {

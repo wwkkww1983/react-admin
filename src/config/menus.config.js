@@ -120,6 +120,22 @@ export default [
                 path: "/staff"
             }
         ]
+    },
+    {
+        title: "商城管理",
+        icon: "icon-mendianguanli",
+        children: [
+            {
+                icon: "icon-product-brand",
+                title: "商城产品",
+                path: "/shopProduct"
+            },
+            {
+                icon: "icon-order",
+                title: "订单管理",
+                path: "/shopOrder"
+            }
+        ]
     }
 ]
 
