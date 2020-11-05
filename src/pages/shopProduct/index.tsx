@@ -2,36 +2,12 @@ import React from "react";
 import "./index.less";
 import NProgress from "nprogress";
 import { input, property as P, initLife } from "../../utils/utils";
-import { Form, Input, Button, Select, Table, Switch, Modal, Tabs, Row, Col, Icon, Upload } from "antd";
+import { Form, Input, Button, Select, Table, Switch, Modal, Tabs, Row, Col, Icon, Upload, message } from "antd";
 const { Option } = Select;
 const { TabPane } = Tabs;
 import { productList, addProduct, editProduct, delProduct, setSold } from "../../api/shop";
-
-//增加、编辑商品表单数据一维结构
-const productToastDataStruct = {
-    title: "",
-    type: 1,
-    canSold: null,
-    imageList: [],
-    content: "",
-    properties: [], //属性集合
-    properyDetail: [], //属性分类价格、信息集合
-    combinationProducts: [] //组合商品集合（区别对待，有我无上面两者）
-}
-
-//构造上传图片组件filelist的元素的函数
-const createFilelistElement = (function () {
-    let uid = 0;
-    return function (url) {
-        if (uid === Number.MAX_SAFE_INTEGER) uid = 0;
-        return {
-            uid: uid++,
-            name: url,
-            status: "done",
-            url
-        }
-    }
-})();
+import AddOrEditProduct from "./components/addOrEditProduct";
+import ProductDetail from "./components/productDetail";
 
 export default class ShopProduct extends React.Component {
     constructor (props) {
@@ -57,9 +33,10 @@ export default class ShopProduct extends React.Component {
         productToast: {
             show: false,
             id: "",
-            title: "新增商品",
-            tabIndex: "0",
-            data: JSON.parse(JSON.stringify(productToastDataStruct))
+        },
+        detailToast: {
+            id: "",
+            show: false
         },
         filelist: [], //上传图片的集合，用于上传组件显示，内部是对象
     }
@@ -127,28 +104,58 @@ export default class ShopProduct extends React.Component {
         const _ = this.state.productToast;
         if (item === true) {
             _.show = true;
-            _.title = "新增商品";
-            _.data = JSON.parse(JSON.stringify(productToastDataStruct));
         }
         else if (typeof item === "object") {
             _.show = true;
-            _.title = `编辑商品 "${item.title}"`;
-            Object.keys(productToastDataStruct).forEach(k => {
-                if (item[k] === undefined) throw "oh shit!";
-                _.data[k] = item[k];
-            });
+            _.id = item.id;
         }
         else if (!item) {
             _.show = false;
-            _.data = JSON.parse(JSON.stringify(productToastDataStruct));
-            this.state.filelist = [];
+            _.id = "";
+        }
+        this.setState({});
+    }
+
+    //打开、关闭商品详情弹窗
+    openOrOffDetailToast (item: boolean|any): void {
+        const _ = this.state.detailToast;
+        if (typeof item === "object") {
+            _.show = true;
+            _.id = item.id;
+        } else {
+            _.show = false;
+            _.id = "";
         }
         this.setState({});
     }
 
     // 新增、编辑弹窗表单保存
-    onSave () {
-        
+    onAddOrEditFinishe () {
+        this.openOfOffProductToast(false);
+        this.loadList();
+    }
+
+    //删除商品
+    onDeleteProduct (item) {
+        Modal.confirm({
+            title: `确定删除 "${item.title}" ?`,
+            okText: 'Yes',
+            okType: 'danger',
+            cancelText: 'No',
+            onOk: async () => {
+                NProgress.start();
+                try {
+                    await delProduct({id: item.id});
+                } catch(err) {
+                    NProgress.done();
+                    return;
+                }
+                NProgress.done();
+                message.success("已删除");
+                this.loadList();
+            },
+            onCancel() {}
+        });
     }
 
     render (): React.ReactNode {
@@ -174,7 +181,7 @@ export default class ShopProduct extends React.Component {
                     <Button icon="search" onClick={this.onSearch.bind(this)}>查找</Button>
                 </Form.Item>
                 <Form.Item>
-                    <Button icon="plus">新增</Button>
+                    <Button icon="plus" onClick={this.openOfOffProductToast.bind(this, true)}>新增</Button>
                 </Form.Item>
             </Form>
 
@@ -215,13 +222,13 @@ export default class ShopProduct extends React.Component {
                     render: item => {
                         return <Form layout="inline">
                             <Form.Item>
-                                <Button>详情</Button>
+                                <Button onClick={this.openOrOffDetailToast.bind(this, item)}>详情</Button>
                             </Form.Item>
                             <Form.Item>
-                                <Button icon="setting">编辑</Button>
+                                <Button icon="setting" onClick={this.openOfOffProductToast.bind(this, item)}>编辑</Button>
                             </Form.Item>
                             <Form.Item>
-                                <Button icon="delete">删除</Button>
+                                <Button icon="delete" onClick={this.onDeleteProduct.bind(this, item)}>删除</Button>
                             </Form.Item>
                         </Form>
                     }
@@ -231,56 +238,13 @@ export default class ShopProduct extends React.Component {
 
 
             {/* 新增、编辑商品表单弹窗 */}
-            <Modal
-            width="80%"
-            title={state.productToast.title}
-            visible={state.productToast.show}
-            onOk={this.onSave.bind(this)}
+            {state.productToast.show && <AddOrEditProduct id={state.productToast.id}
             onCancel={this.openOfOffProductToast.bind(this, false)}
-            closable={false}
-            >
-                <Form>
-                    <Row>
-                        <Col span={7}>
-                            <Form.Item label="商品名称">
-                                <Input placeholder="商品名称"
-                                onChange={input.bind(this, "productToast.data.title")}
-                                />
-                            </Form.Item>
-                        </Col> 
-                        <Col span={7} offset={1}>
-                            <Form.Item label="商品类型">
-                            <Select 
-                            placeholder="选择商品类型"
-                            value={state.productToast.data.type}
-                            onChange={input.bind(this, "productToast.data.type")}
-                            >
-                                {state.types.filter(i => i.value).map(item => <Option value={item.value}>{item.name}</Option>)}
-                            </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={7} offset={1}>
-                            <Form.Item label="是否上架">
-                                <Switch checked={state.productToast.data.canSold} onChange={input.bind(this, "productToast.data.canSold")}/>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                    <Form.Item label="商品图片">
-                        <Upload
-                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                        listType="picture-card"
-                        // fileList={fileList}
-                        // onPreview={this.handlePreview}
-                        // onChange={this.handleChange}
-                        >
-                            <div>
-                                <Icon type="plus" />
-                                <div className="ant-upload-text">Upload</div>
-                            </div>
-                        </Upload>
-                    </Form.Item>
-                </Form>
-            </Modal>
+            onFinishe={this.onAddOrEditFinishe.bind(this)}
+            />}
+
+            {/* 商品详情弹窗 */}
+            {state.detailToast.show && <ProductDetail id={state.detailToast.id} onClose={this.openOrOffDetailToast.bind(this, false)}/>}
 
         </div>
     }

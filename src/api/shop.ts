@@ -18,6 +18,19 @@ export function productList (data: {
 }
 
 /**
+ * 查询商城产品详情 
+ */
+export function productDetail (data: {
+    id: string
+}) {
+    return request({
+        url: "/shop/product/admin/get",
+        method: 'GET',
+        params: data
+    });
+}
+
+/**
  * 新增商城产品
  */
 export function addProduct (data: {
@@ -102,6 +115,49 @@ export function setSold (data: {
 }) {
     return request({
         url: "/shop/product/admin/setSold",
+        method: "POST",
+        data
+    });
+}
+
+/**
+ * 获取用户订单列表 
+ */
+export function shopOrderList (data: {
+    status?: number,//	状态，0为全部；详见：项目文档-订单状态		[int]		
+    beginTime?: number, //	开始时间戳		[int]		
+    endTime?: number, //	结束时间戳		[int]		
+    page: number, //	页码，默认1		[int]		
+    limit: number, //	每页数量，默认15		[int]
+}) {
+    return request({
+        url: "/shop/order/admin/query",
+        method: "GET",
+        params: data
+    });
+}
+
+/**
+ * 获取用户订单详情
+ */
+export function shopOrderDetail (data: {
+    orderId: string|number, //订单id
+}) {
+    return request({
+        url: "/shop/order/admin/get",
+        method: "GET",
+        params: data
+    });
+}
+
+/**
+ * 用户订单发货
+ */
+export function shopOrderExpress (data: {
+    orderId: string|number, //订单id
+}) {
+    return request({
+        url: "/shop/order/admin/shipped",
         method: "POST",
         data
     });
