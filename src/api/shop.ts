@@ -3,7 +3,7 @@ import request from '../utils/request';
 /**
  * 查询商城产品列表 
  */
-export function getList (data: {
+export function productList (data: {
     type: number, //	产品类型；0-全部；1-商品；2-组合商品		[int]		
     q?: string, //	标题模糊搜索词		[string]		
     canSold?: string, //	是否上架；null-不限制；true-查上架商品；false-查下架商品		[boolean]		
