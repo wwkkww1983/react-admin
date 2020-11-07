@@ -173,10 +173,10 @@ export default class Home extends React.Component {
                 render: item => (
                     <Form layout="inline">
                         <Form.Item>
-                            <Button onClick={this.openOrOffTestToast.bind(this, item)} icon="experiment">测试</Button>
+                            <Button onClick={this.openOrOffTestToast.bind(this, item)} icon="experiment"></Button>
                         </Form.Item>
                         <Form.Item>
-                            <Button icon="delete" type="danger" onClick={this.delSubDevice.bind(this, item)}>解绑</Button>
+                            <Button icon="delete" type="danger" onClick={this.delSubDevice.bind(this, item)}></Button>
                         </Form.Item>
                     </Form>
                 )
@@ -495,15 +495,69 @@ export default class Home extends React.Component {
                 maskClosable={false}
                 onCancel={this.openOrOffSubDeviceListToast.bind(this, null)}
                 >
-                    <div style={{height: "700px"}}>
-                        <Table
-                        size="small"
-                        rowKey="id"
-                        scroll={{y: 650}}
-                        columns={state.subDeviceListColumns}
-                        dataSource={state.subDeviceListToast.list}
-                        pagination={false}
-                        />
+                    {/* <Table  这里老陈让改成高度特别小的行，搜索一用了自定义，没用框架，这里注释了，如果真香的话还可以还原
+                    rowKey="id"
+                    scroll={{y: 650}}
+                    columns={state.subDeviceListColumns}
+                    dataSource={state.subDeviceListToast.list}
+                    pagination={false}
+                    /> */}
+
+                    <div className="fuck-table">
+                        <div className="header">
+                            <div className="cell">设备id</div>
+                            <div className="cell">状态</div>
+                            <div className="cell">设备工况</div>
+                            <div className="cell">操作</div>
+                        </div>
+                        <div className="content">
+                            {state.subDeviceListToast.list.map(item => {
+                                const _ = P(item, "charger.latestStatus",{});
+                                const content = (
+                                    <Row style={{width: "400px"}}>
+                                        <Col span={12}>
+                                            <p>端口种类：{_.portType == 1 ? "交流" : "直流"}</p>
+                                            <p>交流端口状态：{_.acPortStatus == 1 ? "充电" : "空闲"}</p>
+                                            <p>充电器状态：{_.chargerInBoxStatus == 1 ? "就位" : "空闲" }</p>
+                                            <p>充电器插入端口状态：{_.chargerPlugPortStatus == 1 ? "插入" : "空闲"}</p>
+                                            <p>NFC读卡器状态：{_.nfcReaderStatus == 1 ? "有" : "无"}</p>
+                                            <p>直流分路箱状态：{_.dcBranchBoxStatus == 1 ? "打开" : "关闭"}</p>
+                                            <p>直流充电模块状态：{_.dcChargingModuleStatus == 1 ? "充电" : "空闲"}</p>
+                                            <p>插口电压：{_.portVoltageError == 1 ? "异常" : "正常"}</p>
+                                        </Col>
+                                        <Col span={10} offset={2}>
+                                            <p>插口电流：{_.portCurrentError == 1 ? "异常" : "正常"}</p>
+                                            <p>插口温度：{_.portTemperatureError == 1 ? "异常" : "正常"}</p>
+                                            <p>插口充电器/电池：{_.portChargerError == 1 ? "异常" : "正常"}</p>
+                                            <p>插口继电器：{_.portRelayError == 1 ? "异常" : "正常"}</p>
+                                            <p>插口插座：{_.portSocketError == 1 ? "异常" : "正常"}</p>
+                                            <p>插口放置盒：{_.portBoxError == 1 ? "异常" : "正常"}</p>
+                                        </Col>
+                                    </Row>
+                                );
+                                return <div className="row">
+                                    <div className="cell">{item.deviceId}</div>
+                                    <div className="cell">
+                                        <Switch checkedChildren="启用" unCheckedChildren="禁用" checked={item.enable} disabled={true}/>
+                                    </div>
+                                    <div className="cell">
+                                        <Popover content={content} title="设备工况">
+                                            <Button type="link">详情></Button>
+                                        </Popover>
+                                    </div>
+                                    <div className="cell">
+                                        <Form layout="inline">
+                                            <Form.Item>
+                                                <Button type="link" onClick={this.openOrOffTestToast.bind(this, item)} icon="experiment"></Button>
+                                            </Form.Item>
+                                            <Form.Item>
+                                                <Button icon="delete" type="link" onClick={this.delSubDevice.bind(this, item)}></Button>
+                                            </Form.Item>
+                                        </Form>
+                                    </div>
+                                </div>
+                            })}
+                        </div>
                     </div>
                 </Modal>
 
