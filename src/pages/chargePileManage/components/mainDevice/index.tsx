@@ -88,37 +88,37 @@ export default class Home extends React.Component {
         ],
         //子设备列表columns
         subDeviceListColumns: [
-            { 
-                title: "id",
-                dataIndex: "id",
-                key: "id"
-            },
+            // { 
+            //     title: "id",
+            //     dataIndex: "id",
+            //     key: "id"
+            // },
             { 
                 title: "设备id",
                 dataIndex: "deviceId",
                 key: "deviceId"
             },
-            { 
-                title: "通讯主机id",
-                dataIndex: "mainDeviceId",
-                key: "mainDeviceId"
-            },
-            {
-                title: "项目名/型号",
-                render: (item, record, index) => {
-                    const content = (
-                        <div>
-                            <p>项目名：{item.name || "-"}</p>
-                            <p>项目ID：{item.projectId || "-"}</p>
-                            <p>型号：{item.model || "-"}</p>
-                            <p>IMSI：{item.imsi || "-"}</p>
-                        </div>
-                    );
-                    return <Popover content={content} title="项目名/IMSI">
-                        <Button type="link">详情></Button>
-                    </Popover>
-                }
-            },
+            // { 
+            //     title: "通讯主机id",
+            //     dataIndex: "mainDeviceId",
+            //     key: "mainDeviceId"
+            // },
+            // {
+            //     title: "项目名/型号",
+            //     render: (item, record, index) => {
+            //         const content = (
+            //             <div>
+            //                 <p>项目名：{item.name || "-"}</p>
+            //                 <p>项目ID：{item.projectId || "-"}</p>
+            //                 <p>型号：{item.model || "-"}</p>
+            //                 <p>IMSI：{item.imsi || "-"}</p>
+            //             </div>
+            //         );
+            //         return <Popover content={content} title="项目名/IMSI">
+            //             <Button type="link">详情></Button>
+            //         </Popover>
+            //     }
+            // },
             // { 
             //     title: "是否在线",
             //     dataIndex: "online",
@@ -332,7 +332,7 @@ export default class Home extends React.Component {
             type: "5",
             mainDeviceId: deviceId,
             page: 1,
-            limit: 10
+            limit: 100 // 不分页，暂时估计他最多100个子设备
         }
         let res = null;
         try {
@@ -487,6 +487,7 @@ export default class Home extends React.Component {
 
                 {/* 子设备列表弹窗，一般子设备就几个，不需要翻页 */}
                 <Modal
+                style={{top: "5%"}}
                 title={state.subDeviceListToast.title}
                 visible={state.subDeviceListToast.show}
                 footer={null}
@@ -494,13 +495,16 @@ export default class Home extends React.Component {
                 maskClosable={false}
                 onCancel={this.openOrOffSubDeviceListToast.bind(this, null)}
                 >
-                    <Table
-                    rowKey="id"
-                    scroll={{y: 500}}
-                    columns={state.subDeviceListColumns}
-                    dataSource={state.subDeviceListToast.list}
-                    pagination={false}
-                    />
+                    <div style={{height: "700px"}}>
+                        <Table
+                        size="small"
+                        rowKey="id"
+                        scroll={{y: 650}}
+                        columns={state.subDeviceListColumns}
+                        dataSource={state.subDeviceListToast.list}
+                        pagination={false}
+                        />
+                    </div>
                 </Modal>
 
                 {/* 单个设备位置地图显示组件 */}
