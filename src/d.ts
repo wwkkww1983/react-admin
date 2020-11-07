@@ -3,6 +3,7 @@ declare var _ENV_: any;
 declare var AMap: any;
 declare var MeScroll: any;
 declare const wx: any;
+declare var Quill: any;
 
 declare module '*.svg'
 declare module '*.png'

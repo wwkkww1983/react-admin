@@ -13,6 +13,9 @@ const productToastDataStruct = {
     title: "",
     type: 1,
     canSold: false,
+    leftStock: 0,// 剩余库存
+    sales: 0,// 已售数量
+    price: 0,// 价格，（单位：分）
     imageList: [],
     content: "",
     properties: [], //属性集合
@@ -43,6 +46,7 @@ export default class AddOrEditProduct extends React.Component {
         filelist: [], //上传图片的集合，用于上传组件显示，内部是对象
         buildSKUTimer: null, // SKU计算防抖计时器
         selectProductShow: false, //选择子产品弹窗
+        editor: null, //富文本编辑器
     }
 
     componentDidMount () {
@@ -64,6 +68,7 @@ export default class AddOrEditProduct extends React.Component {
             this.state.title = "新增商品";
         }
         this.setState({});
+        this.careteEditor();
     }
 
     async loadList () {
@@ -79,6 +84,23 @@ export default class AddOrEditProduct extends React.Component {
         this.setState({});
     }
 
+    //初始化富文本编辑器
+    careteEditor () {
+        setTimeout(() => {
+            this.state.editor = new Quill('#add-or-edit-product-editor', {
+                theme: 'snow',
+                placeholder: "输入商品介绍",
+                modules: {
+                    toolbar: [[{ 'header': [1, 2, 3, false] }], ['bold'], ['italic'], ['underline'], ['strike']]
+                }
+            });
+        }, 200);
+    }
+
+    test () {
+        console.log(this.state.editor.getContents());
+    }
+
     // 新增、编辑弹窗表单保存
     async onSave () {
         const _ = JSON.parse(JSON.stringify(this.state.form));
@@ -86,12 +108,19 @@ export default class AddOrEditProduct extends React.Component {
         if (!_.title) msg = "请填写商品名称";
         else if (_.imageList.length === 0) msg = "请上传商品图片";
         if (msg) {
-            message.warning(msg);
+            message.warning(msg); 
             return;
         }
         if (_.type === 1) {
             if (!this.checkPropertiesInput()) return;
             delete _["combinationProducts"];
+            _.properties = _.properties.map(i => {
+                let str = i.values.replace(/\s/g, "").replace(/[,，]/g, ",");
+                return {
+                    name: i.name,
+                    values: [...str.split(",")].filter(i => i)
+                }
+            });
         }
         if (_.type === 2) {
             if (_.combinationProducts.length === 0) {
@@ -101,6 +130,7 @@ export default class AddOrEditProduct extends React.Component {
             delete _["properties"];
             delete _["properyDetails"];
         }
+        _.content = "<h1>测试富文本</h1>";
         console.log("保存数据：");
         console.log(_);
         NProgress.start();
@@ -158,7 +188,7 @@ export default class AddOrEditProduct extends React.Component {
                     if (_[1]) {
                         f.call(this, _.slice(1), [...pre, item]);
                     } else {
-                        addResult.call(this, [...pre, item].join("-"));
+                        addResult.call(this, [...pre, item].join("|"));
                     }
                 });
             }).call(this, _, []);
@@ -254,9 +284,39 @@ export default class AddOrEditProduct extends React.Component {
                                 </Form.Item>
                             </Col>
                         </Row>
+                        <Row>
+                            <Col span={7}>
+                                <Form.Item label="库存">
+                                    <Input placeholder="库存"
+                                    onChange={input.bind(this, "form.leftStock")}
+                                    />
+                                </Form.Item>
+                            </Col> 
+                            <Col span={7} offset={1}>
+                                <Form.Item label="已售">
+                                    <Input placeholder="已售数量"
+                                    onChange={input.bind(this, "form.sales")}
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col span={7} offset={1}>
+                                <Form.Item label="价格">
+                                    <Input placeholder="价格"
+                                    onChange={input.bind(this, "form.price")}
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
                         <Form.Item label="商品图片">
                             <Upload urls={state.form.imageList} onChange={input.bind(this, "form.imageList")}/>
                         </Form.Item>
+
+                        {/* 富文本 */}
+                        <div style={{marginBottom: "24px"}}>
+                            <p style={{color: "rgba(0, 0, 0, 0.85)"}}>商品简介:</p>
+                            <div id="add-or-edit-product-editor" style={{height: "200px", overflow: "hidden"}}></div>
+                            <Button onClick={this.test.bind(this)}>test</Button>
+                        </div>
 
                         {/* SKU属性 */}
                         {state.form.type !== 2 && <Form.Item label="商品属性">
