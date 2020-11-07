@@ -209,7 +209,8 @@ export default class Home extends React.Component {
             id: "",
             deviceId: "",
             title: "",
-            list: []
+            list: [], //暂时不用
+            $list: [],
         },
         //增加子设备弹窗状态
         addSubDeviceToast: {
@@ -342,7 +343,24 @@ export default class Home extends React.Component {
             return;
         }
         NProgress.done();
-        this.state.subDeviceListToast.list = res.list || [];
+        // this.state.subDeviceListToast.list = res.list || [];
+        res.list.forEach((i, index) => i.$number = index + 1);
+        let c = Math.floor(res.list.length / 2), leftList = [], rightList = [];
+        if (c * 2 < res.list.length) {
+            leftList = res.list.slice(0, c + 1);
+        } else {
+            leftList = res.list.slice(0, c);
+        }
+        rightList = res.list.slice(leftList.length);
+        let $list = [], len = leftList.length;
+        for (let i = 0; i < len; i++) {
+            $list.push([
+                leftList.shift(),
+                rightList.shift()
+            ]);
+        }
+        console.log($list);
+        this.state.subDeviceListToast.$list = $list;
         this.setState({});
     }
 
@@ -487,11 +505,10 @@ export default class Home extends React.Component {
 
                 {/* 子设备列表弹窗，一般子设备就几个，不需要翻页 */}
                 <Modal
-                style={{top: "2%"}}
                 title={state.subDeviceListToast.title}
                 visible={state.subDeviceListToast.show}
                 footer={null}
-                width="80%"
+                width="90%"
                 maskClosable={false}
                 onCancel={this.openOrOffSubDeviceListToast.bind(this, null)}
                 >
@@ -505,15 +522,26 @@ export default class Home extends React.Component {
 
                     <div className="fuck-table">
                         <div className="header">
+                            <div className="cell">序号</div>
+                            <div className="cell">设备id</div>
+                            <div className="cell">状态</div>
+                            <div className="cell">设备工况</div>
+                            <div className="cell">操作</div>
+                            <div className="cell">序号</div>
                             <div className="cell">设备id</div>
                             <div className="cell">状态</div>
                             <div className="cell">设备工况</div>
                             <div className="cell">操作</div>
                         </div>
                         <div className="content">
-                            {state.subDeviceListToast.list.map(item => {
-                                const _ = P(item, "charger.latestStatus",{});
-                                const content = (
+                            {/* 左右中线 */}
+                            <div className="line"></div>
+
+                            {state.subDeviceListToast.$list.map(([l, r]) => {
+                                let _, _1, leftContent, rightContent;
+                                _ = P(l, "charger.latestStatus",{});
+                                r && (_1 = P(r, "charger.latestStatus",{}));
+                                leftContent = (
                                     <Row style={{width: "400px"}}>
                                         <Col span={12}>
                                             <p>端口种类：{_.portType == 1 ? "交流" : "直流"}</p>
@@ -534,27 +562,76 @@ export default class Home extends React.Component {
                                             <p>插口放置盒：{_.portBoxError == 1 ? "异常" : "正常"}</p>
                                         </Col>
                                     </Row>
-                                );
+                                ),
+                                r && (rightContent = (
+                                    <Row style={{width: "400px"}}>
+                                        <Col span={12}>
+                                            <p>端口种类：{_1.portType == 1 ? "交流" : "直流"}</p>
+                                            <p>交流端口状态：{_1.acPortStatus == 1 ? "充电" : "空闲"}</p>
+                                            <p>充电器状态：{_1.chargerInBoxStatus == 1 ? "就位" : "空闲" }</p>
+                                            <p>充电器插入端口状态：{_1.chargerPlugPortStatus == 1 ? "插入" : "空闲"}</p>
+                                            <p>NFC读卡器状态：{_1.nfcReaderStatus == 1 ? "有" : "无"}</p>
+                                            <p>直流分路箱状态：{_1.dcBranchBoxStatus == 1 ? "打开" : "关闭"}</p>
+                                            <p>直流充电模块状态：{_1.dcChargingModuleStatus == 1 ? "充电" : "空闲"}</p>
+                                            <p>插口电压：{_1.portVoltageError == 1 ? "异常" : "正常"}</p>
+                                        </Col>
+                                        <Col span={10} offset={2}>
+                                            <p>插口电流：{_1.portCurrentError == 1 ? "异常" : "正常"}</p>
+                                            <p>插口温度：{_1.portTemperatureError == 1 ? "异常" : "正常"}</p>
+                                            <p>插口充电器/电池：{_.portChargerError == 1 ? "异常" : "正常"}</p>
+                                            <p>插口继电器：{_1.portRelayError == 1 ? "异常" : "正常"}</p>
+                                            <p>插口插座：{_1.portSocketError == 1 ? "异常" : "正常"}</p>
+                                            <p>插口放置盒：{_1.portBoxError == 1 ? "异常" : "正常"}</p>
+                                        </Col>
+                                    </Row>
+                                ));
                                 return <div className="row">
-                                    <div className="cell">{item.deviceId}</div>
-                                    <div className="cell">
-                                        <Switch checkedChildren="启用" unCheckedChildren="禁用" checked={item.enable} disabled={true}/>
+                                    {/* 左侧 */}
+                                    <div className="row-in">
+                                        <div className="cell">{l.$number}</div>
+                                        <div className="cell">{l.deviceId}</div>
+                                        <div className="cell">
+                                            <Switch checkedChildren="启用" unCheckedChildren="禁用" checked={l.enable} disabled={true}/>
+                                        </div>
+                                        <div className="cell">
+                                            <Popover content={leftContent} title="设备工况">
+                                                <Button type="link">详情></Button>
+                                            </Popover>
+                                        </div>
+                                        <div className="cell">
+                                            <Form layout="inline">
+                                                <Form.Item>
+                                                    <Button type="link" onClick={this.openOrOffTestToast.bind(this, l)} icon="experiment"></Button>
+                                                </Form.Item>
+                                                <Form.Item>
+                                                    <Button icon="delete" type="link" onClick={this.delSubDevice.bind(this, l)}></Button>
+                                                </Form.Item>
+                                            </Form>
+                                        </div>
                                     </div>
-                                    <div className="cell">
-                                        <Popover content={content} title="设备工况">
-                                            <Button type="link">详情></Button>
-                                        </Popover>
-                                    </div>
-                                    <div className="cell">
-                                        <Form layout="inline">
-                                            <Form.Item>
-                                                <Button type="link" onClick={this.openOrOffTestToast.bind(this, item)} icon="experiment"></Button>
-                                            </Form.Item>
-                                            <Form.Item>
-                                                <Button icon="delete" type="link" onClick={this.delSubDevice.bind(this, item)}></Button>
-                                            </Form.Item>
-                                        </Form>
-                                    </div>
+                                    {/* 右侧 */}
+                                    {r && <div className="row-in">
+                                        <div className="cell">{r.$number}</div>
+                                        <div className="cell">{r.deviceId}</div>
+                                        <div className="cell">
+                                            <Switch checkedChildren="启用" unCheckedChildren="禁用" checked={r.enable} disabled={true}/>
+                                        </div>
+                                        <div className="cell">
+                                            <Popover content={rightContent} title="设备工况">
+                                                <Button type="link">详情></Button>
+                                            </Popover>
+                                        </div>
+                                        <div className="cell">
+                                            <Form layout="inline">
+                                                <Form.Item>
+                                                    <Button type="link" onClick={this.openOrOffTestToast.bind(this, r)} icon="experiment"></Button>
+                                                </Form.Item>
+                                                <Form.Item>
+                                                    <Button icon="delete" type="link" onClick={this.delSubDevice.bind(this, r)}></Button>
+                                                </Form.Item>
+                                            </Form>
+                                        </div>
+                                    </div>}
                                 </div>
                             })}
                         </div>
