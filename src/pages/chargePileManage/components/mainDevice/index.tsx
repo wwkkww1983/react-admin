@@ -487,7 +487,7 @@ export default class Home extends React.Component {
 
                 {/* 子设备列表弹窗，一般子设备就几个，不需要翻页 */}
                 <Modal
-                style={{top: "5%"}}
+                style={{top: "2%"}}
                 title={state.subDeviceListToast.title}
                 visible={state.subDeviceListToast.show}
                 footer={null}
