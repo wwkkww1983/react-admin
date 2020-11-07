@@ -20,8 +20,8 @@ const productToastDataStruct = {
     imageList: [],
     content: "",
     properties: [], //属性集合
-    properyDetails: [], //属性分类价格、信息集合
-    combinationProducts: [] //组合商品集合（区别对待，有我无上面两者）
+    propertyDetails: [], //属性分类价格、信息集合
+    subProductDetails: [] //组合商品集合（区别对待，有我无上面两者）
 }
 
 export default class AddOrEditProduct extends React.Component {
@@ -59,11 +59,24 @@ export default class AddOrEditProduct extends React.Component {
         if (props.id) {
             await this.loadList();
             this.state.data && (this.state.title = `编辑商品 "${this.state.data.title}"`);  
+            console.log(this.state.data);
             Object.keys(productToastDataStruct).forEach(k => {
-                if (this.state.data[k] !== undefined) {
+                if (this.state.data && this.state.data[k] !== undefined) {
+                    if (k === "properties") {
+                        this.state.data[k].forEach(i => i.values = i.values.join(","));
+                    }
+                    if (k === "price") {
+                        this.state.data[k]= this.state.data[k] / 100;
+                    }
+                    if (k === "propertyDetails") {
+                        this.state.data[k].forEach(item => {
+                            item.price = item.price / 100;
+                        });
+                    }
                     this.state.form[k] = this.state.data[k];
                 }
             });
+            console.log(this.state.form);
             this.setState({});
         } else {
             this.state.title = "新增商品";
@@ -84,10 +97,6 @@ export default class AddOrEditProduct extends React.Component {
         this.setState({});
     }
 
-    test (html) {
-        console.log(html);
-    }
-
     // 新增、编辑弹窗表单保存
     async onSave () {
         const _ = JSON.parse(JSON.stringify(this.state.form));
@@ -100,28 +109,34 @@ export default class AddOrEditProduct extends React.Component {
         }
         if (_.type === 1) {
             if (!this.checkPropertiesInput()) return;
-            delete _["combinationProducts"];
+            delete _["subProductDetails"];
             _.properties = _.properties.map(i => {
+                console.log(i.values);
                 let str = i.values.replace(/\s/g, "").replace(/[,，]/g, ",");
                 return {
                     name: i.name,
                     values: [...str.split(",")].filter(i => i)
                 }
             });
+            _.propertyDetails.forEach(item => {
+                item.price = item.price * 100;
+            });
         }
         if (_.type === 2) {
-            if (_.combinationProducts.length === 0) {
+            if (_.subProductDetails.length === 0) {
                 message.warning("子商品组合不能为空");
                 return;
             }
             delete _["properties"];
-            delete _["properyDetails"];
+            delete _["propertyDetails"];
         }
-        console.log("保存数据：");
+        if ((this as any).props.id) _["id"] = (this as any).props.id;
+        _.price = _.price * 100;
+        console.log("上传数据：");
         console.log(_);
         NProgress.start();
         try {
-            await addProduct(_);
+            (this as any).props.id ?  await editProduct(_) : await addProduct(_);
         } catch(err) {
             NProgress.done();
             return;
@@ -164,7 +179,7 @@ export default class AddOrEditProduct extends React.Component {
         clearTimeout(this.state.buildSKUTimer);
         let result = [], cache = [];
         this.state.buildSKUTimer = setTimeout(() => {
-            cache = this.state.form.properyDetails;
+            cache = this.state.form.propertyDetails;
             const _ = this.state.form.properties.map(item => {
                 let str = item.values.replace(/\s/g, "").replace(/[,，]/g, ",");
                 return [...str.split(",")].filter(i => i);
@@ -178,7 +193,7 @@ export default class AddOrEditProduct extends React.Component {
                     }
                 });
             }).call(this, _, []);
-            this.state.form.properyDetails = result;
+            this.state.form.propertyDetails = result;
             this.setState({});
         }, 500);
         function addResult (sku = "") {
@@ -216,22 +231,28 @@ export default class AddOrEditProduct extends React.Component {
 
     //子商品标签关闭点击
     onCloseSubProduct (index) {
-        this.state.form.comninationProducts.splice(index, 1);
+        this.state.form.subProductDetails.splice(index, 1);
         this.setState({});
     }
 
     //选择子设备回调
     onSelectSubProduct (item) {
-        const _ = this.state.form.comninationProducts;
-        _.push(item.id);
+        const _ = this.state.form.subProductDetails;
+        _.push({ subProductId: item.id });
         this.state.selectProductShow = false;
         this.setState({});
+    }
+
+    //获取子设备id数组, 给子设备选择组件使用（阻止重复选择）
+    getSubProductIds () {
+        return this.state.form.subProductDetails.map(i => i.subProductId);
     }
 
     render (): React.ReactNode {
         const state = this.state, props = (this as any).props;
         return <div className="addereditproduct-component">
             <Modal
+            style={{top: "5%"}}
             width="80%"
             title={state.title}
             visible={true}
@@ -246,6 +267,7 @@ export default class AddOrEditProduct extends React.Component {
                             <Col span={7}>
                                 <Form.Item label="商品名称">
                                     <Input placeholder="商品名称"
+                                    value={state.form.title}
                                     onChange={input.bind(this, "form.title")}
                                     />
                                 </Form.Item>
@@ -275,6 +297,7 @@ export default class AddOrEditProduct extends React.Component {
                                 <Form.Item label="库存">
                                     <Input placeholder="库存"
                                     onChange={input.bind(this, "form.leftStock")}
+                                    value={state.form.leftStock}
                                     />
                                 </Form.Item>
                             </Col> 
@@ -282,6 +305,7 @@ export default class AddOrEditProduct extends React.Component {
                                 <Form.Item label="已售">
                                     <Input placeholder="已售数量"
                                     onChange={input.bind(this, "form.sales")}
+                                    value={state.form.sales}
                                     />
                                 </Form.Item>
                             </Col>
@@ -289,6 +313,7 @@ export default class AddOrEditProduct extends React.Component {
                                 <Form.Item label="价格">
                                     <Input placeholder="价格"
                                     onChange={input.bind(this, "form.price")}
+                                    value={state.form.price}
                                     />
                                 </Form.Item>
                             </Col>
@@ -348,29 +373,29 @@ export default class AddOrEditProduct extends React.Component {
                                 {
                                     title: "库存",
                                     render: (item, record, index) => {
-                                        return <Input placeholder="库存数量" value={item.leftStock} onChange={input.bind(this, `form.properyDetails[${index}].leftStock`)}/>
+                                        return <Input placeholder="库存数量" value={item.leftStock} onChange={input.bind(this, `form.propertyDetails[${index}].leftStock`)}/>
                                     }
                                 },
                                 {
                                     title: "已售",
                                     render: (item, record, index) => {
-                                        return <Input placeholder="已售" value={item.sales} onChange={input.bind(this, `form.properyDetails[${index}].sales`)}/>
+                                        return <Input placeholder="已售" value={item.sales} onChange={input.bind(this, `form.propertyDetails[${index}].sales`)}/>
                                     }
                                 },
                                 {
                                     title: "售价",
                                     render: (item, record, index) => {
-                                        return <Input placeholder="售价" value={item.price} onChange={input.bind(this, `form.properyDetails[${index}].price`)}/>
+                                        return <Input placeholder="售价" value={item.price} onChange={input.bind(this, `form.propertyDetails[${index}].price`)}/>
                                     }
                                 },
                                 {
                                     title: "图片",
                                     render: (item, record, index) => {
-                                        return <Upload urls={item.imageList} onChange={input.bind(this, `form.properyDetails[${index}].imageList`)}/>
+                                        return <Upload urls={item.imageList} onChange={input.bind(this, `form.propertyDetails[${index}].imageList`)}/>
                                     }
                                 }
                             ]}
-                            dataSource={state.form.properyDetails}
+                            dataSource={state.form.propertyDetails}
                             pagination={false}
                             />
                         </Form.Item>}
@@ -378,7 +403,7 @@ export default class AddOrEditProduct extends React.Component {
                         {/* 组合商品 */}
                         {state.form.type === 2 && <Form.Item label="子商品组合">
                             <div style={{display: "flex"}}>
-                            {state.form.combinationProducts.map((item, index) => <Tag style={{height: "30px", lineHeight: "30px"}} color="#f50" closable={true} onClose={this.onCloseSubProduct.bind(this, index)}>id: {item.subProductId}</Tag>)}
+                            {state.form.subProductDetails.map((item, index) => <Tag style={{height: "30px", lineHeight: "30px"}} color="#f50" closable={true} onClose={this.onCloseSubProduct.bind(this, index)}>id: {item.subProductId}</Tag>)}
                                 <Button style={{marginLeft: "-15px"}} icon="plus" type="link" onClick={() => {
                                     this.setState({ selectProductShow: true });
                                 }}>增加子商品</Button>
@@ -387,7 +412,9 @@ export default class AddOrEditProduct extends React.Component {
                     </Form>
 
                     {/* 选择产品子产品id */}
-                    {state.selectProductShow && <SelectProduct onCancel={() => {
+                    {state.selectProductShow && <SelectProduct
+                    excludes={this.getSubProductIds()}
+                    onCancel={() => {
                         this.setState({ selectProductShow: false });
                     }} onSelect={this.onSelectSubProduct.bind(this)}/>}
 

@@ -2,7 +2,7 @@ import React from "react";
 import "./index.less";
 import NProgress from "nprogress";
 import { input, property as P, initLife } from "../../utils/utils";
-import { Form, Input, Button, Select, Table, Switch, Modal, Tabs, Row, Col, Icon, Upload, message } from "antd";
+import { Form, Input, Button, Select, Table, Switch, Modal, Tabs, message, Carousel } from "antd";
 const { Option } = Select;
 const { TabPane } = Tabs;
 import { productList, addProduct, editProduct, delProduct, setSold } from "../../api/shop";
@@ -27,7 +27,7 @@ export default class ShopProduct extends React.Component {
         headForm: {
             type: 0, //产品类型；0-全部；1-商品；2-组合
             q: "",
-            canSold: "null", //是否上架；null-不限制；true-查上架
+            canSold: null, //是否上架；null-不限制；true-查上架
         },
         list: [],
         productToast: {
@@ -172,9 +172,9 @@ export default class ShopProduct extends React.Component {
                 </Form.Item>
                 <Form.Item label="是否上架">
                     <Select defaultValue={state.headForm.canSold} style={{ width: 120 }} onChange={input.bind(this, "headForm.canSold")}>
-                        <Option value="null">不限</Option>
-                        <Option value="true">已上架</Option>
-                        <Option value="false">已下架</Option>
+                        <Option value={null}>不限</Option>
+                        <Option value={1}>已上架</Option>
+                        <Option value={0}>已下架</Option>
                     </Select>
                 </Form.Item>
                 <Form.Item>
@@ -192,7 +192,7 @@ export default class ShopProduct extends React.Component {
                 onChange: page => {
                     state.page = page;
                     this.setState({page: page});
-                    //...
+                    this.loadList();
                 },
                 current: state.page,
                 pageSize: state.limit,
@@ -204,17 +204,25 @@ export default class ShopProduct extends React.Component {
                     dataIndex: "id"
                 },
                 {
-                    title: "商品类型",
-                    dataIndex: "typeText"
-                },
-                {
                     title: "商品名",
                     dataIndex: "title"
                 },
                 {
+                    title: "商品类型",
+                    dataIndex: "typeText"
+                },
+                {
+                    title: "缩略图",
+                    render: item => <div style={{width: "100px", background: "rgba(0,0,0,0.1)", overflow: "hidden"}}>
+                        <Carousel autoplay={true}>
+                            {item.imageList.map(url => <img src={url} alt=""/>)}
+                        </Carousel>
+                    </div>
+                },
+                {
                     title: "是否上架",
                     render: (item, record, index) => {
-                        return <Switch loading={state.switchLoading[index]} onChange={this.onSoldSwitch.bind(this, item, index)}/>
+                        return <Switch loading={state.switchLoading[index]} onChange={this.onSoldSwitch.bind(this, item, index)} checked={item.canSold}/>
                     }
                 },
                 {

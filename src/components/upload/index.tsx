@@ -25,6 +25,10 @@ export default class UploadImg extends React.Component {
         this.setState({ images: (this as any).props.urls });
     }
 
+    componentWillReceiveProps (props) {
+        this.setState({ images: props.urls });
+    }
+
     //上传logo之前进行判断
     beforeUpload (file) {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -79,11 +83,10 @@ export default class UploadImg extends React.Component {
             <div className="upload-component">
                 {state.images.map((i, index) => <div className="child">
                     <img src={i} alt=""/>
-                    <div className="delete-btn" onClick={this.deleteImg.bind(this, index)}>
+                    {this.checkShowUpload() && <div className="delete-btn" onClick={this.deleteImg.bind(this, index)}>
                         <Icon type="delete" style={{color: "red"}}/>
-                    </div>
+                    </div>}
                 </div>)}
-
                 {this.checkShowUpload() && <Upload
                 name="file"
                 headers={{

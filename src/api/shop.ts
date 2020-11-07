@@ -6,7 +6,7 @@ import request from '../utils/request';
 export function productList (data: {
     type: number, //	产品类型；0-全部；1-商品；2-组合商品		[int]		
     q?: string, //	标题模糊搜索词		[string]		
-    canSold?: string, //	是否上架；null-不限制；true-查上架商品；false-查下架商品		[boolean]		
+    canSold?: string|number, //	是否上架；null-不限制；true-查上架商品；false-查下架商品		[boolean]		
     page: number, //	页码，默认1		[int]		
     limit: number, //	每页数量，默认15		[int]	
 }) {

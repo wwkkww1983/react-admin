@@ -1,8 +1,8 @@
 import React from "react";
 import "./index.less";
 import NProgress from "nprogress";
-import { input, property as P, initLife } from "../../utils/utils";
-import { Form, Input, Button, Select, Table, Switch, Icon, message, DatePicker } from "antd";
+import { input, property as P, initLife, timeToDateStr } from "../../utils/utils";
+import { Form, Button, Select, Table, Modal, DatePicker, Popover, message } from "antd";
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 import { shopOrderList, shopOrderDetail, shopOrderExpress } from "../../api/shop";
@@ -55,7 +55,7 @@ export default class ShopProduct extends React.Component {
             limit: this.state.limit,
             page: this.state.page,
         }
-        if (_.status !== undefined) "";
+        if (_.status !== undefined) data.status = _.status;
         if (_.beginTime && _.endTime) {
             data.beginTime = _.beginTime ? Math.floor(_.beginTime.toDate().getTime() / 1000) : 0;
             data.endTime = _.endTime ? Math.floor(_.endTime.toDate().getTime() / 1000) : 0;
@@ -70,6 +70,26 @@ export default class ShopProduct extends React.Component {
         this.setState({ 
             list: res.list,  
             total: res.total === 0 ? 1 : res.total
+        });
+    }
+
+    //发货
+    onExpress (item) {
+        Modal.confirm({
+            title: `确定发货？`,
+            onOk: async () => {
+              NProgress.start();
+              try {
+                await shopOrderExpress({ orderId: item.id });
+              } catch(err) {
+                NProgress.done();
+                return;
+              }
+              NProgress.done();
+              message.success("发货成功");
+              this.loadList();
+            },
+            onCancel() {}
         });
     }
 
@@ -101,7 +121,7 @@ export default class ShopProduct extends React.Component {
                 onChange: page => {
                     state.page = page;
                     this.setState({page: page});
-                    //...
+                    this.loadList();
                 },
                 current: state.page,
                 pageSize: state.limit,
@@ -113,19 +133,70 @@ export default class ShopProduct extends React.Component {
                     dataIndex: "id"
                 },
                 {
-                    title: "商品类型",
-                    dataIndex: "typeText"
+                    title: "订单号",
+                    render: item => {
+                        return <div>
+                            <span>订单号：{item.orderNumber}</span><br/>
+                            <span>卖家id：{item.sellerMemberId}</span>
+                        </div>
+                    }
                 },
                 {
-                    title: "商品名",
-                    dataIndex: "title"
+                    title: "状态",
+                    dataIndex: "statusText"
+                },
+                {
+                    title: "收货人信息",
+                    render: item => {
+                        const content = <div>
+                            <p>姓名：{P(item, "name", "-")}</p>
+                            <p>电话：{P(item, "phone", "-")}</p>
+                            <p>电话：{P(item, "phone", "-")}</p>
+                            <p>地区：{P(item, "province", "-")}/{P(item, "city", "-")}/{P(item, "district", "-")}</p>
+                            <p>地址：{P(item, "address", "-")}</p>
+                        </div>
+                        return <Popover content={content} title="收货人信息" trigger="hover">
+                                <Button type="link">查看>></Button>
+                        </Popover>
+                    }
+                },
+                {
+                    title: "快递信息",
+                    render: item => {
+                        const content = <div>
+                            <p>快递公司id：{P(item, "deliveryCompanyId", "-")}</p>
+                            <p>电话：{P(item, "deliveryNumber", "-")}</p>
+                            <p>发货时间：{timeToDateStr(item.deliveryTime * 1000, "datetime")}</p>
+                            <p>完成时间：{timeToDateStr(item.completeTime * 1000, "datetime")}</p>
+                        </div>
+                        return <Popover content={content} title="快递信息" trigger="hover">
+                            <Button type="link">查看>></Button>
+                        </Popover>
+                    }
+                },
+                {
+                    title: "结算信息",
+                    render: item => {
+                        const content = <div>
+                            <p>总金额：{P(item, "totalAmount", "-")}</p>
+                            <p>实际支付：{P(item, "payAmount", "-")}</p>
+                            <p>支付渠道：{P(item, "payChannel", "-")}</p>
+                            <p>支付系统订单号：{P(item, "payTransferNumber", "-")}</p>
+                            <p>支付最后退款时间：{P(item, "refundExpireTime", "-")}</p>
+                            <p>创建时间：{timeToDateStr(item.createTime * 1000, "datetime")}</p>
+                            <p>支付时间：{timeToDateStr(item.payTime * 1000, "datetime")}</p>
+                        </div>
+                        return <Popover content={content} title="结算信息" trigger="hover">
+                            <Button type="link">查看>></Button>
+                        </Popover>
+                    }
                 },
                 {
                     title: "操作",
                     render: item => {
                         return <Form layout="inline">
                             <Form.Item>
-                                <Button>详情</Button>
+                                <Button icon="check" onClick={this.onExpress.bind(this, item)}>发货</Button>
                             </Form.Item>
                         </Form>
                     }

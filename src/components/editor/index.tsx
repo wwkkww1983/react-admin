@@ -4,9 +4,6 @@ import E from "wangeditor";
 import { uploadImg } from "../../api/upload";
 import NProgress from "nprogress";
 
-//编辑器container id计数
-let CONTAINER_ID  = 0;
-
 const menus = [
     'head',
     'bold',
@@ -54,10 +51,19 @@ export default class Editor extends React.Component {
         this.init();
     }
 
+    componentWillReceiveProps (props) {
+        if (this.state.editor && props.content !== this.state.editor.txt.html()) {
+            this.state.editor && this.state.editor.txt.html(props.content);
+        }
+    }
+
+    componentWillUnmount () {
+        this.state.editor && this.state.editor.destroy(), this.state.editor = null;
+    }
+
     init () {
-        this.setContainerId();
         setTimeout(() => {
-            const editor: any = this.state.editor = new E("#" + this.state.containerId);
+            const editor: any = this.state.editor = new E((this as any).refs["editor"]);
             editor.config.menus = menus;
             editor.config.placeholder = (this as any).props.placeholder;
             editor.config.customUploadImg = async (resultFiles, insertImgFn) => {
@@ -84,18 +90,11 @@ export default class Editor extends React.Component {
             editor.create();
             if ((this as any).props.content) editor.txt.html((this as any).props.content);
             if ((this as any).props.disabled) editor.disable();
-        }, 100);
-    }
-
-    private setContainerId () {
-        if (CONTAINER_ID === Number.MAX_SAFE_INTEGER) CONTAINER_ID = 0;
-        CONTAINER_ID++;
-        this.state.containerId = "editor-component-container-" + CONTAINER_ID;
-        this.setState({});
+        });
     }
 
     render (): React.ReactNode {
         const state = this.state, props = this.props;
-        return <div className="editor-component" id={state.containerId}></div>
+        return <div className="editor-component" ref="editor"></div>
     }
 }

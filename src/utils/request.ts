@@ -34,7 +34,7 @@ service.interceptors.response.use(
 			store.dispatch({type: "token/DEL_TOKEN"});
 			History.replace({path: "/"});
 		}
-		message.error(res.message);
+		message.error(res.message || "系统错误");
 		return Promise.reject('error');
 	},
 	error => {

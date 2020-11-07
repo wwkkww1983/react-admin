@@ -13,6 +13,7 @@ export default class ShopProduct extends React.Component {
 
     static defaultProps = {
         title: "选择子产品",
+        excludes: [], // 不要再次选择的id
         onSelect: () => {},
         onCancel: () => {}
     }
@@ -29,7 +30,7 @@ export default class ShopProduct extends React.Component {
         headForm: {
             type: 0, //产品类型；0-全部；1-商品；2-组合
             q: "",
-            canSold: "null", //是否上架；null-不限制；true-查上架
+            canSold: null, //是否上架；null-不限制；true-查上架
         },
         list: []
     }
@@ -97,9 +98,9 @@ export default class ShopProduct extends React.Component {
                 </Form.Item>
                 <Form.Item label="是否上架">
                     <Select defaultValue={state.headForm.canSold} style={{ width: 120 }} onChange={input.bind(this, "headForm.canSold")}>
-                        <Option value="null">不限</Option>
-                        <Option value="true">已上架</Option>
-                        <Option value="false">已下架</Option>
+                        <Option value={null}>不限</Option>
+                        <Option value={1}>已上架</Option>
+                        <Option value={0}>已下架</Option>
                     </Select>
                 </Form.Item>
                 <Form.Item>
@@ -145,7 +146,7 @@ export default class ShopProduct extends React.Component {
                     render: item => {
                         return <Form layout="inline">
                             <Form.Item>
-                                <Button icon="check" onClick={() => {
+                                <Button icon="check" disabled={props.excludes.includes(item.id)} onClick={() => {
                                     (this as any).props.onSelect(item);
                                 }}>选择</Button>
                             </Form.Item>
