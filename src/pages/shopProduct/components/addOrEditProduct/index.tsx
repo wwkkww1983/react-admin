@@ -7,6 +7,7 @@ const { Option } = Select;
 import { productDetail, addProduct, editProduct, } from "../../../../api/shop";
 import Upload from "../../../../components/upload";
 import SelectProduct from "../selectProducrt";
+import Editor from "../../../../components/editor";
 
 //增加、编辑商品表单数据一维结构
 const productToastDataStruct = {
@@ -68,7 +69,6 @@ export default class AddOrEditProduct extends React.Component {
             this.state.title = "新增商品";
         }
         this.setState({});
-        this.careteEditor();
     }
 
     async loadList () {
@@ -84,21 +84,8 @@ export default class AddOrEditProduct extends React.Component {
         this.setState({});
     }
 
-    //初始化富文本编辑器
-    careteEditor () {
-        setTimeout(() => {
-            this.state.editor = new Quill('#add-or-edit-product-editor', {
-                theme: 'snow',
-                placeholder: "输入商品介绍",
-                modules: {
-                    toolbar: [[{ 'header': [1, 2, 3, false] }], ['bold'], ['italic'], ['underline'], ['strike']]
-                }
-            });
-        }, 200);
-    }
-
-    test () {
-        console.log(this.state.editor.getContents());
+    test (html) {
+        console.log(html);
     }
 
     // 新增、编辑弹窗表单保存
@@ -130,7 +117,6 @@ export default class AddOrEditProduct extends React.Component {
             delete _["properties"];
             delete _["properyDetails"];
         }
-        _.content = "<h1>测试富文本</h1>";
         console.log("保存数据：");
         console.log(_);
         NProgress.start();
@@ -314,8 +300,7 @@ export default class AddOrEditProduct extends React.Component {
                         {/* 富文本 */}
                         <div style={{marginBottom: "24px"}}>
                             <p style={{color: "rgba(0, 0, 0, 0.85)"}}>商品简介:</p>
-                            <div id="add-or-edit-product-editor" style={{height: "200px", overflow: "hidden"}}></div>
-                            <Button onClick={this.test.bind(this)}>test</Button>
+                            <Editor onChange={input.bind(this, "form.content")}  content={state.form.content} placeholder="商品简介" disabled={false}/>
                         </div>
 
                         {/* SKU属性 */}
